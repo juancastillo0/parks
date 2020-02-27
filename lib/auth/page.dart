@@ -3,6 +3,7 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:parks/auth/store.dart';
 import 'package:parks/routes.gr.dart';
 import 'package:provider/provider.dart';
+import 'package:styled_widget/styled_widget.dart';
 
 class AuthPage extends StatefulWidget {
   AuthPage({Key key, this.title}) : super(key: key);
@@ -74,12 +75,11 @@ class _AuthPageState extends State<AuthPage> {
                   TextFormField(
                     key: Key("password2"),
                     onSaved: (password2) => _password2 = password2,
-                    decoration: InputDecoration(
-                        labelText: "Verification Password"),
+                    decoration:
+                        InputDecoration(labelText: "Verification Password"),
                     validator: (password2) {
                       if (!_isSigningUp) return null;
-                      if (password2.length == 0)
-                        return "Required";
+                      if (password2.length == 0) return "Required";
                       if (password2 != _password)
                         return "The passwords don't match";
                       return null;
@@ -89,31 +89,23 @@ class _AuthPageState extends State<AuthPage> {
 
                 // SUBMIT BUTTON
 
-                Padding(
-                  padding: const EdgeInsets.only(top: 24, bottom: 10),
-                  child: Observer(
-                      builder: (_) => RaisedButton(
-                            onPressed: authStore.loading ? null : _authenticate,
-                            child: authStore.loading
-                                ? LinearProgressIndicator()
-                                : Text((_isSigningUp
-                                    ? "Sign up"
-                                    : "Log in")),
-                          )),
-                ),
+                Observer(
+                    builder: (_) => RaisedButton(
+                          onPressed: authStore.loading ? null : _authenticate,
+                          child: authStore.loading
+                              ? LinearProgressIndicator()
+                              : Text((_isSigningUp ? "Sign up" : "Log in")),
+                        )).padding(top: 24, bottom: 10),
 
                 // Backend error
                 mainError(),
                 // Toggle _isSigningUp
                 redirectSignInSignUp(),
                 // Continue with out auth
-                Padding(
-                  padding: const EdgeInsets.only(top: 8.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[Text("Or")],
-                  ),
-                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[Text("Or")],
+                ).padding(top: 8.0),
                 continueNoAuth(),
               ],
             ),
@@ -150,14 +142,11 @@ class _AuthPageState extends State<AuthPage> {
     return Observer(
       builder: (_) {
         return (authStore.error != null
-            ? Padding(
-                padding: const EdgeInsets.only(bottom: 10),
-                child: Text(
-                  authStore.error,
-                  style: TextStyle(color: Colors.red, fontSize: 16),
-                  textAlign: TextAlign.center,
-                ),
-              )
+            ? Text(
+                authStore.error,
+                style: TextStyle(color: Colors.red, fontSize: 16),
+                textAlign: TextAlign.center,
+              ).padding(bottom: 10)
             : Container());
       },
     );
@@ -167,17 +156,16 @@ class _AuthPageState extends State<AuthPage> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
-        Text(_isSigningUp ? "¿You have an account?" : "¿You don't have an account?"),
-        Padding(
-          padding: const EdgeInsets.all(6.0),
-          child: InkWell(
-            onTap: _toggleSignUp,
-            child: Text(
-              _isSigningUp ? "Log in" : "Sign up",
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-            ),
+        Text(_isSigningUp
+            ? "¿You have an account?"
+            : "¿You don't have an account?"),
+        InkWell(
+          onTap: _toggleSignUp,
+          child: Text(
+            _isSigningUp ? "Log in" : "Sign up",
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
           ),
-        ),
+        ).padding(all: 6),
       ],
     );
   }

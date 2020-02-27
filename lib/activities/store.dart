@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:mobx/mobx.dart';
 import 'package:provider/provider.dart';
+import 'package:styled_widget/styled_widget.dart';
 
 part 'store.g.dart';
 
@@ -47,11 +48,7 @@ class Activity {
 
   Widget get fullnessWidget {
     return Row(
-      children: <Widget>[
-        Padding(
-          padding: const EdgeInsets.only(right: 8.0),
-          child: Icon(Icons.people),
-        ),
+      children: <Widget>[Icon(Icons.people).padding(right: 8.0),
         Text(
           fullness,
           style: TextStyle(

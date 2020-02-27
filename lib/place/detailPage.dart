@@ -4,7 +4,7 @@ import 'package:parks/common/scaffold.dart';
 import 'package:provider/provider.dart';
 
 class PlacePage extends StatelessWidget {
-  String address;
+  final String address;
 
   PlacePage({@required this.address});
 

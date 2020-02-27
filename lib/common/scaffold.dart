@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:parks/auth/store.dart';
 import 'package:parks/routes.gr.dart';
 
@@ -15,4 +16,9 @@ List<Widget> getActions(AuthStore authStore) {
       width: 16,
     )
   ];
+}
+
+TextTheme useTextTheme(){
+  final context = useContext();
+  return Theme.of(context).textTheme;
 }

@@ -5,6 +5,7 @@ import 'package:parks/common/scaffold.dart';
 import 'package:parks/routes.gr.dart';
 import 'package:parks/user/model.dart';
 import 'package:provider/provider.dart';
+import 'package:styled_widget/styled_widget.dart';
 
 class ActivityPage extends StatelessWidget {
   final Activity act;
@@ -20,7 +21,7 @@ class ActivityPage extends StatelessWidget {
         actions: getActions(authStore),
       ),
       body: Container(
-        padding: EdgeInsets.all(25),
+        padding: EdgeInsets.symmetric(horizontal: 20),
         child: Column(
           children: <Widget>[
             //
@@ -42,26 +43,23 @@ class ActivityPage extends StatelessWidget {
             //
             participants(act),
             //
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  RaisedButton(
-                    key: Key('Chat'),
-                    onPressed: () {},
-                    child: Icon(Icons.chat),
-                  ),
-                  RaisedButton(
-                    key: Key('Join'),
-                    onPressed: () {},
-                    child: Icon(Icons.group_add),
-                  ),
-                ],
-              ),
-            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                RaisedButton(
+                  key: Key('Chat'),
+                  onPressed: () {},
+                  child: Icon(Icons.chat),
+                ),
+                RaisedButton(
+                  key: Key('Join'),
+                  onPressed: () {},
+                  child: Icon(Icons.group_add),
+                ),
+              ],
+            ).padding(all: 16.0),
           ],
-        ),
+        ).padding(vertical: 16.0).scrollable(scrollDirection: Axis.vertical),
       ),
       // bottomNavigationBar: Padding(
       //   padding: const EdgeInsets.all(16.0),
@@ -97,37 +95,20 @@ Widget activityDescription(Activity act) {
         children: <Widget>[
           Text(
             "Description",
-            style: TextStyle(
-              fontWeight: FontWeight.w500,
-              fontSize: 18,
-            ),
-          ),
-          Text(
-            act.type,
-            style: TextStyle(
-              fontWeight: FontWeight.w500,
-              fontSize: 18,
-            ),
-          )
+          ).fontSize(18).fontWeight(FontWeight.w500),
+          Text(act.type).fontSize(18).fontWeight(FontWeight.w500)
         ],
       ),
-      Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Text(
-          act.fullDescription,
-          style: TextStyle(
-            fontSize: 16,
-          ),
-        ),
-      ),
+      Text(
+        act.fullDescription,
+      ).fontSize(16).padding(vertical: 8.0),
     ],
   );
 }
 
 Widget creatorInfo() {
-  return Padding(
-    padding: const EdgeInsets.symmetric(vertical: 12.0),
-    child: Row(
+  return Card(
+      child: Row(
       children: <Widget>[
         Container(
           width: 100,
@@ -139,27 +120,18 @@ Widget creatorInfo() {
         Expanded(
           child: Column(
             children: <Widget>[
-              Text(
-                "Name",
-                style: TextStyle(
-                  fontWeight: FontWeight.w500,
-                  fontSize: 20,
-                ),
-              ),
+              Text("Name").fontWeight(FontWeight.w500).fontSize(20),
               Divider(
                 height: 8,
               ),
               Text(
                 "Similique accusantium eaque vel. Porro quasi soluta. Quasi laboriosam voluptatem nam aut enim tempora. Harum quia earum blanditiis explicabo ullam provident.",
-                style: TextStyle(
-                  fontWeight: FontWeight.w500,
-                ),
               ),
             ],
           ),
         ),
       ],
-    ),
+    ).padding(all: 12.0), 
   );
 }
 
