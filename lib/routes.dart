@@ -1,8 +1,9 @@
 import 'package:auto_route/auto_route_annotations.dart';
-import 'package:parks/activities/detailPage.dart';
-import 'package:parks/activities/listPage.dart';
-import 'package:parks/auth/page.dart';
-import 'package:parks/place/detailPage.dart';
+import 'package:parks/activity/activity-detail.dart';
+import 'package:parks/activity/activity-list.dart';
+import 'package:parks/auth/auth-page.dart';
+import 'package:parks/place/place-detail.dart';
+import 'package:parks/place/place-list.dart';
 
 @MaterialAutoRouter()
 class $Router {
@@ -11,4 +12,5 @@ class $Router {
   ActivityPage activityDetail;
   PlacePage placeDetail;
   AuthPage auth;
+  PlacesPage places;
 }

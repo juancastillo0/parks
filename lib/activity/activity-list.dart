@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:parks/activities/store.dart';
+import 'package:parks/activity/store.dart';
 import 'package:parks/auth/store.dart';
 import 'package:parks/common/scaffold.dart';
 import 'package:parks/routes.gr.dart';
@@ -23,6 +23,7 @@ class ActivitiesPage extends HookWidget {
         title: Text("Activities"),
         actions: getActions(authStore),
       ),
+      bottomNavigationBar: getBottomNavigationBar(),
       body: Container(
         color: Colors.grey[200],
         child: Column(

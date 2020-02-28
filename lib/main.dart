@@ -1,10 +1,27 @@
 import 'package:flutter/material.dart';
-import 'package:parks/activities/store.dart';
+import 'package:parks/activity/store.dart';
 import 'package:parks/auth/store.dart';
+import 'package:parks/common/location-service.dart';
 import 'package:parks/routes.gr.dart';
 import 'package:provider/provider.dart';
 
 void main() => runApp(MyApp());
+
+final colorScheme = ColorScheme.light(
+  primary: Colors.lightBlue[50],
+  primaryVariant: Color(0xffafc2cb),
+  background: Colors.white,
+  onPrimary: Colors.black,
+  onBackground: Colors.black,
+  error: Colors.red[200],
+  secondary: Color(0xff00838f),
+  onError: Colors.black,
+  onSecondary: Colors.white,
+  surface: Colors.lightBlue[50],
+  onSurface: Colors.black,
+  secondaryVariant: Color(0xff005662),
+  brightness: Brightness.light,
+);
 
 class MyApp extends StatelessWidget {
   @override
@@ -13,6 +30,7 @@ class MyApp extends StatelessWidget {
       providers: [
         Provider.value(value: AuthStore()),
         Provider.value(value: ActivitiesStore()),
+        Provider.value(value: LocationService())
         // ProxyProvider<AuthStore, CallStore>(
         //   // Dependency injection
         //   update: (context, authStore, initCallStore) => CallStore(authStore),
@@ -22,7 +40,10 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         title: 'Flutter Demo',
         theme: ThemeData(
-          primarySwatch: Colors.green,
+          primaryColor: colorScheme.primary,
+          accentColor: colorScheme.secondary,
+          backgroundColor: colorScheme.background,
+          colorScheme: colorScheme,
         ),
         onGenerateRoute: Router.onGenerateRoute,
         navigatorKey: Router.navigator.key,

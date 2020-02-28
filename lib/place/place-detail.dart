@@ -16,6 +16,7 @@ class PlacePage extends StatelessWidget {
           title: Text("$address"),
           actions: getActions(authStore),
         ),
+        bottomNavigationBar: getBottomNavigationBar(),
         body: Column(
           children: <Widget>[
             Image(

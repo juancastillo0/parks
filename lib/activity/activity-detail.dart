@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:parks/activities/store.dart';
+import 'package:parks/activity/store.dart';
 import 'package:parks/auth/store.dart';
 import 'package:parks/common/scaffold.dart';
 import 'package:parks/routes.gr.dart';
@@ -20,6 +20,7 @@ class ActivityPage extends StatelessWidget {
         title: Text("${act.name}"),
         actions: getActions(authStore),
       ),
+      bottomNavigationBar: getBottomNavigationBar(),
       body: Container(
         padding: EdgeInsets.symmetric(horizontal: 20),
         child: Column(

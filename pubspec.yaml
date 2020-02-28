@@ -39,6 +39,9 @@ dependencies:
 
   auto_route:
   json_annotation:
+  google_maps_flutter: 
+  js: ^0.6.0
+  location: ^2.5.0
 
 dev_dependencies:
   flutter_test:

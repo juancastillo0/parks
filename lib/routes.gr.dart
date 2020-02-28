@@ -7,17 +7,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:auto_route/auto_route.dart';
-import 'package:parks/activities/listPage.dart';
-import 'package:parks/activities/detailPage.dart';
-import 'package:parks/activities/store.dart';
-import 'package:parks/place/detailPage.dart';
-import 'package:parks/auth/page.dart';
+import 'package:parks/activity/activity-list.dart';
+import 'package:parks/activity/activity-detail.dart';
+import 'package:parks/activity/store.dart';
+import 'package:parks/place/place-detail.dart';
+import 'package:parks/auth/auth-page.dart';
+import 'package:parks/place/place-list.dart';
 
 class Router {
   static const home = '/';
   static const activityDetail = '/activity-detail';
   static const placeDetail = '/place-detail';
   static const auth = '/auth';
+  static const places = '/places';
   static const _guardedRoutes = const {};
   static final navigator = ExtendedNavigator();
   static Route<dynamic> onGenerateRoute(RouteSettings settings) {
@@ -57,6 +59,15 @@ class Router {
         final typedArgs = args as AuthPageArguments ?? AuthPageArguments();
         return MaterialPageRoute<dynamic>(
           builder: (_) => AuthPage(key: typedArgs.key, title: typedArgs.title),
+          settings: settings,
+        );
+      case Router.places:
+        if (hasInvalidArgs<Key>(args)) {
+          return misTypedArgsRoute<Key>(args);
+        }
+        final typedArgs = args as Key;
+        return MaterialPageRoute<dynamic>(
+          builder: (_) => PlacesPage(key: typedArgs),
           settings: settings,
         );
       default:
