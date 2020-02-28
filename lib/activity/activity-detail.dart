@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:parks/activity/store.dart';
 import 'package:parks/auth/store.dart';
 import 'package:parks/common/scaffold.dart';
+import 'package:parks/main.dart';
 import 'package:parks/routes.gr.dart';
 import 'package:parks/user/model.dart';
 import 'package:provider/provider.dart';
 import 'package:styled_widget/styled_widget.dart';
 
-class ActivityPage extends StatelessWidget {
+class ActivityPage extends HookWidget {
   final Activity act;
 
   ActivityPage({@required this.act});
@@ -23,22 +25,24 @@ class ActivityPage extends StatelessWidget {
       bottomNavigationBar: getBottomNavigationBar(),
       body: Container(
         padding: EdgeInsets.symmetric(horizontal: 20),
+        constraints: BoxConstraints(minWidth: 300),
         child: Column(
-          children: <Widget>[
+          children: [
             //
             activityDescription(act),
             //
             FlatButton(
-                onPressed: () => Router.navigator.pushNamed(
-                      Router.placeDetail,
-                      arguments: act.address,
-                    ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    act.placeWidget,
-                  ],
-                )),
+              onPressed: () => Router.navigator.pushNamed(
+                Router.placeDetail,
+                arguments: act.address,
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  act.placeWidget,
+                ],
+              ),
+            ),
             //
             creatorInfo(),
             //
@@ -62,54 +66,66 @@ class ActivityPage extends StatelessWidget {
           ],
         ).padding(vertical: 16.0).scrollable(scrollDirection: Axis.vertical),
       ),
-      // bottomNavigationBar: Padding(
-      //   padding: const EdgeInsets.all(16.0),
-      //   child: Row(
-      //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      //     children: <Widget>[
-      //       FloatingActionButton(
-      //         heroTag: null,
-      //         key: Key('Chat'),
-      //         onPressed: () {},
-      //         tooltip: 'Chat',
-      //         child: Icon(Icons.chat),
-      //       ),
-      //       FloatingActionButton(
-      //         heroTag: null,
-      //         key: Key('Join'),
-      //         onPressed: () {},
-      //         tooltip: 'Join',
-      //         child: Icon(Icons.group_add),
-      //       ),
-      //     ],
-      //   ),
-      // ),
+      floatingActionButton: IgnorePointer(
+        child: Row(
+          children: [
+            FloatingActionButton(
+              heroTag: null,
+              key: Key('Chat'),
+              onPressed: () {},
+              tooltip: 'Chat',
+              child: Icon(Icons.chat),
+            ).padding(left: 31),
+            Spacer(flex: 1),
+            FloatingActionButton(
+              heroTag: null,
+              key: Key('Join'),
+              onPressed: () {},
+              tooltip: 'Join',
+              child: Icon(Icons.group_add),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
 
 Widget activityDescription(Activity act) {
-  return Column(
-    children: <Widget>[
-      Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: <Widget>[
-          Text(
-            "Description",
-          ).fontSize(18).fontWeight(FontWeight.w500),
-          Text(act.type).fontSize(18).fontWeight(FontWeight.w500)
-        ],
-      ),
-      Text(
-        act.fullDescription,
-      ).fontSize(16).padding(vertical: 8.0),
-    ],
+  final theme = useTextTheme();
+  return Card(
+    child: Column(
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            Text(
+              "Description",
+              style: theme.headline5,
+            ),
+            Text(
+              act.type,
+              style: theme.subtitle1,
+            ),
+          ],
+        ).padding(
+          bottom: 5,
+        ),
+        Text(
+          act.fullDescription,
+          style: theme.bodyText2,
+        )
+            .padding(vertical: 10.0)
+            .border(top: 1, color: colorScheme.primaryVariant),
+      ],
+    ).padding(all: 12),
   );
 }
 
 Widget creatorInfo() {
   return Card(
-      child: Row(
+    elevation: 2,
+    child: Row(
       children: <Widget>[
         Container(
           width: 100,
@@ -124,6 +140,7 @@ Widget creatorInfo() {
               Text("Name").fontWeight(FontWeight.w500).fontSize(20),
               Divider(
                 height: 8,
+                color: colorScheme.primaryVariant,
               ),
               Text(
                 "Similique accusantium eaque vel. Porro quasi soluta. Quasi laboriosam voluptatem nam aut enim tempora. Harum quia earum blanditiis explicabo ullam provident.",
@@ -132,8 +149,8 @@ Widget creatorInfo() {
           ),
         ),
       ],
-    ).padding(all: 12.0), 
-  );
+    ).padding(all: 12.0),
+  ).padding(vertical: 8);
 }
 
 List<User> _users = [

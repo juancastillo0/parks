@@ -46,7 +46,7 @@ class _AuthPageState extends State<AuthPage> {
           child: Container(
             width: 400,
             constraints: BoxConstraints.loose(Size(350, 800)),
-            margin: EdgeInsets.only(left: 18, right: 18, top: 15, bottom: 15),
+            margin: EdgeInsets.only(left: 18, right: 18),
             child: ListView(
               children: <Widget>[
                 // NAME AND EMAIL
@@ -95,7 +95,7 @@ class _AuthPageState extends State<AuthPage> {
                           child: authStore.loading
                               ? LinearProgressIndicator()
                               : Text((_isSigningUp ? "Sign up" : "Log in")),
-                        )).padding(top: 24, bottom: 10),
+                        )).padding(top: 24, bottom: 14),
 
                 // Backend error
                 mainError(),
@@ -134,7 +134,9 @@ class _AuthPageState extends State<AuthPage> {
       onPressed: () => Router.navigator.pushNamed(
         Router.home,
       ),
-      child: Text("Continue without an account"),
+      child: Text("Continue without an account")
+          .fontSize(16)
+          .fontWeight(FontWeight.bold),
     );
   }
 
@@ -157,8 +159,9 @@ class _AuthPageState extends State<AuthPage> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
         Text(_isSigningUp
-            ? "¿You have an account?"
-            : "¿You don't have an account?"),
+                ? "¿You have an account?"
+                : "¿You don't have an account?")
+            .fontSize(16),
         InkWell(
           onTap: _toggleSignUp,
           child: Text(

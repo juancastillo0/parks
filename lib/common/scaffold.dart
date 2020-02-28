@@ -48,15 +48,15 @@ Widget getBottomNavigationBar() {
       if (route == name) {
         return FlatButton(
           onPressed: null,
-          child: Text(text),
+          child: Text(text).fontWeight(FontWeight.bold),
+          disabledTextColor: Colors.black,
         )
             .decoration(
               border: Border(
-                top: BorderSide(color: colorScheme.secondary, width: 2),
+                top: BorderSide(color: colorScheme.secondary, width: 3),
               ),
             )
-            .expanded()
-            .padding(all: 0);
+            .expanded();
       } else {
         return FlatButton(
           onPressed: () => Router.navigator.pushNamedAndRemoveUntil(
