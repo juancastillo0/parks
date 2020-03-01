@@ -38,3 +38,6 @@ lib/generated_plugin_registrant.dart
 # Exceptions to above rules.
 !/packages/flutter_tools/test/data/dart_dependencies_test/**/.packages
 android/app/src/main/AndroidManifest.xml
+ios/Runner/GoogleService-Info.plist
+ios/Runner/AppDelegate.swift
+android/app/src/main/AndroidManifest.xml
