@@ -53,21 +53,25 @@ class Message {
 }
 
 class ChatModel = _ChatModel with _$ChatModel;
+
 abstract class _ChatModel with Store {
   ObservableList<Message> messages;
+  ChatType type;
   List<User> peers;
 }
 
+enum ChatType { Group, Individual }
+
 class ChatStore = _ChatStore with _$ChatStore;
+
 abstract class _ChatStore with Store {
   final _chatsDb = FirebaseDatabase.instance.reference().child("/chats/");
 
   @observable
-  ObservableList<ChatModel> activities = ObservableList.of([]);
+  ObservableList<ChatModel> chats = ObservableList.of([]);
 
   @observable
   bool fetching = false;
-
 }
 
 ChatStore useActivityStore(BuildContext context) {

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:parks/activity/store.dart';
 import 'package:parks/auth/store.dart';
 import 'package:parks/common/location-service.dart';
+import 'package:parks/common/scaffold.dart';
 import 'package:parks/routes.gr.dart';
 import 'package:provider/provider.dart';
 
@@ -53,34 +54,44 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
-      providers: [
-        Provider.value(value: AuthStore()),
-        Provider.value(value: ActivitiesStore()),
-        Provider.value(value: LocationService())
-        // ProxyProvider<AuthStore, CallStore>(
-        //   // Dependency injection
-        //   update: (context, authStore, initCallStore) => CallStore(authStore),
-        //   dispose: (_, callStore) => callStore.dispose(),
-        // )
-      ], 
-      child: MaterialApp(
-        title: 'Flutter Demo', 
-        theme: ThemeData.from( 
-          colorScheme: colorScheme,
-          // textSelectionColor: Colors.black,
-          // primaryColor: colorScheme.primary,
-          // accentColor: colorScheme.secondary,
-          // accentColorBrightness: Brightness.light,
-          // backgroundColor: colorScheme.background,
-          // primaryColorBrightness: Brightness.light,
-          // brightness: colorScheme.brightness,
-          // primaryColorDark: Colors.black
-        ),
-        onGenerateRoute: Router.onGenerateRoute,
-        navigatorKey: Router.navigator.key,
-        initialRoute: Router.home,
-      ),
-    );
+        providers: [
+          Provider.value(value: AuthStore()),
+          Provider.value(value: ActivitiesStore()),
+          Provider.value(value: LocationService())
+          // ProxyProvider<AuthStore, CallStore>(
+          //   // Dependency injection
+          //   update: (context, authStore, initCallStore) => CallStore(authStore),
+          //   dispose: (_, callStore) => callStore.dispose(),
+          // )
+        ],
+        child: WillPopScope(
+          onWillPop: () async {
+            if (Router.home == getCurrentRoute()) {
+              return true;
+            } else {
+              Router.navigator
+                  .pushNamedAndRemoveUntil(Router.home, (route) => false);
+              return false;
+            }
+          },
+          child: MaterialApp(
+            title: 'Flutter Demo',
+            theme: ThemeData.from(
+              colorScheme: colorScheme,
+              // textSelectionColor: Colors.black,
+              // primaryColor: colorScheme.primary,
+              // accentColor: colorScheme.secondary,
+              // accentColorBrightness: Brightness.light,
+              // backgroundColor: colorScheme.background,
+              // primaryColorBrightness: Brightness.light,
+              // brightness: colorScheme.brightness,
+              // primaryColorDark: Colors.black
+            ),
+            onGenerateRoute: Router.onGenerateRoute,
+            navigatorKey: Router.navigator.key,
+            initialRoute: Router.home,
+          ),
+        ));
   }
 }
 

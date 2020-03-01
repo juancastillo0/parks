@@ -6,18 +6,32 @@ import 'package:parks/routes.gr.dart';
 import 'package:styled_widget/styled_widget.dart';
 
 List<Widget> getActions(AuthStore authStore) {
-  return <Widget>[
-    IconButton(
-      onPressed: () => Router.navigator
-          .pushNamed(authStore.user != null ? Router.home : Router.auth),
-      icon: Icon(
-        Icons.person,
+  if (Router.profile == getCurrentRoute()) {
+    return <Widget>[
+      IconButton(
+        onPressed: () => authStore.signOut(),
+        icon: Icon(
+          Icons.exit_to_app,
+        ),
       ),
-    ),
-    Container(
-      width: 16,
-    )
-  ];
+      Container(
+        width: 16,
+      )
+    ];
+  } else {
+    return <Widget>[
+      IconButton(
+        onPressed: () => Router.navigator
+            .pushNamed(authStore.user != null ? Router.profile : Router.auth),
+        icon: Icon(
+          Icons.person,
+        ),
+      ),
+      Container(
+        width: 16,
+      )
+    ];
+  }
 }
 
 String getCurrentRoute() {

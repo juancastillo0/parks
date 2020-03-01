@@ -1,4 +1,3 @@
-import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:mobx/mobx.dart';
@@ -13,6 +12,45 @@ abstract class ActivityType {
   static const Sport = "Sport";
   static const Outdoor = "Outdoor";
 }
+
+List<Activity> allActivities = [
+  {
+    "address": "33529 Gislason Drive",
+    "city": "Bogotá",
+    "date": "2020-02-19T22:34:16.186",
+    "description": "Nice music, nice place",
+    "fullDescription":
+        "In a voluptas sit sit dolore aperiam voluptatem. Et repellat consequatur. Cumque cupiditate consequatur sit ad dolor sint culpa doloribus.",
+    "maxParticipants": 25,
+    "name": "Jazz Concert",
+    "participants": 3,
+    "type": "Music"
+  },
+  {
+    "address": "8781 Hettinger Stream",
+    "city": "Bogotá",
+    "date": "2020-02-19T22:34:16.186",
+    "description": "5 vs 5 footbal match",
+    "fullDescription":
+        "Quod quidem nobis quas quidem voluptates. Enim at voluptatibus accusantium. A officia sed ut id similique sit temporibus molestias commodi. Qui voluptate at possimus similique non. Placeat non voluptatum hic et ab.",
+    "maxParticipants": 5,
+    "name": "Football match",
+    "participants": 3,
+    "type": "Other"
+  },
+  {
+    "address": "43695 Kemmer Road",
+    "city": "Bogotá",
+    "date": "2020-02-25T22:34:16.186",
+    "description": "Outdoor yoga class",
+    "fullDescription":
+        "Maxime reprehenderit cumque est aut quo molestiae et dolore. Natus labore consequuntur. Hic delectus praesentium eveniet beatae et veritatis. Est ab maxime eum vel harum rerum ut explicabo reiciendis.",
+    "maxParticipants": 12,
+    "name": "Yoga class",
+    "participants": 3,
+    "type": "Outdoor"
+  }
+].map((j) => Activity.fromJson(j)).toList();
 
 @JsonSerializable()
 class Activity {
@@ -48,7 +86,8 @@ class Activity {
 
   Widget get fullnessWidget {
     return Row(
-      children: <Widget>[Icon(Icons.people).padding(right: 8.0),
+      children: <Widget>[
+        Icon(Icons.people).padding(right: 8.0),
         Text(
           fullness,
           style: TextStyle(
@@ -80,8 +119,8 @@ class Activity {
 class ActivitiesStore = _ActivitiesStore with _$ActivitiesStore;
 
 abstract class _ActivitiesStore with Store {
-  final _activitiesDb =
-      FirebaseDatabase.instance.reference().child("/activities/");
+  // final _activitiesDb =
+  //     FirebaseDatabase.instance.reference().child("/activities/");
 
   @observable
   ObservableList<Activity> activities = ObservableList.of([]);
@@ -97,10 +136,12 @@ abstract class _ActivitiesStore with Store {
     if (fetching || activities.length == 3) return;
     fetching = true;
 
-    final snapchot = await _activitiesDb.limitToFirst(20).once();
-    activities.addAll((snapchot.value as List<dynamic>)
-        .where((v) => v != null)
-        .map((v) => Activity.fromJson(Map<String, dynamic>.from(v))));
+    // final snapchot = await _activitiesDb.limitToFirst(20).once();
+    // activities.addAll((snapchot.value as List<dynamic>)
+    //     .where((v) => v != null)
+    //     .map((v) => Activity.fromJson(Map<String, dynamic>.from(v))));
+    activities.addAll(allActivities);
+
     fetching = false;
   }
 }

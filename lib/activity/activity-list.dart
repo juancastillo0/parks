@@ -38,7 +38,8 @@ class ActivitiesPage extends HookWidget {
                   itemBuilder: (_, index) {
                     final act = activityStore.activities[index];
                     return Observer(
-                      builder: (_) => ActivityListTile(act),
+                      builder: (_) => Card(child: ActivityListTile(act))
+                          .padding(horizontal: 12),
                     );
                   },
                   itemCount: activityStore.activities.length,
@@ -76,40 +77,38 @@ class ActivityListTile extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      child: ListTile(
-        onTap: () =>
-            Router.navigator.pushNamed(Router.activityDetail, arguments: act),
-        contentPadding: EdgeInsets.all(16),
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: <Widget>[
-            Text(
-              act.name,
-            ).fontWeight(FontWeight.w500).padding(bottom: 4),
-            act.fullnessWidget
-          ],
-        ),
-        leading: Text(act.type),
-        subtitle: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Text(
-              act.description,
-              maxLines: 3,
-              overflow: TextOverflow.ellipsis,
-            ).padding(bottom: 15),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(act.address),
-                Text(timeago.format(act.date)),
-              ],
-            ),
-          ],
-        ),
+    return ListTile(
+      onTap: () =>
+          Router.navigator.pushNamed(Router.activityDetail, arguments: act),
+      contentPadding: EdgeInsets.all(16),
+      title: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: <Widget>[
+          Text(
+            act.name,
+          ).fontWeight(FontWeight.w500).padding(bottom: 4),
+          act.fullnessWidget
+        ],
       ),
-    ).constraints(maxWidth: 100).padding(horizontal: 12);
+      leading: Text(act.type),
+      subtitle: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Text(
+            act.description,
+            maxLines: 3,
+            overflow: TextOverflow.ellipsis,
+          ).padding(bottom: 15),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(act.address),
+              Text(timeago.format(act.date)),
+            ],
+          ),
+        ],
+      ),
+    );
   }
 }

@@ -29,7 +29,7 @@ class ActivityPage extends HookWidget {
         child: Column(
           children: [
             //
-            activityDescription(act),
+            activityDescription(act).padding(bottom: 12),
             //
             FlatButton(
               onPressed: () => Router.navigator.pushNamed(
@@ -44,25 +44,25 @@ class ActivityPage extends HookWidget {
               ),
             ),
             //
-            creatorInfo(),
+            creatorInfo().padding(vertical: 12),
             //
-            participants(act),
+            participants(act).padding(bottom: 65),
             //
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                RaisedButton(
-                  key: Key('Chat'),
-                  onPressed: () {},
-                  child: Icon(Icons.chat),
-                ),
-                RaisedButton(
-                  key: Key('Join'),
-                  onPressed: () {},
-                  child: Icon(Icons.group_add),
-                ),
-              ],
-            ).padding(all: 16.0),
+            // Row(
+            //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            //   children: <Widget>[
+            //     RaisedButton(
+            //       key: Key('Chat'),
+            //       onPressed: () {},
+            //       child: Icon(Icons.chat),
+            //     ),
+            //     RaisedButton(
+            //       key: Key('Join'),
+            //       onPressed: () {},
+            //       child: Icon(Icons.group_add),
+            //     ),
+            //   ],
+            // ).padding(all: 16.0),
           ],
         ).padding(vertical: 16.0).scrollable(scrollDirection: Axis.vertical),
       ),
@@ -94,6 +94,7 @@ class ActivityPage extends HookWidget {
 Widget activityDescription(Activity act) {
   final theme = useTextTheme();
   return Card(
+    elevation: 6,
     child: Column(
       children: [
         Row(
@@ -111,12 +112,14 @@ Widget activityDescription(Activity act) {
         ).padding(
           bottom: 5,
         ),
+        Divider(
+          height: 8,
+          color: colorScheme.primaryVariant,
+        ),
         Text(
           act.fullDescription,
           style: theme.bodyText2,
-        )
-            .padding(vertical: 10.0)
-            .border(top: 1, color: colorScheme.primaryVariant),
+        ).padding(vertical: 10.0),
       ],
     ).padding(all: 12),
   );
@@ -124,7 +127,7 @@ Widget activityDescription(Activity act) {
 
 Widget creatorInfo() {
   return Card(
-    elevation: 2,
+    elevation: 6,
     child: Row(
       children: <Widget>[
         Container(

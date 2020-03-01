@@ -35,21 +35,21 @@ mixin _$ChatModel on _ChatModel, Store {
 }
 
 mixin _$ChatStore on _ChatStore, Store {
-  final _$activitiesAtom = Atom(name: '_ChatStore.activities');
+  final _$chatsAtom = Atom(name: '_ChatStore.chats');
 
   @override
-  ObservableList<ChatModel> get activities {
-    _$activitiesAtom.context.enforceReadPolicy(_$activitiesAtom);
-    _$activitiesAtom.reportObserved();
-    return super.activities;
+  ObservableList<ChatModel> get chats {
+    _$chatsAtom.context.enforceReadPolicy(_$chatsAtom);
+    _$chatsAtom.reportObserved();
+    return super.chats;
   }
 
   @override
-  set activities(ObservableList<ChatModel> value) {
-    _$activitiesAtom.context.conditionallyRunInAction(() {
-      super.activities = value;
-      _$activitiesAtom.reportChanged();
-    }, _$activitiesAtom, name: '${_$activitiesAtom.name}_set');
+  set chats(ObservableList<ChatModel> value) {
+    _$chatsAtom.context.conditionallyRunInAction(() {
+      super.chats = value;
+      _$chatsAtom.reportChanged();
+    }, _$chatsAtom, name: '${_$chatsAtom.name}_set');
   }
 
   final _$fetchingAtom = Atom(name: '_ChatStore.fetching');
@@ -72,7 +72,7 @@ mixin _$ChatStore on _ChatStore, Store {
   @override
   String toString() {
     final string =
-        'activities: ${activities.toString()},fetching: ${fetching.toString()}';
+        'chats: ${chats.toString()},fetching: ${fetching.toString()}';
     return '{$string}';
   }
 }

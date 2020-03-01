@@ -13,6 +13,7 @@ import 'package:parks/activity/store.dart';
 import 'package:parks/place/place-detail.dart';
 import 'package:parks/auth/auth-page.dart';
 import 'package:parks/place/place-list.dart';
+import 'package:parks/user/user-profile.dart';
 
 class Router {
   static const home = '/';
@@ -20,6 +21,7 @@ class Router {
   static const placeDetail = '/place-detail';
   static const auth = '/auth';
   static const places = '/places';
+  static const profile = '/profile';
   static const _guardedRoutes = const {};
   static final navigator = ExtendedNavigator();
   static Route<dynamic> onGenerateRoute(RouteSettings settings) {
@@ -68,6 +70,11 @@ class Router {
         final typedArgs = args as Key;
         return MaterialPageRoute<dynamic>(
           builder: (_) => PlacesPage(key: typedArgs),
+          settings: settings,
+        );
+      case Router.profile:
+        return MaterialPageRoute<dynamic>(
+          builder: (_) => UserProfilePage(),
           settings: settings,
         );
       default:

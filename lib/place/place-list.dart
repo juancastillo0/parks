@@ -5,12 +5,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:parks/activity/store.dart';
 import 'package:parks/auth/store.dart';
 import 'package:parks/common/location-service.dart';
 import 'package:parks/common/scaffold.dart';
 import 'package:parks/main.dart';
+import 'package:parks/place/place-store.dart';
 import 'package:provider/provider.dart';
+import 'package:styled_widget/styled_widget.dart';
 
 class PlacesPage extends StatelessWidget {
   const PlacesPage({Key key}) : super(key: key);
@@ -21,53 +22,46 @@ class PlacesPage extends StatelessWidget {
   }
 }
 
-class Location {
-  int key;
-  String name;
-  double latitud;
-  double longitud;
-  String description;
-  double rating;
-  List<Activity> activities;
+class PlaceListTile extends HookWidget {
+  final Place place;
+  PlaceListTile(this.place);
 
-  Location({
-    this.key,
-    this.name,
-    this.latitud,
-    this.longitud,
-    this.description,
-    this.rating,
-    this.activities: const [],
-  });
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      title: Text(place.name, style: useTextTheme().headline6),
+      leading: Text(place.rating.toString()),
+      subtitle: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Text(
+            place.description,
+            maxLines: 3,
+            overflow: TextOverflow.ellipsis,
+          ).padding(bottom: 15),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(place.address),
+            ],
+          ),
+        ],
+      ),
+    ).padding(bottom: 8);
+  }
 }
 
-var locations = [
-  Location(
-    key: 1,
-    name: "National Park",
-    description:
-        "Sed culpa consequuntur labore in. Quis quia recusandae amet. Consectetur doloribus sit omnis temporibus officia. Earum ipsum tempora occaecati fugit. Deserunt facilis autem occaecati consequatur iure maxime ut.",
-    rating: 4.2,
-    latitud: 4.669515485820514,
-    longitud: -74.05895933919157,
-  ),
-  Location(
-    key: 2,
-    name: "Calle 80 # 11 Park",
-    description:
-        "Qui ratione officiis repellat. Et maiores facilis optio excepturi animi. Ut consequatur consequatur non omnis. Omnis ut ad enim quia in sit. Facere temporibus ipsam nesciunt recusandae ex qui dolores eos.",
-    rating: 3.5,
-    latitud: 4.610515485820514,
-    longitud: -74.07895933919157,
-  ),
-  Location(
-    key: 3,
-    name: "Virrey Park",
-    description: "Tempore id nostrum alias est voluptatibus et qui enim.",
-    rating: 4.0,
-    latitud: 4.607683967477323,
-    longitud: -73.8008203466492,
-  )
+var placesTabs = [
+  FlatButton(
+      onPressed: null,
+      child: Text("Map", style: TextStyle(color: colorScheme.onPrimary))),
+  FlatButton(
+      onPressed: null,
+      child: Text("List", style: TextStyle(color: colorScheme.onPrimary))),
+  FlatButton(
+      onPressed: null,
+      child: Text("Filter", style: TextStyle(color: colorScheme.onPrimary))),
 ];
 
 class _PlacesPage extends HookWidget {
@@ -112,20 +106,7 @@ class _PlacesPage extends HookWidget {
         bottom: TabBar(
           controller: tabController,
           labelColor: colorScheme.onPrimary,
-          tabs: <Widget>[
-            FlatButton(
-                onPressed: null,
-                child: Text("Map",
-                    style: TextStyle(color: colorScheme.onPrimary))),
-            FlatButton(
-                onPressed: null,
-                child: Text("List",
-                    style: TextStyle(color: colorScheme.onPrimary))),
-            FlatButton(
-                onPressed: null,
-                child: Text("Filter",
-                    style: TextStyle(color: colorScheme.onPrimary))),
-          ],
+          tabs: placesTabs,
         ),
       ),
       body: Stack(
@@ -145,7 +126,8 @@ class _PlacesPage extends HookWidget {
                 markerId: MarkerId("-1"),
                 consumeTapEvents: true,
                 onTap: () async {
-                  (await controller.future).showMarkerInfoWindow(MarkerId("-1"));
+                  (await controller.future)
+                      .showMarkerInfoWindow(MarkerId("-1"));
                 },
                 position: LatLng(4.6617833, -74.0507351),
                 icon: BitmapDescriptor.defaultMarkerWithHue(
@@ -156,7 +138,7 @@ class _PlacesPage extends HookWidget {
                       "Sunt quae consectetur voluptatibus maxime facere et culpa.",
                 ),
               ),
-              ...locations.map((e) {
+              ...places.map((e) {
                 final markerId = MarkerId(e.key.toString());
                 return Marker(
                   markerId: markerId,

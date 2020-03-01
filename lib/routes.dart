@@ -4,6 +4,7 @@ import 'package:parks/activity/activity-list.dart';
 import 'package:parks/auth/auth-page.dart';
 import 'package:parks/place/place-detail.dart';
 import 'package:parks/place/place-list.dart';
+import 'package:parks/user/user-profile.dart';
 
 @MaterialAutoRouter()
 class $Router {
@@ -13,4 +14,5 @@ class $Router {
   PlacePage placeDetail;
   AuthPage auth;
   PlacesPage places;
+  UserProfilePage profile;
 }
