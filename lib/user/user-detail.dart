@@ -41,7 +41,6 @@ class UserDetail extends HookWidget {
           expandedWidgetFn: (v) => PlaceListTile(v),
           value: e);
     }).toList();
-    // final authStore = Provider.of<AuthStore>(context, listen: false);
 
     return Column(
       children: <Widget>[
@@ -57,10 +56,6 @@ class UserDetail extends HookWidget {
             )
           ],
         ).padding(all: 12),
-        // RaisedButton(
-        //   onPressed: () => authStore.signOut(),
-        //   child: Text("Log out"),
-        // ),
         Card(
           margin: EdgeInsets.all(12),
           elevation: 12,

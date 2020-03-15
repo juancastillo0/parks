@@ -39,7 +39,8 @@ abstract class _AuthStore with Store {
     error = null;
 
     // Switch pages
-    final currentRoute = _user != null || !wasLoggedIn ? Router.home : Router.auth;
+    final currentRoute =
+        _user != null || !wasLoggedIn ? Router.home : Router.auth;
     // Pop  all the stack
     Router.navigator.pushNamedAndRemoveUntil(currentRoute, (_) => false);
   }
@@ -68,3 +69,5 @@ abstract class _AuthStore with Store {
     }
   }
 }
+
+

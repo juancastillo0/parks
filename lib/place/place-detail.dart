@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:parks/auth/store.dart';
+import 'package:parks/common/root-store.dart';
 import 'package:parks/common/scaffold.dart';
-import 'package:provider/provider.dart';
 import 'package:styled_widget/styled_widget.dart';
 
 class PlacePage extends StatelessWidget {
@@ -11,7 +10,7 @@ class PlacePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final authStore = Provider.of<AuthStore>(context, listen: false);
+    final authStore = useAuthStore(context);
     return Scaffold(
       appBar: AppBar(
         title: Text("$address"),

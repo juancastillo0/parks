@@ -7,10 +7,10 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:parks/auth/store.dart';
 import 'package:parks/common/location-service.dart';
+import 'package:parks/common/root-store.dart';
 import 'package:parks/common/scaffold.dart';
 import 'package:parks/main.dart';
 import 'package:parks/place/place-store.dart';
-import 'package:provider/provider.dart';
 import 'package:styled_widget/styled_widget.dart';
 
 class PlacesPage extends StatelessWidget {
@@ -71,8 +71,9 @@ class _PlacesPage extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    LocationService locationService = Provider.of<LocationService>(context);
-    AuthStore authStore = Provider.of<AuthStore>(context);
+    final store = useStore(context);
+    LocationService locationService = store.locationService;
+    AuthStore authStore = store.authStore;
     Completer<GoogleMapController> controller = useMemoized(() => Completer());
     // final cc = useState<GoogleMapController>();
 

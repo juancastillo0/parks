@@ -21,8 +21,10 @@ List<Widget> getActions(AuthStore authStore) {
   } else {
     return <Widget>[
       IconButton(
+        // onPressed: () => Router.navigator
+        //     .pushNamed(authStore.user != null ? Router.profile : Router.auth),
         onPressed: () => Router.navigator
-            .pushNamed(authStore.user != null ? Router.profile : Router.auth),
+            .pushNamed( Router.profile),
         icon: Icon(
           Icons.person,
         ),
@@ -46,9 +48,9 @@ String getCurrentRoute() {
 }
 
 const mainRoutes = [
-  {"name": Router.home, "text": "Activities"},
-  {"name": Router.places, "text": "Places"},
-  {"name": Router.auth, "text": "Chats"}
+  {"name": Router.home, "text": "Transactions"},
+  {"name": Router.places, "text": "Parkings"},
+  {"name": Router.profile, "text": "Settings"}
 ];
 Widget getBottomNavigationBar() {
   final route = getCurrentRoute();

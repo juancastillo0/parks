@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:functional_widget_annotation/functional_widget_annotation.dart';
 import 'package:parks/activity/store.dart';
 import 'package:parks/auth/store.dart';
 import 'package:parks/common/scaffold.dart';
@@ -8,6 +9,8 @@ import 'package:parks/routes.gr.dart';
 import 'package:provider/provider.dart';
 import 'package:styled_widget/styled_widget.dart';
 import 'package:timeago/timeago.dart' as timeago;
+
+part 'activity-list.g.dart';
 
 class ActivitiesPage extends HookWidget {
   const ActivitiesPage({Key key}) : super(key: key);
@@ -28,7 +31,7 @@ class ActivitiesPage extends HookWidget {
         color: Colors.grey[200],
         child: Column(
           children: <Widget>[
-            searchRow().padding(
+            SearchRow().padding(
               bottom: 9.0,
               horizontal: 25,
             ),
@@ -53,6 +56,8 @@ class ActivitiesPage extends HookWidget {
   }
 }
 
+
+@hwidget
 Widget searchRow() {
   return Row(
     children: <Widget>[

@@ -13,21 +13,28 @@ import 'package:parks/activity/store.dart';
 import 'package:parks/place/place-detail.dart';
 import 'package:parks/auth/auth-page.dart';
 import 'package:parks/place/place-list.dart';
-import 'package:parks/user/user-profile.dart';
+import 'package:parks/user-parking/user-detail.dart';
+import 'package:parks/transactions/transaction-list.dart';
+import 'package:parks/transactions/transaction-detail.dart';
+import 'package:parks/transactions/transaction-model.dart';
+import 'package:parks/user-parking/paymentMethod.dart';
+import 'package:parks/user-parking/user-store.dart';
 
 class Router {
-  static const home = '/';
+  static const activities = '/';
   static const activityDetail = '/activity-detail';
   static const placeDetail = '/place-detail';
   static const auth = '/auth';
   static const places = '/places';
   static const profile = '/profile';
-  static const _guardedRoutes = const {};
+  static const home = '/home';
+  static const transactionDetail = '/transaction-detail';
+  static const createPaymentMethod = '/create-payment-method';
   static final navigator = ExtendedNavigator();
   static Route<dynamic> onGenerateRoute(RouteSettings settings) {
     final args = settings.arguments;
     switch (settings.name) {
-      case Router.home:
+      case Router.activities:
         if (hasInvalidArgs<Key>(args)) {
           return misTypedArgsRoute<Key>(args);
         }
@@ -74,8 +81,38 @@ class Router {
         );
       case Router.profile:
         return MaterialPageRoute<dynamic>(
-          builder: (_) => UserProfilePage(),
+          builder: (_) => UserParkingDetail(),
           settings: settings,
+        );
+      case Router.home:
+        if (hasInvalidArgs<Key>(args)) {
+          return misTypedArgsRoute<Key>(args);
+        }
+        final typedArgs = args as Key;
+        return MaterialPageRoute<dynamic>(
+          builder: (_) => TransactionsPage(key: typedArgs),
+          settings: settings,
+        );
+      case Router.transactionDetail:
+        if (hasInvalidArgs<TransactionPageArguments>(args)) {
+          return misTypedArgsRoute<TransactionPageArguments>(args);
+        }
+        final typedArgs =
+            args as TransactionPageArguments ?? TransactionPageArguments();
+        return MaterialPageRoute<dynamic>(
+          builder: (_) =>
+              TransactionPage(typedArgs.transaction, key: typedArgs.key),
+          settings: settings,
+        );
+      case Router.createPaymentMethod:
+        if (hasInvalidArgs<UserStore>(args)) {
+          return misTypedArgsRoute<UserStore>(args);
+        }
+        final typedArgs = args as UserStore;
+        return MaterialPageRoute<dynamic>(
+          builder: (_) => CreatePaymentMethodForm(typedArgs),
+          settings: settings,
+          fullscreenDialog: true,
         );
       default:
         return unknownRoutePage(settings.name);
@@ -92,4 +129,11 @@ class AuthPageArguments {
   final Key key;
   final String title;
   AuthPageArguments({this.key, this.title});
+}
+
+//TransactionPage arguments holder class
+class TransactionPageArguments {
+  final TransactionModel transaction;
+  final Key key;
+  TransactionPageArguments({this.transaction, this.key});
 }

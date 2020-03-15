@@ -82,7 +82,7 @@ class ActivityPage extends HookWidget {
               key: Key('Join'),
               onPressed: () {},
               tooltip: 'Join',
-              child: Icon(Icons.group_add),
+              child: Icon(Icons.group_add), 
             ),
           ],
         ),

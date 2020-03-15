@@ -1,12 +1,19 @@
+import 'package:dart_json_mapper/dart_json_mapper.dart';
+import 'package:dart_json_mapper_mobx/dart_json_mapper_mobx.dart';
 import 'package:flutter/material.dart';
-import 'package:parks/activity/store.dart';
-import 'package:parks/auth/store.dart';
-import 'package:parks/common/location-service.dart';
+import 'package:parks/common/root-store.dart';
 import 'package:parks/common/scaffold.dart';
 import 'package:parks/routes.gr.dart';
+import 'package:parks/user-parking/user-model.dart';
 import 'package:provider/provider.dart';
 
-void main() => runApp(MyApp());
+import 'main.reflectable.dart' show initializeReflectable;
+
+void main() {
+  initializeReflectable();
+  JsonMapper().useAdapter(mobXAdapter);
+  runApp(MyApp());
+}
 
 // var colorScheme = ColorScheme.light(
 //   primary: Colors.lightBlue[50],
@@ -38,7 +45,7 @@ var colorScheme = ColorScheme.dark(
   secondaryVariant: Color(0xff8da9c1),
   onSecondary: Colors.black,
   //
-  background: Color(0xffffffff),
+  background: Color(0xffeeeeee),
   onBackground: Colors.black,
   //
   error: Colors.red[100],
@@ -55,9 +62,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
         providers: [
-          Provider.value(value: AuthStore()),
-          Provider.value(value: ActivitiesStore()),
-          Provider.value(value: LocationService())
+          Provider.value(value: RootStore(allUsers[0])),
           // ProxyProvider<AuthStore, CallStore>(
           //   // Dependency injection
           //   update: (context, authStore, initCallStore) => CallStore(authStore),
