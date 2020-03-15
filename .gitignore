@@ -42,3 +42,17 @@ android/app/src/main/AndroidManifest.xml
 ios/Runner/GoogleService-Info.plist
 ios/Runner/AppDelegate.swift
 android/app/src/main/AndroidManifest.xml
+
+lib/external/**/doc/api/
+lib/external/.dart_tool/
+lib/external/.flutter-plugins
+lib/external/.packages
+lib/external/.pub-cache/
+lib/external/.pub/
+lib/external/build/
+lib/external/android/
+lib/external/ios/
+
+# test_coverage generated main file
+lib/external/.test_coverage.dart
+lib/external/coverage/
