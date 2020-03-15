@@ -35,7 +35,7 @@ class NotificationService {
         print("onResume: $message");
         Router.navigator.pushNamed(Router.transactionDetail,
             arguments: TransactionPageArguments(
-                transaction: allUsers[0].transactions[1]));
+                transaction: allUsers[0].transactions[0]));
       },
     );
     subscribeToTopic(plate);
