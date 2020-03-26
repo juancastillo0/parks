@@ -3,33 +3,21 @@ import 'package:mobx/mobx.dart';
 import 'package:parks/place/place-store.dart';
 import 'package:parks/transactions/transaction-model.dart';
 
+import 'car.dart';
+
 part "user-model.g.dart";
-
-@jsonSerializable
-class CarModel {
-  String plate;
-  String model;
-  bool active;
-
-  CarModel({this.plate, this.model, this.active});
-  // factory CarModel.fromJson(Map<String, dynamic> json) =>
-  //     _$CarModelFromJson(json);
-  // Map<String, dynamic> toJson() => _$CarModelToJson(this);
-}
 
 enum PaymentMethodType { Credit }
 
 @jsonSerializable
 class PaymentMethod {
   String name;
+  @JsonProperty(enumValues: PaymentMethodType.values)
   PaymentMethodType type;
   String lastDigits;
   String provider;
 
   PaymentMethod({this.name, this.type, this.lastDigits, this.provider});
-  // factory PaymentMethod.fromJson(Map<String, dynamic> json) =>
-  //     _$PaymentMethodFromJson(json);
-  // Map<String, dynamic> toJson() => _$PaymentMethodToJson(this);
 }
 
 @jsonSerializable

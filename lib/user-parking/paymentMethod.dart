@@ -17,9 +17,8 @@ class CreatePaymentMethodForm extends HookWidget {
     final number = useTextEditingController();
     final provider = useTextEditingController();
     final obscureText = useState(true);
-    // final month = useState(DateTime.now().add(Duration(days: 365 * 2)));
-    // final year = useState(DateTime.now().add(Duration(days: 365 * 2)));
     final expDate = useState(DateTime.now().add(Duration(days: 365 * 2)));
+
     return Scaffold(
       appBar: AppBar(
         title: Text("Create Payment Method"),
@@ -60,41 +59,7 @@ class CreatePaymentMethodForm extends HookWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  // MonthPicker(
-                  //   selectedDate: month.value,
-                  //   onChanged: (v) => month.value = v,
-                  //   firstDate: DateTime.now(),
-                  //   lastDate: DateTime.now().add(Duration(days: 365 * 100)),
-                  // ),
-                  // YearPicker(
-                  //   selectedDate: year.value,
-                  //   onChanged: (v) => year.value = v,
-                  //   firstDate: DateTime.now(),
-                  //   lastDate: DateTime.now().add(Duration(days: 365 * 100)),
-                  // ),
-                  InkWell(
-                    onTap: () async {
-                      final _date = await showMonthPicker(
-                        context: context,
-                        initialDate: expDate.value,
-                        firstDate: DateTime.now(),
-                      );
-                      if (_date != null) expDate.value = _date;
-                    },
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: <Widget>[
-                        Icon(Icons.calendar_today),
-                        const SizedBox(width: 20),
-                        Text(
-                            "Expiration Date:  ${expDate.value.month}/${expDate.value.year}"),
-                        const SizedBox(width: 60),
-                        Icon(Icons.arrow_drop_down),
-                      ],
-                    ),
-                  )
-                ],
+                children: [MonthPicker(expDate)],
               ),
             ),
             Row(
@@ -128,6 +93,36 @@ class CreatePaymentMethodForm extends HookWidget {
           ],
         ),
       ).padding(horizontal: 40),
+    );
+  }
+}
+
+class MonthPicker extends HookWidget {
+  const MonthPicker(this.expDate, {Key key}) : super(key: key);
+  final ValueNotifier<DateTime> expDate;
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: () async {
+        final _date = await showMonthPicker(
+          context: context,
+          initialDate: expDate.value,
+          firstDate: DateTime.now(),
+        );
+        if (_date != null) expDate.value = _date;
+      },
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: <Widget>[
+          Icon(Icons.calendar_today),
+          const SizedBox(width: 20),
+          Text(
+              "Expiration Date:  ${expDate.value.month}/${expDate.value.year}"),
+          const SizedBox(width: 60),
+          Icon(Icons.arrow_drop_down),
+        ],
+      ),
     );
   }
 }

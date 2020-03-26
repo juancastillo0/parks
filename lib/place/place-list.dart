@@ -13,12 +13,113 @@ import 'package:parks/main.dart';
 import 'package:parks/place/place-store.dart';
 import 'package:styled_widget/styled_widget.dart';
 
-class PlacesPage extends StatelessWidget {
+class PlacesPage extends HookWidget {
   const PlacesPage({Key key}) : super(key: key);
+  static const _initialPosition =
+      CameraPosition(target: LatLng(4.6617833, -74.0507351), zoom: 16);
 
   @override
   Widget build(BuildContext context) {
-    return _PlacesPage();
+    final store = useStore(context);
+    LocationService locationService = store.locationService;
+    AuthStore authStore = store.authStore;
+    Completer<GoogleMapController> controller = useMemoized(() => Completer());
+    // final cc = useState<GoogleMapController>();
+
+    final _goToUserLocation = useMemoized(
+      () => () async {
+        final location = await locationService.location;
+        if (location != null) {
+          (await controller.future).animateCamera(
+            CameraUpdate.newCameraPosition(
+              CameraPosition(
+                target: LatLng(location.latitude, location.longitude),
+                zoom: 16,
+              ),
+            ),
+          );
+        }
+      },
+      [controller],
+    );
+
+    final ticker = useSingleTickerProvider();
+    final tabController =
+        useMemoized(() => TabController(length: 3, vsync: ticker));
+
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("Places"),
+        actions: [
+          IconButton(onPressed: () {}, icon: Icon(Icons.map)),
+          IconButton(onPressed: () {}, icon: Icon(Icons.list)),
+          IconButton(onPressed: () {}, icon: Icon(Icons.tune)),
+          ...getActions(authStore)
+        ],
+        bottom: TabBar(
+          controller: tabController,
+          labelColor: colorScheme.onPrimary,
+          tabs: placesTabs,
+        ),
+      ),
+      bottomNavigationBar: getBottomNavigationBar(),
+      body: Stack(
+        children: [
+          GoogleMap(
+            mapType: MapType.normal,
+            initialCameraPosition: _initialPosition,
+            onCameraMove: (position) {},
+            onMapCreated: (GoogleMapController _controller) {
+              controller.complete(_controller);
+            },
+            myLocationButtonEnabled: true,
+            mapToolbarEnabled: true,
+            myLocationEnabled: true,
+            markers: <Marker>[
+              Marker(
+                markerId: MarkerId("-1"),
+                consumeTapEvents: true,
+                onTap: () async {
+                  (await controller.future)
+                      .showMarkerInfoWindow(MarkerId("-1"));
+                },
+                position: LatLng(4.6617833, -74.0507351),
+                icon: BitmapDescriptor.defaultMarkerWithHue(
+                    BitmapDescriptor.hueRed),
+                infoWindow: InfoWindow(
+                  title: "Antiquarian",
+                  snippet:
+                      "Sunt quae consectetur voluptatibus maxime facere et culpa.",
+                ),
+              ),
+              ...places.map((e) {
+                final markerId = MarkerId(e.key.toString());
+                return Marker(
+                  markerId: markerId,
+                  consumeTapEvents: true,
+                  onTap: () async {
+                    (await controller.future).showMarkerInfoWindow(markerId);
+                  },
+                  position: LatLng(e.latitud, e.longitud),
+                  icon: BitmapDescriptor.defaultMarkerWithHue(
+                    BitmapDescriptor.hueRed,
+                  ),
+                  infoWindow: InfoWindow(
+                    title: e.name,
+                    snippet: e.description,
+                  ),
+                );
+              })
+            ].toSet(),
+          ),
+        ],
+      ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: _goToUserLocation,
+        label: Text('My Location'),
+        icon: Icon(Icons.my_location),
+      ),
+    );
   }
 }
 
@@ -63,109 +164,3 @@ var placesTabs = [
       onPressed: null,
       child: Text("Filter", style: TextStyle(color: colorScheme.onPrimary))),
 ];
-
-class _PlacesPage extends HookWidget {
-  const _PlacesPage({Key key}) : super(key: key);
-  static const _initialPosition =
-      CameraPosition(target: LatLng(4.6617833, -74.0507351), zoom: 16);
-
-  @override
-  Widget build(BuildContext context) {
-    final store = useStore(context);
-    LocationService locationService = store.locationService;
-    AuthStore authStore = store.authStore;
-    Completer<GoogleMapController> controller = useMemoized(() => Completer());
-    // final cc = useState<GoogleMapController>();
-
-    final _goToUserLocation = useMemoized(
-        () => () async {
-              final _controller = await controller.future;
-              final location = await locationService.location;
-              if (location != null) {
-                _controller.animateCamera(CameraUpdate.newCameraPosition(
-                  CameraPosition(
-                    target: LatLng(location.latitude, location.longitude),
-                    zoom: 16,
-                  ),
-                ));
-              }
-            },
-        [controller]);
-
-    final ticker = useSingleTickerProvider();
-    final tabController =
-        useMemoized(() => TabController(length: 3, vsync: ticker));
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("Places"),
-        actions: [
-          IconButton(onPressed: () {}, icon: Icon(Icons.map)),
-          IconButton(onPressed: () {}, icon: Icon(Icons.list)),
-          IconButton(onPressed: () {}, icon: Icon(Icons.tune)),
-          ...getActions(authStore)
-        ],
-        bottom: TabBar(
-          controller: tabController,
-          labelColor: colorScheme.onPrimary,
-          tabs: placesTabs,
-        ),
-      ),
-      body: Stack(
-        children: [
-          GoogleMap(
-            mapType: MapType.normal,
-            initialCameraPosition: _initialPosition,
-            onCameraMove: (position) {},
-            onMapCreated: (GoogleMapController _controller) {
-              controller.complete(_controller);
-            },
-            myLocationButtonEnabled: true,
-            mapToolbarEnabled: true,
-            myLocationEnabled: true,
-            markers: <Marker>[
-              Marker(
-                markerId: MarkerId("-1"),
-                consumeTapEvents: true,
-                onTap: () async {
-                  (await controller.future)
-                      .showMarkerInfoWindow(MarkerId("-1"));
-                },
-                position: LatLng(4.6617833, -74.0507351),
-                icon: BitmapDescriptor.defaultMarkerWithHue(
-                    BitmapDescriptor.hueRed),
-                infoWindow: InfoWindow(
-                  title: "Antiquarian",
-                  snippet:
-                      "Sunt quae consectetur voluptatibus maxime facere et culpa.",
-                ),
-              ),
-              ...places.map((e) {
-                final markerId = MarkerId(e.key.toString());
-                return Marker(
-                  markerId: markerId,
-                  consumeTapEvents: true,
-                  onTap: () async {
-                    (await controller.future).showMarkerInfoWindow(markerId);
-                  },
-                  position: LatLng(e.latitud, e.longitud),
-                  icon: BitmapDescriptor.defaultMarkerWithHue(
-                      BitmapDescriptor.hueRed),
-                  infoWindow: InfoWindow(
-                    title: e.name,
-                    snippet: e.description,
-                  ),
-                );
-              })
-            ].toSet(),
-          ),
-        ],
-      ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: _goToUserLocation,
-        label: Text('My Location'),
-        icon: Icon(Icons.my_location),
-      ),
-      bottomNavigationBar: getBottomNavigationBar(),
-    );
-  }
-}

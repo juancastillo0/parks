@@ -2,7 +2,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:mobx/mobx.dart';
-import 'package:parks/user/model.dart';
+import 'package:parks/user-parking/user-model.dart';
 import 'package:provider/provider.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
@@ -57,7 +57,7 @@ class ChatModel = _ChatModel with _$ChatModel;
 abstract class _ChatModel with Store {
   ObservableList<Message> messages;
   ChatType type;
-  List<User> peers;
+  List<UserModel> peers;
 }
 
 enum ChatType { Group, Individual }

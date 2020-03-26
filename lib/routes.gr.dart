@@ -7,11 +7,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:auto_route/auto_route.dart';
-import 'package:parks/activity/activity-list.dart';
-import 'package:parks/activity/activity-detail.dart';
-import 'package:parks/activity/store.dart';
-import 'package:parks/place/place-detail.dart';
 import 'package:parks/auth/auth-page.dart';
+import 'package:parks/place/place-detail.dart';
 import 'package:parks/place/place-list.dart';
 import 'package:parks/user-parking/user-detail.dart';
 import 'package:parks/transactions/transaction-list.dart';
@@ -21,35 +18,24 @@ import 'package:parks/user-parking/paymentMethod.dart';
 import 'package:parks/user-parking/user-store.dart';
 
 class Router {
-  static const activities = '/';
-  static const activityDetail = '/activity-detail';
-  static const placeDetail = '/place-detail';
   static const auth = '/auth';
+  static const placeDetail = '/place-detail';
   static const places = '/places';
   static const profile = '/profile';
-  static const home = '/home';
+  static const home = '/';
   static const transactionDetail = '/transaction-detail';
   static const createPaymentMethod = '/create-payment-method';
   static final navigator = ExtendedNavigator();
   static Route<dynamic> onGenerateRoute(RouteSettings settings) {
     final args = settings.arguments;
     switch (settings.name) {
-      case Router.activities:
-        if (hasInvalidArgs<Key>(args)) {
-          return misTypedArgsRoute<Key>(args);
+      case Router.auth:
+        if (hasInvalidArgs<AuthPageArguments>(args)) {
+          return misTypedArgsRoute<AuthPageArguments>(args);
         }
-        final typedArgs = args as Key;
+        final typedArgs = args as AuthPageArguments ?? AuthPageArguments();
         return MaterialPageRoute<dynamic>(
-          builder: (_) => ActivitiesPage(key: typedArgs),
-          settings: settings,
-        );
-      case Router.activityDetail:
-        if (hasInvalidArgs<Activity>(args, isRequired: true)) {
-          return misTypedArgsRoute<Activity>(args);
-        }
-        final typedArgs = args as Activity;
-        return MaterialPageRoute<dynamic>(
-          builder: (_) => ActivityPage(act: typedArgs),
+          builder: (_) => AuthPage(key: typedArgs.key, title: typedArgs.title),
           settings: settings,
         );
       case Router.placeDetail:
@@ -59,15 +45,6 @@ class Router {
         final typedArgs = args as String;
         return MaterialPageRoute<dynamic>(
           builder: (_) => PlacePage(address: typedArgs),
-          settings: settings,
-        );
-      case Router.auth:
-        if (hasInvalidArgs<AuthPageArguments>(args)) {
-          return misTypedArgsRoute<AuthPageArguments>(args);
-        }
-        final typedArgs = args as AuthPageArguments ?? AuthPageArguments();
-        return MaterialPageRoute<dynamic>(
-          builder: (_) => AuthPage(key: typedArgs.key, title: typedArgs.title),
           settings: settings,
         );
       case Router.places:

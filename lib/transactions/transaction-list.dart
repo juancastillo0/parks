@@ -101,6 +101,8 @@ class TransactionListTile extends HookWidget {
           ].toRow(mainAxisAlignment: MainAxisAlignment.end),
         ],
       ).padding(top: 8),
-    ).backgroundColor(getTransactionBackgroundColor(transaction.state));
+    ).backgroundColor(
+      getTransactionBackgroundColor(transaction.state),
+    );
   }
 }

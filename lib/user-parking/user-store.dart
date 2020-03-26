@@ -1,4 +1,5 @@
 import 'package:mobx/mobx.dart';
+import 'package:parks/user-parking/car.dart';
 import 'package:parks/user-parking/user-model.dart';
 
 part 'user-store.g.dart';

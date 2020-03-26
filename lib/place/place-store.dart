@@ -1,9 +1,8 @@
-import 'package:json_annotation/json_annotation.dart';
-import 'package:parks/activity/store.dart';
+import 'package:dart_json_mapper/dart_json_mapper.dart';
 
 part 'place-store.g.dart';
 
-@JsonSerializable()
+@jsonSerializable
 class Place {
   int key;
   String name;
@@ -12,7 +11,6 @@ class Place {
   String description;
   double rating;
   String address;
-  List<Activity> activities;
 
   Place({
     this.key,
@@ -22,11 +20,7 @@ class Place {
     this.description,
     this.rating,
     this.address,
-    this.activities: const [],
   });
-
-  factory Place.fromJson(Map<String, dynamic> json) => _$PlaceFromJson(json);
-  Map<String, dynamic> toJson() => _$PlaceToJson(this);
 }
 
 var places = [

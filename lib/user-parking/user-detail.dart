@@ -5,6 +5,7 @@ import 'package:mobx/mobx.dart';
 import 'package:parks/common/root-store.dart';
 import 'package:parks/common/scaffold.dart';
 import 'package:parks/common/text-with-icon.dart';
+import 'package:parks/common/widgets.dart';
 import 'package:parks/routes.gr.dart';
 import 'package:parks/user-parking/user-model.dart';
 import 'package:styled_widget/styled_widget.dart';
@@ -41,27 +42,6 @@ class PaymentMethodListTile extends HookWidget {
   }
 }
 
-class CarListTile extends HookWidget {
-  const CarListTile(this.car, this.trailing, {Key key}) : super(key: key);
-
-  final CarModel car;
-  final IconButton trailing;
-
-  @override
-  Widget build(_) {
-    return ListTile(
-      contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-      title: Text(car.plate),
-      leading: Switch(
-        value: car.active,
-        onChanged: (_) {},
-      ),
-      subtitle: Text(car.model),
-      trailing: trailing,
-    );
-  }
-}
-
 class _Item<T> {
   bool isExpanded;
   Widget contractedWidget;
@@ -73,30 +53,6 @@ class _Item<T> {
       this.list,
       this.contractedWidget,
       this.expandedWidgetFn});
-}
-
-Future Function() deleteDialog(BuildContext context, void Function() onPressed,
-    Widget title, Widget content) {
-  return () async {
-    await showDialog(
-      context: context,
-      builder: (_) => AlertDialog(
-        title: title,
-        content: content,
-        actions: [
-          FlatButton(
-            child: Text("CANCEL"),
-            onPressed: () => Router.navigator.pop(),
-          ),
-          FlatButton(
-            child: Text("DELETE").textColor(Colors.white),
-            color: Colors.red[800],
-            onPressed: onPressed,
-          )
-        ],
-      ),
-    );
-  };
 }
 
 class UserParkingDetail extends HookWidget {
