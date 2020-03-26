@@ -350,20 +350,6 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
-  functional_widget:
-    dependency: "direct dev"
-    description:
-      path: "lib/external/functional_widget/functional_widget"
-      relative: true
-    source: path
-    version: "0.7.2"
-  functional_widget_annotation:
-    dependency: "direct main"
-    description:
-      path: "lib/external/functional_widget/functional_widget_annotation"
-      relative: true
-    source: path
-    version: "0.5.1"
   glob:
     dependency: transitive
     description:
@@ -711,7 +697,7 @@ packages:
       name: test_api
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.2.11"
+    version: "0.2.15"
   timeago:
     dependency: "direct main"
     description:

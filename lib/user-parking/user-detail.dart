@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:functional_widget_annotation/functional_widget_annotation.dart';
 import 'package:mobx/mobx.dart';
 import 'package:parks/common/root-store.dart';
 import 'package:parks/common/scaffold.dart';
@@ -12,40 +11,55 @@ import 'package:styled_widget/styled_widget.dart';
 
 import 'car.dart';
 
-part 'user-detail.g.dart';
 
-@hwidget
-Widget paymentMethodListTile(PaymentMethod method, [Widget trailing]) {
-  return ListTile(
-    contentPadding: EdgeInsets.all(16),
-    title: Text(method.name),
-    leading: Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [Text(method.type.toString().split(".")[1])],
-    ),
-    subtitle: Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: <Widget>[
-        Text(method.provider),
-        Text("Last Digits: ${method.lastDigits}"),
-      ],
-    ),
-    trailing: trailing,
-  );
+class PaymentMethodListTile extends HookWidget {
+  const PaymentMethodListTile(this.method, this.trailing, {Key key})
+      : super(key: key);
+
+  final PaymentMethod method;
+
+  final Widget trailing;
+
+  @override
+  Widget build(_) {
+    return ListTile(
+      contentPadding: EdgeInsets.all(16),
+      title: Text(method.name),
+      leading: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [Text(method.type.toString().split(".")[1])],
+      ),
+      subtitle: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: <Widget>[
+          Text(method.provider),
+          Text("Last Digits: ${method.lastDigits}"),
+        ],
+      ),
+      trailing: trailing,
+    );
+  }
 }
 
-@hwidget
-Widget carListTile(CarModel car, [IconButton trailing]) {
-  return ListTile(
-    contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-    title: Text(car.plate),
-    leading: Switch(
-      value: car.active,
-      onChanged: (_) {},
-    ),
-    subtitle: Text(car.model),
-    trailing: trailing,
-  );
+class CarListTile extends HookWidget {
+  const CarListTile(this.car, this.trailing, {Key key}) : super(key: key);
+
+  final CarModel car;
+  final IconButton trailing;
+
+  @override
+  Widget build(_) {
+    return ListTile(
+      contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+      title: Text(car.plate),
+      leading: Switch(
+        value: car.active,
+        onChanged: (_) {},
+      ),
+      subtitle: Text(car.model),
+      trailing: trailing,
+    );
+  }
 }
 
 class _Item<T> {
@@ -197,8 +211,8 @@ class UserParkingDetail extends HookWidget {
             child: Text(
               "Test Notification",
             ),
-            onPressed: () =>
-                store.notificationService.testNotification(user.cars[0].plate, 4),
+            onPressed: () => store.notificationService
+                .testNotification(user.cars[0].plate, 4),
           )
         ],
       ).scrollable(),

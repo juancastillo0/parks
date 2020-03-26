@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:functional_widget_annotation/functional_widget_annotation.dart';
 import 'package:parks/activity/store.dart';
 import 'package:parks/auth/store.dart';
 import 'package:parks/common/scaffold.dart';
@@ -9,8 +8,6 @@ import 'package:parks/routes.gr.dart';
 import 'package:provider/provider.dart';
 import 'package:styled_widget/styled_widget.dart';
 import 'package:timeago/timeago.dart' as timeago;
-
-part 'activity-list.g.dart';
 
 class ActivitiesPage extends HookWidget {
   const ActivitiesPage({Key key}) : super(key: key);
@@ -56,24 +53,27 @@ class ActivitiesPage extends HookWidget {
   }
 }
 
+class SearchRow extends HookWidget {
+  const SearchRow({Key key}) : super(key: key);
 
-@hwidget
-Widget searchRow() {
-  return Row(
-    children: <Widget>[
-      Expanded(
-        child: TextFormField(
-          key: Key("search_text"),
-          onSaved: (_) {},
-          decoration: InputDecoration(
-            labelText: "Search",
-            icon: Icon(Icons.search),
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: <Widget>[
+        Expanded(
+          child: TextFormField(
+            key: Key("search_text"),
+            onSaved: (_) {},
+            decoration: InputDecoration(
+              labelText: "Search",
+              icon: Icon(Icons.search),
+            ),
           ),
         ),
-      ),
-      Icon(Icons.tune).padding(left: 10.0),
-    ],
-  );
+        Icon(Icons.tune).padding(left: 10.0),
+      ],
+    );
+  }
 }
 
 class ActivityListTile extends HookWidget {
