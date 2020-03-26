@@ -1,7 +1,5 @@
 import 'package:dart_json_mapper/dart_json_mapper.dart';
 
-part 'place-store.g.dart';
-
 @jsonSerializable
 class Place {
   int key;

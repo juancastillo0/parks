@@ -17,7 +17,7 @@ import 'package:parks/transactions/transaction-model.dart';
 import 'package:parks/user-parking/paymentMethod.dart';
 import 'package:parks/user-parking/user-store.dart';
 
-class Router {
+abstract class Routes {
   static const auth = '/auth';
   static const placeDetail = '/place-detail';
   static const places = '/places';
@@ -25,11 +25,19 @@ class Router {
   static const home = '/';
   static const transactionDetail = '/transaction-detail';
   static const createPaymentMethod = '/create-payment-method';
-  static final navigator = ExtendedNavigator();
-  static Route<dynamic> onGenerateRoute(RouteSettings settings) {
+}
+
+class Router extends RouterBase {
+  //This will probably be removed in future versions
+  //you should call ExtendedNavigator.ofRouter<Router>() directly
+  static ExtendedNavigatorState get navigator =>
+      ExtendedNavigator.ofRouter<Router>();
+
+  @override
+  Route<dynamic> onGenerateRoute(RouteSettings settings) {
     final args = settings.arguments;
     switch (settings.name) {
-      case Router.auth:
+      case Routes.auth:
         if (hasInvalidArgs<AuthPageArguments>(args)) {
           return misTypedArgsRoute<AuthPageArguments>(args);
         }
@@ -38,7 +46,7 @@ class Router {
           builder: (_) => AuthPage(key: typedArgs.key, title: typedArgs.title),
           settings: settings,
         );
-      case Router.placeDetail:
+      case Routes.placeDetail:
         if (hasInvalidArgs<String>(args, isRequired: true)) {
           return misTypedArgsRoute<String>(args);
         }
@@ -47,7 +55,7 @@ class Router {
           builder: (_) => PlacePage(address: typedArgs),
           settings: settings,
         );
-      case Router.places:
+      case Routes.places:
         if (hasInvalidArgs<Key>(args)) {
           return misTypedArgsRoute<Key>(args);
         }
@@ -56,12 +64,12 @@ class Router {
           builder: (_) => PlacesPage(key: typedArgs),
           settings: settings,
         );
-      case Router.profile:
+      case Routes.profile:
         return MaterialPageRoute<dynamic>(
           builder: (_) => UserParkingDetail(),
           settings: settings,
         );
-      case Router.home:
+      case Routes.home:
         if (hasInvalidArgs<Key>(args)) {
           return misTypedArgsRoute<Key>(args);
         }
@@ -70,7 +78,7 @@ class Router {
           builder: (_) => TransactionsPage(key: typedArgs),
           settings: settings,
         );
-      case Router.transactionDetail:
+      case Routes.transactionDetail:
         if (hasInvalidArgs<TransactionPageArguments>(args)) {
           return misTypedArgsRoute<TransactionPageArguments>(args);
         }
@@ -81,7 +89,7 @@ class Router {
               TransactionPage(typedArgs.transaction, key: typedArgs.key),
           settings: settings,
         );
-      case Router.createPaymentMethod:
+      case Routes.createPaymentMethod:
         if (hasInvalidArgs<UserStore>(args)) {
           return misTypedArgsRoute<UserStore>(args);
         }

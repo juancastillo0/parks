@@ -6,12 +6,12 @@ import 'package:parks/common/root-store.dart';
 import 'package:parks/common/scaffold.dart';
 import 'package:parks/common/text-with-icon.dart';
 import 'package:parks/common/widgets.dart';
+import 'package:parks/routes.dart';
 import 'package:parks/routes.gr.dart';
 import 'package:parks/user-parking/user-model.dart';
 import 'package:styled_widget/styled_widget.dart';
 
 import 'car.dart';
-
 
 class PaymentMethodListTile extends HookWidget {
   const PaymentMethodListTile(this.method, this.trailing, {Key key})
@@ -61,6 +61,8 @@ class UserParkingDetail extends HookWidget {
     final store = useStore(context);
     final userStore = useUserStore(context);
     final user = userStore.user;
+    final navigator = useNavigator(context: context);
+
     final showDeleteCarDialog = useMemoized(() => () async {
           await showDialog(
             context: context,
@@ -114,8 +116,8 @@ class UserParkingDetail extends HookWidget {
         ),
         trailing: IconButton(
           icon: Icon(Icons.add_circle_outline),
-          onPressed: () => Router.navigator.pushNamed(
-            Router.createPaymentMethod,
+          onPressed: () => navigator.pushNamed(
+            Routes.createPaymentMethod,
             arguments: userStore,
           ),
         ),
@@ -142,7 +144,7 @@ class UserParkingDetail extends HookWidget {
         title: Text("Profile"),
         actions: getActions(authStore),
       ),
-      bottomNavigationBar: getBottomNavigationBar(),
+      bottomNavigationBar: DefaultBottomNavigationBar(),
       body: Column(
         children: [
           Text(

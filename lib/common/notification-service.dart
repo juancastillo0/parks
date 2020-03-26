@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:auto_route/auto_route.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:http/http.dart';
@@ -33,7 +34,7 @@ class NotificationService {
       },
       onResume: (message) async {
         print("onResume: $message");
-        Router.navigator.pushNamed(Router.transactionDetail,
+        ExtendedNavigator.rootNavigator.pushNamed(Routes.transactionDetail,
             arguments: TransactionPageArguments(
                 transaction: allUsers[0].transactions[0]));
       },

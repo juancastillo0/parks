@@ -1,3 +1,4 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:parks/auth/store.dart';
@@ -28,7 +29,7 @@ class _AuthPageState extends State<AuthPage> {
     if (authStore.user != null) {
       // Go to home if the user is logged in
       Future.delayed(Duration.zero, () {
-        Router.navigator.pushNamed(Router.home);
+        ExtendedNavigator.rootNavigator.pushNamed(Routes.home);
       });
     }
   }
@@ -131,8 +132,8 @@ class _AuthPageState extends State<AuthPage> {
 
   Widget continueNoAuth() {
     return FlatButton(
-      onPressed: () => Router.navigator.pushNamed(
-        Router.home,
+      onPressed: () => ExtendedNavigator.rootNavigator.pushNamed(
+        Routes.home,
       ),
       child: Text("Continue without an account")
           .fontSize(16)

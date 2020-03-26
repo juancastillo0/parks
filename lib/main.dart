@@ -67,11 +67,11 @@ class MyApp extends StatelessWidget {
         ],
         child: WillPopScope(
           onWillPop: () async {
-            if (Router.home == getCurrentRoute()) {
+            if (Routes.home == getCurrentRoute()) {
               return true;
             } else {
               ExtendedNavigator.rootNavigator
-                  .pushNamedAndRemoveUntil(Router.home, (route) => false);
+                  .pushNamedAndRemoveUntil(Routes.home, (route) => false);
               return false;
             }
           },
@@ -88,9 +88,7 @@ class MyApp extends StatelessWidget {
               // brightness: colorScheme.brightness,
               // primaryColorDark: Colors.black
             ),
-            onGenerateRoute: Router.onGenerateRoute,
-            navigatorKey: Router.navigator.key,
-            initialRoute: Router.home,
+            builder: ExtendedNavigator<Router>(router: Router()),
           ),
         ));
   }

@@ -11,6 +11,8 @@ import 'package:parks/user-parking/user-model.dart';
 import 'package:styled_widget/styled_widget.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
+import '../routes.dart';
+
 class TransactionsPage extends HookWidget {
   TransactionsPage({Key key}) : super(key: key) {
     transactions.sort(TransactionModel.compareTo);
@@ -38,7 +40,7 @@ class TransactionList extends HookWidget {
         title: Text("Transactions"),
         actions: getActions(authStore),
       ),
-      bottomNavigationBar: getBottomNavigationBar(),
+      bottomNavigationBar: DefaultBottomNavigationBar(),
       body: Padding(
         padding: EdgeInsets.symmetric(vertical: 20, horizontal: 20),
         child: ListView.builder(
@@ -74,10 +76,11 @@ class TransactionListTile extends HookWidget {
   final TransactionModel transaction;
 
   @override
-  Widget build(_) {
+  Widget build(context) {
+    final navigator = useNavigator(context: context);
     return ListTile(
       onTap: () {
-        Router.navigator.pushNamed(Router.transactionDetail,
+        navigator.pushNamed(Routes.transactionDetail,
             arguments: TransactionPageArguments(transaction: transaction));
       },
       contentPadding: EdgeInsets.all(8),

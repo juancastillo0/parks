@@ -62,7 +62,7 @@ class PlacesPage extends HookWidget {
           tabs: placesTabs,
         ),
       ),
-      bottomNavigationBar: getBottomNavigationBar(),
+      bottomNavigationBar: DefaultBottomNavigationBar(),
       body: Stack(
         children: [
           GoogleMap(

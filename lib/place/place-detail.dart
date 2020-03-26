@@ -17,7 +17,7 @@ class PlacePage extends HookWidget {
         title: Text("$address"),
         actions: getActions(authStore),
       ),
-      bottomNavigationBar: getBottomNavigationBar(),
+      bottomNavigationBar: DefaultBottomNavigationBar(),
       body: ListView(
         children: [
           Image(

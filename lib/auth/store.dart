@@ -1,3 +1,4 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:mobx/mobx.dart';
 import 'package:parks/routes.gr.dart';
@@ -40,9 +41,9 @@ abstract class _AuthStore with Store {
 
     // Switch pages
     final currentRoute =
-        _user != null || !wasLoggedIn ? Router.home : Router.auth;
+        _user != null || !wasLoggedIn ? Routes.home : Routes.auth;
     // Pop  all the stack
-    Router.navigator.pushNamedAndRemoveUntil(currentRoute, (_) => false);
+    ExtendedNavigator.rootNavigator.pushNamedAndRemoveUntil(currentRoute, (_) => false);
   }
 
   @action

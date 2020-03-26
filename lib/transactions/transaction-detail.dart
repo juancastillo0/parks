@@ -28,7 +28,7 @@ class TransactionDetail extends HookWidget {
         title: Text("Transaction"),
         actions: getActions(authStore),
       ),
-      bottomNavigationBar: getBottomNavigationBar(),
+      bottomNavigationBar: DefaultBottomNavigationBar(),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [

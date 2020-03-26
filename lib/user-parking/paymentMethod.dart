@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:month_picker_dialog/month_picker_dialog.dart';
 import 'package:parks/common/scaffold.dart';
-import 'package:parks/routes.gr.dart';
+import 'package:parks/routes.dart';
 import 'package:parks/user-parking/user-model.dart';
 import 'package:parks/user-parking/user-store.dart';
 import 'package:styled_widget/styled_widget.dart';
@@ -18,18 +18,18 @@ class CreatePaymentMethodForm extends HookWidget {
     final provider = useTextEditingController();
     final obscureText = useState(true);
     final expDate = useState(DateTime.now().add(Duration(days: 365 * 2)));
+    final navigator = useNavigator(context: context);
 
     return Scaffold(
       appBar: AppBar(
         title: Text("Create Payment Method"),
       ),
-      bottomNavigationBar: getBottomNavigationBar(),
+      bottomNavigationBar: DefaultBottomNavigationBar(),
       body: Form(
         child: ListView(
           children: <Widget>[
             TextFormField(
               controller: name,
-              autofocus: true,
               decoration: InputDecoration(
                 labelText: "Name",
                 border: OutlineInputBorder(),
@@ -67,7 +67,7 @@ class CreatePaymentMethodForm extends HookWidget {
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
                 RaisedButton(
-                  onPressed: () => Router.navigator.pop(),
+                  onPressed: () => navigator.pop(),
                   child: Text("CANCEL"),
                 ),
                 SizedBox(
@@ -84,7 +84,7 @@ class CreatePaymentMethodForm extends HookWidget {
                         provider: provider.text,
                       ),
                     );
-                    Router.navigator.pop();
+                    navigator.pop();
                   },
                   child: Text("CREATE"),
                 )

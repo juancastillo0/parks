@@ -1,7 +1,7 @@
 import 'package:dart_json_mapper/dart_json_mapper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:parks/routes.gr.dart';
+import 'package:parks/routes.dart';
 import 'package:parks/user-parking/user-store.dart';
 import 'package:styled_widget/styled_widget.dart';
 
@@ -40,9 +40,11 @@ class CreateCarForm extends HookWidget {
   const CreateCarForm(this.userStore);
 
   @override
-  Widget build(BuildContext _context) {
+  Widget build(BuildContext context) {
     final plateC = useTextEditingController();
     final modelC = useTextEditingController();
+    final navigator = useNavigator(context: context);
+
     FormState();
     return Form(
       child: Column(
@@ -68,7 +70,7 @@ class CreateCarForm extends HookWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               RaisedButton(
-                onPressed: () => Router.navigator.pop(),
+                onPressed: () => navigator.pop(),
                 child: Text("CANCEL"),
               ),
               SizedBox(
@@ -83,7 +85,7 @@ class CreateCarForm extends HookWidget {
                       plate: plateC.text,
                     ),
                   );
-                  Router.navigator.pop();
+                  navigator.pop();
                 },
                 child: Text("CREATE"),
               )
