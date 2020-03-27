@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:auto_route/auto_route.dart';
 import 'package:cloud_functions/cloud_functions.dart';
@@ -17,13 +16,13 @@ class NotificationService {
   StreamSubscription<IosNotificationSettings> iosSubscription;
 
   NotificationService(String plate) {
-    if (Platform.isIOS) {
-      iosSubscription = fcm.onIosSettingsRegistered.listen((data) {
-        // save the token  OR subscribe to a topic here
-      });
+    // if (Platform.isIOS) {
+    //   iosSubscription = fcm.onIosSettingsRegistered.listen((data) {
+    //     // save the token  OR subscribe to a topic here
+    //   });
 
-      fcm.requestNotificationPermissions(IosNotificationSettings());
-    }
+    //   fcm.requestNotificationPermissions(IosNotificationSettings());
+    // }
 
     fcm.configure(
       onMessage: (message) async {
