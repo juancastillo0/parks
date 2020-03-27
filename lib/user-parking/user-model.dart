@@ -81,20 +81,32 @@ var allUsers = [
           place: places[0],
           state: TransactionState.Completed,
           timestamp: DateTime.now().subtract(Duration(days: 2)),
+          endTimestamp: DateTime.now().subtract(Duration(days: 1, hours: 23)),
           car: _car,
           cost: 8900),
       TransactionModel(
           id: 2,
+          place: places[2],
+          state: TransactionState.Completed,
+          timestamp: DateTime.now().subtract(Duration(days: 1)),
+          endTimestamp:
+              DateTime.now().subtract(Duration(hours: 22, minutes: 12)),
+          car: _car,
+          cost: 8900),
+      TransactionModel(
+          id: 3,
           place: places[1],
           state: TransactionState.Waiting,
           timestamp: DateTime.now().subtract(Duration(minutes: 3)),
+          endTimestamp: null,
           car: _car,
           cost: 12400),
       TransactionModel(
-          id: 3,
+          id: 4,
           place: places[2],
           state: TransactionState.Active,
           timestamp: DateTime.now().subtract(Duration(minutes: 20)),
+          endTimestamp: null,
           car: _car2,
           cost: 600)
     ]),

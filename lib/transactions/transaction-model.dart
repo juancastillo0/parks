@@ -8,6 +8,7 @@ enum TransactionState { Completed, Active, Waiting }
 class TransactionModel {
   int id;
   DateTime timestamp;
+  DateTime endTimestamp;
   Place place;
   @JsonProperty(enumValues: TransactionState.values)
   TransactionState state;
@@ -15,7 +16,13 @@ class TransactionModel {
   double cost;
 
   TransactionModel(
-      {this.id, this.timestamp, this.place, this.state, this.car, this.cost});
+      {this.id,
+      this.timestamp,
+      this.endTimestamp,
+      this.place,
+      this.state,
+      this.car,
+      this.cost});
 
   static int compareTo(TransactionModel a, TransactionModel b) {
     if (a.state == b.state) {

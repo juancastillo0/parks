@@ -63,7 +63,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
         providers: [
-          Provider.value(value: RootStore(allUsers[0])),
+          Provider.value(value: RootStore(allUsers[0])), 
         ],
         child: WillPopScope(
           onWillPop: () async {

@@ -164,7 +164,10 @@ class UserParkingDetail extends HookWidget {
               ].toColumn(),
             ],
           ).padding(bottom: 26),
-          ExpandibleList([cars, paymentMethods]).padding(bottom: 50),
+          ExpandibleList([cars, paymentMethods])
+              .padding(bottom: 50)
+              .constraints(maxWidth: 400)
+              .alignment(Alignment.center),
           RaisedButton(
             child: Text(
               "Test Notification",

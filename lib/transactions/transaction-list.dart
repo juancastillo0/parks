@@ -52,7 +52,7 @@ class TransactionList extends HookWidget {
             );
           },
           itemCount: transactions.length,
-        ),
+        ).constraints(maxWidth: 400).alignment(Alignment.center),
       ),
     );
   }
