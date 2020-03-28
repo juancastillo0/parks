@@ -24,6 +24,20 @@ class TransactionModel {
       this.vehicle,
       this.cost});
 
+  String costString() {
+    var s = cost.toInt().toString();
+    if (s.length <= 3) return s;
+    
+    final ans = [];
+    var prev = 0;
+    for (var i = s.length - (s.length % 3); i >= 0; i -= 3) {
+      final size = s.length - i;
+      ans.add(s.substring(prev, size));
+      prev += size;
+    }
+    return ans.join(",");
+  }
+
   static int compareTo(TransactionModel a, TransactionModel b) {
     if (a.state == b.state) {
       return a.id.compareTo(b.id);

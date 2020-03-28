@@ -2,19 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:parks/common/root-store.dart';
 import 'package:parks/common/scaffold.dart';
+import 'package:parks/place/place-store.dart';
 import 'package:styled_widget/styled_widget.dart';
 
 class PlacePage extends HookWidget {
-  final String address;
+  final Place place;
 
-  PlacePage({@required this.address});
+  PlacePage({Key key, this.place}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     final authStore = useAuthStore(context);
     return Scaffold(
       appBar: AppBar(
-        title: Text("$address"),
+        title: Text("${place.address}"),
         actions: getActions(authStore),
       ),
       bottomNavigationBar: DefaultBottomNavigationBar(),

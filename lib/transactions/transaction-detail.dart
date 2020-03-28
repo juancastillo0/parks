@@ -16,6 +16,7 @@ class TransactionPage extends HookWidget {
   Widget build(BuildContext _context) => TransactionDetail(transaction);
 }
 
+
 class TransactionDetail extends HookWidget {
   const TransactionDetail(this.transaction, {Key key}) : super(key: key);
   final TransactionModel transaction;
@@ -26,8 +27,8 @@ class TransactionDetail extends HookWidget {
     final textTheme = Theme.of(ctx).textTheme;
     final isCompleted = transaction.state == TransactionState.Completed;
     final duration = isCompleted
-        ? timeago.format(transaction.endTimestamp,
-            clock: transaction.timestamp, locale: 'en_short')
+        ? timeago.format(transaction.timestamp,
+            clock: transaction.endTimestamp, locale: 'en_short')
         : "${transaction.state.toString().split(".")[1]} ${timeago.format(transaction.timestamp, locale: 'en_short')}";
 
     return Scaffold(
@@ -38,7 +39,7 @@ class TransactionDetail extends HookWidget {
       bottomNavigationBar: DefaultBottomNavigationBar(),
       body: ListView(
         children: [
-          SizedBox(height: 20),
+          SizedBox(height: 15),
           TransactionDetailColumn(
             "Place",
             Icons.location_on,
@@ -61,7 +62,7 @@ class TransactionDetail extends HookWidget {
             "Cost",
             Icons.attach_money,
             Text(
-              "${transaction.cost.toString()} COP",
+              "${transaction.costString()} COP",
               style: textTheme.headline5,
             ),
           ),
@@ -144,17 +145,17 @@ class TransactionDetailColumn extends HookWidget {
         Row(mainAxisAlignment: MainAxisAlignment.start, children: [
           Icon(
             icon,
-            size: 28,
-          ).padding(right: 8, left: 25),
+            size: 26,
+          ).padding(right: 6, left: 25),
           Text(
             name,
-            style: Theme.of(ctx).textTheme.headline5,
+            style: Theme.of(ctx).textTheme.subtitle1,
           )
         ]).padding(bottom: 12, top: 12),
         info,
         Divider(
-          height: 25,
-          thickness: 2,
+          height: 20,
+          thickness: 1,
         ).padding(top: 8)
       ],
     );

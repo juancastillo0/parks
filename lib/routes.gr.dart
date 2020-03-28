@@ -9,6 +9,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:parks/auth/auth-page.dart';
 import 'package:parks/place/place-detail.dart';
+import 'package:parks/place/place-store.dart';
 import 'package:parks/place/place-list.dart';
 import 'package:parks/user-parking/user-detail.dart';
 import 'package:parks/transactions/transaction-list.dart';
@@ -47,12 +48,12 @@ class Router extends RouterBase {
           settings: settings,
         );
       case Routes.placeDetail:
-        if (hasInvalidArgs<String>(args, isRequired: true)) {
-          return misTypedArgsRoute<String>(args);
+        if (hasInvalidArgs<PlacePageArguments>(args)) {
+          return misTypedArgsRoute<PlacePageArguments>(args);
         }
-        final typedArgs = args as String;
+        final typedArgs = args as PlacePageArguments ?? PlacePageArguments();
         return MaterialPageRoute<dynamic>(
-          builder: (_) => PlacePage(address: typedArgs),
+          builder: (_) => PlacePage(key: typedArgs.key, place: typedArgs.place),
           settings: settings,
         );
       case Routes.places:
@@ -114,6 +115,13 @@ class AuthPageArguments {
   final Key key;
   final String title;
   AuthPageArguments({this.key, this.title});
+}
+
+//PlacePage arguments holder class
+class PlacePageArguments {
+  final Key key;
+  final Place place;
+  PlacePageArguments({this.key, this.place});
 }
 
 //TransactionPage arguments holder class

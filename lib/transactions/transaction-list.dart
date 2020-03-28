@@ -89,7 +89,7 @@ class TransactionListTile extends HookWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Icon(Icons.attach_money).padding(bottom: 6),
-          Text(transaction.cost.toString()),
+          Text(transaction.costString()),
         ],
       ),
       subtitle: Column(
