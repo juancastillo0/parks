@@ -17,7 +17,7 @@ class RootStore extends _RootStore with _$RootStore {
 abstract class _RootStore with Store {
   _RootStore(UserModel user) {
     userStore = UserStore(user);
-    notificationService = NotificationService(user.cars[0].plate);
+    notificationService = NotificationService(user.vehicles[0].plate);
   }
   @observable
   AuthStore authStore = AuthStore();

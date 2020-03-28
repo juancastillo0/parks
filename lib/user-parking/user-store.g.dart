@@ -26,18 +26,18 @@ mixin _$UserStore on _UserStore, Store {
     }, _$userAtom, name: '${_$userAtom.name}_set');
   }
 
-  final _$createCarAsyncAction = AsyncAction('createCar');
+  final _$createVehicleAsyncAction = AsyncAction('createVehicle');
 
   @override
-  Future<dynamic> createCar(CarModel car) {
-    return _$createCarAsyncAction.run(() => super.createCar(car));
+  Future<dynamic> createVehicle(VehicleModel vehicle) {
+    return _$createVehicleAsyncAction.run(() => super.createVehicle(vehicle));
   }
 
-  final _$deleteCarAsyncAction = AsyncAction('deleteCar');
+  final _$deleteVehicleAsyncAction = AsyncAction('deleteVehicle');
 
   @override
-  Future<dynamic> deleteCar(String plate) {
-    return _$deleteCarAsyncAction.run(() => super.deleteCar(plate));
+  Future<dynamic> deleteVehicle(String plate) {
+    return _$deleteVehicleAsyncAction.run(() => super.deleteVehicle(plate));
   }
 
   final _$createPaymentMethodAsyncAction = AsyncAction('createPaymentMethod');

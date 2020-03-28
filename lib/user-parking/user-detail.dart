@@ -8,10 +8,10 @@ import 'package:parks/common/text-with-icon.dart';
 import 'package:parks/common/widgets.dart';
 import 'package:parks/routes.dart';
 import 'package:parks/routes.gr.dart';
+import 'package:parks/transactions/transaction-model.dart';
 import 'package:parks/user-parking/user-model.dart';
+import 'package:parks/user-parking/vehicle.dart';
 import 'package:styled_widget/styled_widget.dart';
-
-import 'car.dart';
 
 class PaymentMethodListTile extends HookWidget {
   const PaymentMethodListTile(this.method, this.trailing, {Key key})
@@ -63,18 +63,18 @@ class UserParkingDetail extends HookWidget {
     final user = userStore.user;
     final navigator = useNavigator(context: context);
 
-    final showDeleteCarDialog = useMemoized(() => () async {
+    final showDeleteVehicleDialog = useMemoized(() => () async {
           await showDialog(
             context: context,
             builder: (_context) {
               return SimpleDialog(
-                title: Text("Create Car").padding(bottom: 5),
+                title: Text("Create Vehicle").padding(bottom: 5),
                 contentPadding: EdgeInsets.symmetric(
                   vertical: 20,
                   horizontal: 30,
                 ),
                 children: [
-                  CreateCarForm(userStore),
+                  CreateVehicleForm(userStore),
                 ],
               );
             },
@@ -85,26 +85,26 @@ class UserParkingDetail extends HookWidget {
       contractedWidget: ListTile(
         title: Observer(
           builder: (_) => textWithIcon(
-              Icons.directions_car, Text("Cars (${user.cars.length})")),
+              Icons.directions_car, Text("Vehicles (${user.vehicles.length})")),
         ),
         trailing: IconButton(
             icon: Icon(Icons.add_circle_outline),
-            onPressed: showDeleteCarDialog),
+            onPressed: showDeleteVehicleDialog),
       ),
       expandedWidgetFn: (v) => Observer(
-        builder: (_) => CarListTile(
+        builder: (_) => VehicleListTile(
           v,
           IconButton(
             icon: Icon(Icons.delete),
             onPressed: deleteDialog(
                 context,
-                () => userStore.deleteCar(v.plate),
-                Text("Delete Car"),
+                () => userStore.deleteVehicle(v.plate),
+                Text("Delete Vehicle"),
                 Text("Are you sure you want to delete the car?")),
           ),
         ),
       ),
-      list: user.cars,
+      list: user.vehicles,
       isExpanded: true,
     );
 
@@ -172,8 +172,13 @@ class UserParkingDetail extends HookWidget {
             child: Text(
               "Test Notification",
             ),
-            onPressed: () => store.notificationService
-                .testNotification(user.cars[0].plate, 4),
+            onPressed: () => store.notificationService.testNotification(
+                user.transactions
+                    .firstWhere(
+                        (element) => element.state == TransactionState.Waiting)
+                    .vehicle
+                    .plate,
+                4),
           )
         ],
       ).scrollable(),

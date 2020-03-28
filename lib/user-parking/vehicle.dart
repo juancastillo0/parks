@@ -6,18 +6,18 @@ import 'package:parks/user-parking/user-store.dart';
 import 'package:styled_widget/styled_widget.dart';
 
 @jsonSerializable
-class CarModel {
+class VehicleModel {
   String plate;
   String model;
   bool active;
 
-  CarModel({this.plate, this.model, this.active});
+  VehicleModel({this.plate, this.model, this.active});
 }
 
-class CarListTile extends HookWidget {
-  const CarListTile(this.car, this.trailing, {Key key}) : super(key: key);
+class VehicleListTile extends HookWidget {
+  const VehicleListTile(this.car, this.trailing, {Key key}) : super(key: key);
 
-  final CarModel car;
+  final VehicleModel car;
   final IconButton trailing;
 
   @override
@@ -35,9 +35,9 @@ class CarListTile extends HookWidget {
   }
 }
 
-class CreateCarForm extends HookWidget {
+class CreateVehicleForm extends HookWidget {
   final UserStore userStore;
-  const CreateCarForm(this.userStore);
+  const CreateVehicleForm(this.userStore);
 
   @override
   Widget build(BuildContext context) {
@@ -78,8 +78,8 @@ class CreateCarForm extends HookWidget {
               ),
               RaisedButton(
                 onPressed: () {
-                  userStore.createCar(
-                    CarModel(
+                  userStore.createVehicle(
+                    VehicleModel(
                       active: true,
                       model: modelC.text,
                       plate: plateC.text,

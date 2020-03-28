@@ -97,7 +97,7 @@ class TransactionListTile extends HookWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           [
-            textWithIcon(Icons.directions_car, Text(transaction.car.plate)),
+            textWithIcon(Icons.directions_car, Text(transaction.vehicle.plate)),
           ].toRow(mainAxisAlignment: MainAxisAlignment.start),
           [
             Text(timeago.format(transaction.timestamp)),

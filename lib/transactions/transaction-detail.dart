@@ -72,12 +72,12 @@ class TransactionDetail extends HookWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
-                  transaction.car.plate,
+                  transaction.vehicle.plate,
                   style: textTheme.headline5,
                 ),
                 SizedBox(height: 8),
                 Text(
-                  transaction.car.model,
+                  transaction.vehicle.model,
                   style: textTheme.subtitle1,
                 )
               ],

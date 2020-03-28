@@ -2,8 +2,7 @@ import 'package:dart_json_mapper/dart_json_mapper.dart';
 import 'package:mobx/mobx.dart';
 import 'package:parks/place/place-store.dart';
 import 'package:parks/transactions/transaction-model.dart';
-
-import 'car.dart';
+import 'package:parks/user-parking/vehicle.dart';
 
 part "user-model.g.dart";
 
@@ -22,7 +21,8 @@ class PaymentMethod {
 
 @jsonSerializable
 class UserModel extends _UserModel with _$UserModel {
-  UserModel({name, userId, email, phone, transactions, paymentMethods, cars})
+  UserModel(
+      {name, userId, email, phone, transactions, paymentMethods, vehicles})
       : super(
             name: name,
             userId: userId,
@@ -30,7 +30,7 @@ class UserModel extends _UserModel with _$UserModel {
             phone: phone,
             transactions: transactions,
             paymentMethods: paymentMethods,
-            cars: cars);
+            vehicles: vehicles);
 }
 
 @jsonSerializable
@@ -42,7 +42,7 @@ abstract class _UserModel with Store {
 
   // Data
   @observable
-  ObservableList<CarModel> cars;
+  ObservableList<VehicleModel> vehicles;
   @observable
   ObservableList<TransactionModel> transactions;
   @observable
@@ -55,15 +55,15 @@ abstract class _UserModel with Store {
       this.phone,
       this.transactions,
       this.paymentMethods,
-      this.cars});
+      this.vehicles});
 }
 
-var _car = CarModel(model: "Toyota", plate: "YWM 394", active: true);
-var _car2 = CarModel(model: "Toyota", plate: "UIS 267", active: false);
+var _car = VehicleModel(model: "Toyota", plate: "YWM 394", active: true);
+var _car2 = VehicleModel(model: "Toyota", plate: "UIS 267", active: false);
 var allUsers = [
   UserModel(
     userId: "1",
-    cars: ObservableList.of([_car, _car2]),
+    vehicles: ObservableList.of([_car, _car2]),
     email: "juan@mail.com",
     name: "Juan Manuel",
     phone: 3104902048,
@@ -82,7 +82,7 @@ var allUsers = [
           state: TransactionState.Completed,
           timestamp: DateTime.now().subtract(Duration(days: 2)),
           endTimestamp: DateTime.now().subtract(Duration(days: 1, hours: 23)),
-          car: _car,
+          vehicle: _car,
           cost: 8900),
       TransactionModel(
           id: 2,
@@ -91,7 +91,7 @@ var allUsers = [
           timestamp: DateTime.now().subtract(Duration(days: 1)),
           endTimestamp:
               DateTime.now().subtract(Duration(hours: 22, minutes: 12)),
-          car: _car,
+          vehicle: _car,
           cost: 8900),
       TransactionModel(
           id: 3,
@@ -99,7 +99,7 @@ var allUsers = [
           state: TransactionState.Waiting,
           timestamp: DateTime.now().subtract(Duration(minutes: 3)),
           endTimestamp: null,
-          car: _car,
+          vehicle: _car,
           cost: 12400),
       TransactionModel(
           id: 4,
@@ -107,7 +107,7 @@ var allUsers = [
           state: TransactionState.Active,
           timestamp: DateTime.now().subtract(Duration(minutes: 20)),
           endTimestamp: null,
-          car: _car2,
+          vehicle: _car2,
           cost: 600)
     ]),
   )

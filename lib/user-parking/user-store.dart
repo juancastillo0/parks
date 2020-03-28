@@ -1,6 +1,6 @@
 import 'package:mobx/mobx.dart';
-import 'package:parks/user-parking/car.dart';
 import 'package:parks/user-parking/user-model.dart';
+import 'package:parks/user-parking/vehicle.dart';
 
 part 'user-store.g.dart';
 
@@ -15,13 +15,13 @@ abstract class _UserStore with Store {
   UserModel user;
 
   @action
-  Future createCar(CarModel car) async {
-    user.cars.add(car);
+  Future createVehicle(VehicleModel vehicle) async {
+    user.vehicles.add(vehicle);
   }
 
   @action
-  Future deleteCar(String plate) async {
-    user.cars.removeWhere((car) => car.plate == plate);
+  Future deleteVehicle(String plate) async {
+    user.vehicles.removeWhere((vehicle) => vehicle.plate == plate);
   }
 
   @action

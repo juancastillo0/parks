@@ -1,6 +1,6 @@
 import 'package:dart_json_mapper/dart_json_mapper.dart';
 import 'package:parks/place/place-store.dart';
-import 'package:parks/user-parking/car.dart';
+import 'package:parks/user-parking/vehicle.dart';
 
 enum TransactionState { Completed, Active, Waiting }
 
@@ -12,7 +12,7 @@ class TransactionModel {
   Place place;
   @JsonProperty(enumValues: TransactionState.values)
   TransactionState state;
-  CarModel car;
+  VehicleModel vehicle;
   double cost;
 
   TransactionModel(
@@ -21,7 +21,7 @@ class TransactionModel {
       this.endTimestamp,
       this.place,
       this.state,
-      this.car,
+      this.vehicle,
       this.cost});
 
   static int compareTo(TransactionModel a, TransactionModel b) {
