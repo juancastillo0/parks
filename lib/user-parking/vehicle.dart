@@ -15,7 +15,7 @@ class VehicleModel {
 }
 
 class VehicleListTile extends HookWidget {
-  const VehicleListTile(this.vehicle, this.trailing, {Key key})
+  const VehicleListTile(this.vehicle, {this.trailing, Key key})
       : super(key: key);
 
   final VehicleModel vehicle;
@@ -57,16 +57,18 @@ class CreateVehicleForm extends HookWidget {
             validator: (v) => v.length > 0 ? null : "Required",
             decoration: InputDecoration(
               labelText: "Plate",
-              labelStyle: TextStyle(fontSize: 22),
+              labelStyle: TextStyle(fontSize: 18),
               border: OutlineInputBorder(),
+              isDense: true,
             ),
           ).padding(bottom: 22),
           TextFormField(
             controller: modelC,
             decoration: InputDecoration(
               labelText: "Model",
-              labelStyle: TextStyle(fontSize: 22),
+              labelStyle: TextStyle(fontSize: 18),
               border: OutlineInputBorder(),
+              isDense: true,
             ),
           ).padding(bottom: 22),
           Row(

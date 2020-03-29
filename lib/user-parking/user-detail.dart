@@ -63,7 +63,7 @@ class UserParkingDetail extends HookWidget {
     final user = userStore.user;
     final navigator = useNavigator(context: context);
 
-    final showDeleteVehicleDialog = useMemoized(
+    final showCreateVehicleDialog = useMemoized(
       () => () async {
         await showDialog(
           context: context,
@@ -72,7 +72,7 @@ class UserParkingDetail extends HookWidget {
                 Text("Create Vehicle", style: Theme.of(ctx).textTheme.headline5)
                     .textAlignment(TextAlign.center)
                     .padding(bottom: 12)
-                    .border(bottom: 2, color: Colors.black26),
+                    .border(bottom: 1, color: Colors.black12),
             contentPadding: EdgeInsets.all(30),
             children: [
               CreateVehicleForm(userStore),
@@ -90,20 +90,18 @@ class UserParkingDetail extends HookWidget {
         ),
         trailing: IconButton(
           icon: Icon(Icons.add_circle_outline),
-          onPressed: showDeleteVehicleDialog,
+          onPressed: showCreateVehicleDialog,
         ),
       ),
-      expandedWidgetFn: (v) => Observer(
-        builder: (_) => VehicleListTile(
-          v,
-          IconButton(
-            icon: Icon(Icons.delete),
-            onPressed: deleteDialog(
-                context,
-                () => userStore.deleteVehicle(v.plate),
-                Text("Delete Vehicle"),
-                Text("Are you sure you want to delete the car?")),
-          ),
+      expandedWidgetFn: (v) => VehicleListTile(
+        v,
+        trailing: IconButton(
+          icon: Icon(Icons.delete),
+          onPressed: deleteDialog(
+              context,
+              () => userStore.deleteVehicle(v.plate),
+              Text("Delete Vehicle"),
+              Text("Are you sure you want to delete the car?")),
         ),
       ),
       list: user.vehicles,

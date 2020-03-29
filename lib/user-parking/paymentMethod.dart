@@ -33,28 +33,31 @@ class CreatePaymentMethodForm extends HookWidget {
               decoration: InputDecoration(
                 labelText: "Name",
                 border: OutlineInputBorder(),
+                isDense: true,
               ),
-            ).padding(bottom: 20, top: 40),
+            ).padding(bottom: 22, top: 40),
             TextFormField(
               controller: provider,
               decoration: InputDecoration(
                 labelText: "Provider",
                 border: OutlineInputBorder(),
+                isDense: true,
               ),
-            ).padding(bottom: 20),
+            ).padding(bottom: 22),
             TextFormField(
               controller: number,
               obscureText: obscureText.value,
               decoration: InputDecoration(
                   labelText: "Number",
                   border: OutlineInputBorder(),
+                  isDense: true,
                   suffixIcon: IconButton(
                     icon: Icon(Icons.remove_red_eye),
                     onPressed: () => obscureText.value = !obscureText.value,
                   )),
-            ).padding(bottom: 20),
+            ).padding(bottom: 25),
             Container(
-              padding: EdgeInsets.only(bottom: 20),
+              padding: EdgeInsets.only(bottom: 25),
               constraints: BoxConstraints.loose(Size(400, 100)),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -71,7 +74,7 @@ class CreatePaymentMethodForm extends HookWidget {
                   child: Text("CANCEL"),
                 ),
                 SizedBox(
-                  width: 40,
+                  width: 50,
                 ),
                 RaisedButton(
                   onPressed: () {
@@ -91,7 +94,7 @@ class CreatePaymentMethodForm extends HookWidget {
               ],
             ).padding(bottom: 40)
           ],
-        ),
+        ).constraints(maxWidth: 400).alignment(Alignment.center)
       ).padding(horizontal: 40),
     );
   }
@@ -117,10 +120,13 @@ class MonthPicker extends HookWidget {
         children: <Widget>[
           Icon(Icons.calendar_today),
           const SizedBox(width: 20),
-          Text(
-              "Expiration Date:  ${expDate.value.month}/${expDate.value.year}"),
+          Text("Expiration Date:  ${expDate.value.month}/${expDate.value.year}")
+              .fontSize(18),
           const SizedBox(width: 60),
-          Icon(Icons.arrow_drop_down),
+          Icon(
+            Icons.arrow_drop_down,
+            size: 26,
+          ),
         ],
       ),
     );
