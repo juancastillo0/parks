@@ -170,44 +170,11 @@ mixin _$TransactionFilterStore on _TransactionFilterStore, Store {
   }
 
   @override
-  dynamic addPlace(Place place) {
+  dynamic reset() {
     final _$actionInfo =
         _$_TransactionFilterStoreActionController.startAction();
     try {
-      return super.addPlace(place);
-    } finally {
-      _$_TransactionFilterStoreActionController.endAction(_$actionInfo);
-    }
-  }
-
-  @override
-  dynamic removePlace(Place place) {
-    final _$actionInfo =
-        _$_TransactionFilterStoreActionController.startAction();
-    try {
-      return super.removePlace(place);
-    } finally {
-      _$_TransactionFilterStoreActionController.endAction(_$actionInfo);
-    }
-  }
-
-  @override
-  dynamic addVehicle(VehicleModel vehicle) {
-    final _$actionInfo =
-        _$_TransactionFilterStoreActionController.startAction();
-    try {
-      return super.addVehicle(vehicle);
-    } finally {
-      _$_TransactionFilterStoreActionController.endAction(_$actionInfo);
-    }
-  }
-
-  @override
-  dynamic removeVehicle(VehicleModel vehicle) {
-    final _$actionInfo =
-        _$_TransactionFilterStoreActionController.startAction();
-    try {
-      return super.removeVehicle(vehicle);
+      return super.reset();
     } finally {
       _$_TransactionFilterStoreActionController.endAction(_$actionInfo);
     }
@@ -287,6 +254,19 @@ mixin _$TransactionStore on _TransactionStore, Store {
       super.filter = value;
       _$filterAtom.reportChanged();
     }, _$filterAtom, name: '${_$filterAtom.name}_set');
+  }
+
+  final _$_TransactionStoreActionController =
+      ActionController(name: '_TransactionStore');
+
+  @override
+  dynamic resetFilter() {
+    final _$actionInfo = _$_TransactionStoreActionController.startAction();
+    try {
+      return super.resetFilter();
+    } finally {
+      _$_TransactionStoreActionController.endAction(_$actionInfo);
+    }
   }
 
   @override

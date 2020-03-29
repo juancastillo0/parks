@@ -5,47 +5,8 @@ import 'package:mobx/mobx.dart';
 import 'package:parks/common/root-store.dart';
 import 'package:parks/common/utils.dart';
 import 'package:parks/place/place-store.dart';
-import 'package:parks/transactions/transaction-store.dart';
 import 'package:parks/user-parking/vehicle.dart';
 import 'package:styled_widget/styled_widget.dart';
-
-Future Function() selectPlacesDialog(
-    BuildContext ctx, TransactionStore transactionStore) {
-  return () async {
-    await showDialog(
-      context: ctx,
-      builder: (ctx) => SimpleDialog(
-        title: Text("Select Places", style: Theme.of(ctx).textTheme.headline5)
-            .textAlignment(TextAlign.center)
-            .padding(bottom: 12)
-            .border(bottom: 1, color: Colors.black26),
-        contentPadding: EdgeInsets.all(30),
-        children: transactionStore.placesInTransactions
-            .map(
-              (e) => Observer(
-                builder: (_) {
-                  final isSelected = transactionStore.filter.places.contains(e);
-                  return ListTile(
-                    onTap: () => isSelected
-                        ? transactionStore.filter.removePlace(e)
-                        : transactionStore.filter.addPlace(e),
-                    title: Text(e.name),
-                    dense: true,
-                    selected: isSelected,
-                    subtitle: Text(e.address),
-                    leading: Checkbox(
-                      value: isSelected,
-                      onChanged: null,
-                    ),
-                  );
-                },
-              ),
-            )
-            .toList(),
-      ),
-    );
-  };
-}
 
 Future Function() multiSelectDialog<T>(
   BuildContext ctx, {
@@ -159,67 +120,120 @@ class TransactionFilter extends HookWidget {
   @override
   Widget build(ctx) {
     final transactionStore = useTransactionStore(ctx);
-    final filter = transactionStore.filter;
+    final open = useState(false);
     final openPlacesDialog = useMemoized(
-        () => selectPlacesDialog(ctx, transactionStore), [transactionStore]);
-    final openVehiclesDialog =
-        useMemoized(() => multiSelectDialog<VehicleModel>(
+        () => multiSelectDialog<Place>(
+              ctx,
+              items: transactionStore.placesInTransactions,
+              selected: transactionStore.filter.places,
+              subtitle: (e) => Text(e.address),
+              title: (e) => Text(e.name),
+            ),
+        [transactionStore, transactionStore.filter]);
+    final openVehiclesDialog = useMemoized(
+        () => multiSelectDialog<VehicleModel>(
               ctx,
               items: transactionStore.vehiclesInTransactions,
-              selected: filter.vehicles,
+              selected: transactionStore.filter.vehicles,
               subtitle: (e) => Text(e.model),
               title: (e) => Text(e.plate),
-            ));
-    return Form(
-      child: ListView(
-        shrinkWrap: true,
-        children: [
-          Observer(
-            builder: (ctx) => MultiSelect<Place>(
-              idFn: (e) => e.name,
-              items: transactionStore.placesInTransactions,
-              openDialog: openPlacesDialog,
-              selected: filter.places,
-              title: Row(children: [
-                Icon(Icons.place, size: 24),
-                Text("Places", style: Theme.of(ctx).textTheme.headline5)
-                    .padding(horizontal: 8),
-              ]),
             ),
+        [transactionStore, transactionStore.filter]);
+    final toggleOpen =
+        useMemoized(() => () => open.value = !open.value, [open.value]);
+
+    final titleStyle = Theme.of(ctx).textTheme.subtitle1;
+
+    if (!open.value) {
+      return LayoutBuilder(
+        builder: (ctx, box) => Row(children: [
+          FlatButton.icon(
+            onPressed: toggleOpen,
+            icon: Icon(Icons.tune),
+            label: Text("Filters"),
           ),
-          Observer(
-            builder: (_) => MultiSelect<VehicleModel>(
-              idFn: (e) => e.plate,
-              items: transactionStore.vehiclesInTransactions,
-              openDialog: openVehiclesDialog,
-              selected: filter.vehicles,
-              title: Row(children: [
-                Icon(Icons.directions_car, size: 24),
-                Text("Vehicles", style: Theme.of(ctx).textTheme.headline5)
-                    .padding(horizontal: 8),
-              ]),
-            ),
+        ]),
+      );
+    }
+
+    return ListView(
+      shrinkWrap: true,
+      physics: NeverScrollableScrollPhysics(),
+      padding: EdgeInsets.symmetric(horizontal: 10),
+      children: [
+        SizedBox(height: 10),
+        Observer(
+          builder: (ctx) => MultiSelect<Place>(
+            idFn: (e) => e.name,
+            items: transactionStore.placesInTransactions,
+            openDialog: openPlacesDialog,
+            selected: transactionStore.filter.places,
+            title: Row(children: [
+              Icon(Icons.place, size: 24),
+              Text("Places", style: titleStyle).padding(horizontal: 8),
+            ]),
           ),
-          Observer(
-            builder: (_) {
-              final interval = transactionStore.costInterval;
-              final minCost = filter.minCost ?? interval.min;
-              final maxCost = filter.maxCost ?? interval.max;
-              return RangeSlider(
-                values: RangeValues(minCost, maxCost),
-                min: interval.min,
-                max: interval.max,
-                onChanged: filter.setCostInteval,
-                labels: RangeLabels(
-                  currencyString(minCost),
-                  currencyString(maxCost),
-                ),
-                divisions: 100,
-              );
-            },
-          )
-        ],
-      ),
+        ),
+        SizedBox(height: 10),
+        Observer(
+          builder: (_) => MultiSelect<VehicleModel>(
+            idFn: (e) => e.plate,
+            items: transactionStore.vehiclesInTransactions,
+            openDialog: openVehiclesDialog,
+            selected: transactionStore.filter.vehicles,
+            title: Row(children: [
+              Icon(Icons.directions_car, size: 24),
+              Text("Vehicles", style: titleStyle).padding(horizontal: 8),
+            ]),
+          ),
+        ),
+        SizedBox(height: 15),
+        Observer(
+          builder: (_) {
+            final interval = transactionStore.costInterval;
+            final minCost = transactionStore.filter.minCost ?? interval.min;
+            final maxCost = transactionStore.filter.maxCost ?? interval.max;
+            return Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Row(children: [
+                  Icon(Icons.attach_money, size: 24),
+                  Text("Cost", style: titleStyle).padding(horizontal: 8),
+                ]),
+                RangeSlider(
+                  values: RangeValues(minCost, maxCost),
+                  min: interval.min,
+                  max: interval.max,
+                  onChanged: transactionStore.filter.setCostInteval,
+                  labels: RangeLabels(
+                    currencyString(minCost),
+                    currencyString(maxCost),
+                  ),
+                  divisions: 100,
+                ).padding(horizontal: 10, top: 5),
+              ],
+            );
+          },
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              FlatButton.icon(
+                onPressed: transactionStore.resetFilter,
+                icon: Icon(Icons.settings_backup_restore),
+                label: Text("Reset"),
+              ),
+              FlatButton.icon(
+                onPressed: toggleOpen,
+                icon: Icon(Icons.close),
+                label: Text("Close"),
+              ),
+            ],
+          ),
+        )
+      ],
     );
   }
 }

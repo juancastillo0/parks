@@ -81,27 +81,17 @@ abstract class _TransactionFilterStore with Store {
   @observable
   ObservableSet<Place> places = ObservableSet();
 
-  @action
-  addPlace(Place place) {
-    places.add(place);
-  }
-
-  @action
-  removePlace(Place place) {
-    places.remove(place);
-  }
-
   @observable
   ObservableSet<VehicleModel> vehicles = ObservableSet();
 
   @action
-  addVehicle(VehicleModel vehicle) {
-    vehicles.add(vehicle);
-  }
-
-  @action
-  removeVehicle(VehicleModel vehicle) {
-    vehicles.remove(vehicle);
+  reset() {
+    places.clear();
+    vehicles.clear();
+    minCost = null;
+    maxCost = null;
+    minTime = null;
+    maxTime = null;
   }
 }
 
@@ -116,6 +106,11 @@ abstract class _TransactionStore with Store {
   UserModel user;
   @observable
   TransactionFilterStore filter = TransactionFilterStore();
+
+  @action
+  resetFilter() {
+    filter = TransactionFilterStore();
+  }
 
   @computed
   Iterable<TransactionModel> get filteredTransactions {
