@@ -15,21 +15,22 @@ class VehicleModel {
 }
 
 class VehicleListTile extends HookWidget {
-  const VehicleListTile(this.car, this.trailing, {Key key}) : super(key: key);
+  const VehicleListTile(this.vehicle, this.trailing, {Key key})
+      : super(key: key);
 
-  final VehicleModel car;
+  final VehicleModel vehicle;
   final IconButton trailing;
 
   @override
   Widget build(_) {
     return ListTile(
       contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-      title: Text(car.plate),
+      title: Text(vehicle.plate),
       leading: Switch(
-        value: car.active,
+        value: vehicle.active,
         onChanged: (_) {},
       ),
-      subtitle: Text(car.model),
+      subtitle: Text(vehicle.model),
       trailing: trailing,
     );
   }
@@ -56,16 +57,18 @@ class CreateVehicleForm extends HookWidget {
             validator: (v) => v.length > 0 ? null : "Required",
             decoration: InputDecoration(
               labelText: "Plate",
+              labelStyle: TextStyle(fontSize: 22),
               border: OutlineInputBorder(),
             ),
-          ).padding(bottom: 20),
+          ).padding(bottom: 22),
           TextFormField(
             controller: modelC,
             decoration: InputDecoration(
               labelText: "Model",
+              labelStyle: TextStyle(fontSize: 22),
               border: OutlineInputBorder(),
             ),
-          ).padding(bottom: 20),
+          ).padding(bottom: 22),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
@@ -74,7 +77,7 @@ class CreateVehicleForm extends HookWidget {
                 child: Text("CANCEL"),
               ),
               SizedBox(
-                width: 40,
+                width: 50,
               ),
               RaisedButton(
                 onPressed: () {
@@ -87,7 +90,8 @@ class CreateVehicleForm extends HookWidget {
                   );
                   navigator.pop();
                 },
-                child: Text("CREATE"),
+                child: Text("CREATE").textColor(Colors.white),
+                color: Colors.green[700],
               )
             ],
           )

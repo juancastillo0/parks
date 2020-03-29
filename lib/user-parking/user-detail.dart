@@ -63,23 +63,24 @@ class UserParkingDetail extends HookWidget {
     final user = userStore.user;
     final navigator = useNavigator(context: context);
 
-    final showDeleteVehicleDialog = useMemoized(() => () async {
-          await showDialog(
-            context: context,
-            builder: (_context) {
-              return SimpleDialog(
-                title: Text("Create Vehicle").padding(bottom: 5),
-                contentPadding: EdgeInsets.symmetric(
-                  vertical: 20,
-                  horizontal: 30,
-                ),
-                children: [
-                  CreateVehicleForm(userStore),
-                ],
-              );
-            },
-          );
-        });
+    final showDeleteVehicleDialog = useMemoized(
+      () => () async {
+        await showDialog(
+          context: context,
+          builder: (ctx) => SimpleDialog(
+            title:
+                Text("Create Vehicle", style: Theme.of(ctx).textTheme.headline5)
+                    .textAlignment(TextAlign.center)
+                    .padding(bottom: 12)
+                    .border(bottom: 2, color: Colors.black26),
+            contentPadding: EdgeInsets.all(30),
+            children: [
+              CreateVehicleForm(userStore),
+            ],
+          ),
+        );
+      },
+    );
 
     final cars = _Item(
       contractedWidget: ListTile(
@@ -88,8 +89,9 @@ class UserParkingDetail extends HookWidget {
               Icons.directions_car, Text("Vehicles (${user.vehicles.length})")),
         ),
         trailing: IconButton(
-            icon: Icon(Icons.add_circle_outline),
-            onPressed: showDeleteVehicleDialog),
+          icon: Icon(Icons.add_circle_outline),
+          onPressed: showDeleteVehicleDialog,
+        ),
       ),
       expandedWidgetFn: (v) => Observer(
         builder: (_) => VehicleListTile(
