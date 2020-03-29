@@ -1,41 +1,35 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:mobx/mobx.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:parks/common/root-store.dart';
 import 'package:parks/common/scaffold.dart';
 import 'package:parks/common/text-with-icon.dart';
+import 'package:parks/routes.dart';
 import 'package:parks/routes.gr.dart';
+import 'package:parks/transactions/transaction-filter.dart';
 import 'package:parks/transactions/transaction-model.dart';
-import 'package:parks/user-parking/user-model.dart';
 import 'package:styled_widget/styled_widget.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
-import '../routes.dart';
-
 class TransactionsPage extends HookWidget {
-  TransactionsPage({Key key}) : super(key: key) {
-    transactions.sort(TransactionModel.compareTo);
-  }
-
-  final ObservableList<TransactionModel> transactions =
-      allUsers[0].transactions;
+  TransactionsPage({Key key}) : super(key: key);
 
   @override
-  Widget build(BuildContext _context) => TransactionList(transactions);
+  Widget build(BuildContext _) => TransactionList();
 }
 
 class TransactionList extends HookWidget {
-  const TransactionList(this.transactions, {Key key}) : super(key: key);
-  final ObservableList<TransactionModel> transactions;
+  const TransactionList({Key key}) : super(key: key);
 
   @override
   Widget build(
-    BuildContext context,
+    ctx,
   ) {
     final authStore = useAuthStore();
+    final transactionStore = useTransactionStore(ctx);
     return Scaffold(
-      backgroundColor: Theme.of(context).backgroundColor,
+      backgroundColor: Theme.of(ctx).backgroundColor,
       appBar: AppBar(
         title: Text("Transactions"),
         actions: getActions(authStore),
@@ -43,16 +37,22 @@ class TransactionList extends HookWidget {
       bottomNavigationBar: DefaultBottomNavigationBar(),
       body: Padding(
         padding: EdgeInsets.symmetric(vertical: 20, horizontal: 20),
-        child: ListView.builder(
-          itemBuilder: (_, index) {
-            final transaction = transactions[index];
-            return Card(
-              margin: EdgeInsets.symmetric(vertical: 6),
-              child: TransactionListTile(transaction),
-            );
+        child: Observer(
+          builder: (_) {
+            final transactions = transactionStore.filteredTransactions.toList();
+            return ListView.builder(
+              itemBuilder: (_, index) {
+                if (index == 0) return TransactionFilter();
+                final transaction = transactions[index - 1];
+                return Card(
+                  margin: EdgeInsets.symmetric(vertical: 6),
+                  child: TransactionListTile(transaction),
+                );
+              },
+              itemCount: transactions.length + 1,
+            ).constraints(maxWidth: 400).alignment(Alignment.center);
           },
-          itemCount: transactions.length,
-        ).constraints(maxWidth: 400).alignment(Alignment.center),
+        ),
       ),
     );
   }

@@ -1,4 +1,5 @@
 import 'package:dart_json_mapper/dart_json_mapper.dart';
+import 'package:parks/common/utils.dart';
 import 'package:parks/place/place-store.dart';
 import 'package:parks/user-parking/vehicle.dart';
 
@@ -25,17 +26,7 @@ class TransactionModel {
       this.cost});
 
   String costString() {
-    var s = cost.toInt().toString();
-    if (s.length <= 3) return s;
-    
-    final ans = [];
-    var prev = 0;
-    for (var i = s.length - (s.length % 3); i >= 0; i -= 3) {
-      final size = s.length - i;
-      ans.add(s.substring(prev, size));
-      prev += size;
-    }
-    return ans.join(",");
+    return currencyString(cost);
   }
 
   static int compareTo(TransactionModel a, TransactionModel b) {

@@ -43,6 +43,23 @@ mixin _$RootStore on _RootStore, Store {
     }, _$userStoreAtom, name: '${_$userStoreAtom.name}_set');
   }
 
+  final _$transactionStoreAtom = Atom(name: '_RootStore.transactionStore');
+
+  @override
+  TransactionStore get transactionStore {
+    _$transactionStoreAtom.context.enforceReadPolicy(_$transactionStoreAtom);
+    _$transactionStoreAtom.reportObserved();
+    return super.transactionStore;
+  }
+
+  @override
+  set transactionStore(TransactionStore value) {
+    _$transactionStoreAtom.context.conditionallyRunInAction(() {
+      super.transactionStore = value;
+      _$transactionStoreAtom.reportChanged();
+    }, _$transactionStoreAtom, name: '${_$transactionStoreAtom.name}_set');
+  }
+
   final _$locationServiceAtom = Atom(name: '_RootStore.locationService');
 
   @override
@@ -83,7 +100,7 @@ mixin _$RootStore on _RootStore, Store {
   @override
   String toString() {
     final string =
-        'authStore: ${authStore.toString()},userStore: ${userStore.toString()},locationService: ${locationService.toString()},notificationService: ${notificationService.toString()}';
+        'authStore: ${authStore.toString()},userStore: ${userStore.toString()},transactionStore: ${transactionStore.toString()},locationService: ${locationService.toString()},notificationService: ${notificationService.toString()}';
     return '{$string}';
   }
 }
