@@ -133,19 +133,19 @@ class PlacesPage extends HookWidget {
                     top: showList.value ? 60 : box.maxHeight,
                     left: 13,
                     animate: true)
-                .animate(Duration(milliseconds: 180), Curves.easeInOut),
+                .animate(Duration(milliseconds: 200), Curves.easeInOut),
             FloatingActionButton.extended(
               heroTag: null,
               key: Key("Filter"),
               onPressed: _goToUserLocation,
-              label: Text("Filter", style: Theme.of(ctx).textTheme.subtitle1),
+              label: Text("Filter", style: Theme.of(ctx).textTheme.subtitle1.copyWith(fontSize: 18)),
               icon: Icon(Icons.tune),
             ).positioned(bottom: 20, right: 20),
             FloatingActionButton.extended(
               heroTag: null,
               key: Key("List"),
               onPressed: () => showList.value = !showList.value,
-              label: Text("List", style: Theme.of(ctx).textTheme.subtitle1),
+              label: Text("List", style: Theme.of(ctx).textTheme.subtitle1.copyWith(fontSize: 18)),
               icon: Icon(Icons.list),
             ).positioned(bottom: 20, left: 20)
           ],
