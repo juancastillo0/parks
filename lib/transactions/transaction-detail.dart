@@ -16,20 +16,19 @@ class TransactionPage extends HookWidget {
   Widget build(BuildContext _context) => TransactionDetail(transaction);
 }
 
-
 class TransactionDetail extends HookWidget {
   const TransactionDetail(this.transaction, {Key key}) : super(key: key);
   final TransactionModel transaction;
 
   @override
-  Widget build(BuildContext ctx) {
+  Widget build(ctx) {
     final authStore = useAuthStore(ctx);
     final textTheme = Theme.of(ctx).textTheme;
     final isCompleted = transaction.state == TransactionState.Completed;
     final duration = isCompleted
         ? timeago.format(transaction.timestamp,
             clock: transaction.endTimestamp, locale: 'en_short')
-        : "${transaction.state.toString().split(".")[1]} ${timeago.format(transaction.timestamp, locale: 'en_short')}";
+        : "${transaction.state.toString().split(".")[1]}: ${timeago.format(transaction.timestamp, locale: 'en_short')}";
 
     return Scaffold(
       appBar: AppBar(
@@ -101,7 +100,10 @@ class TransactionDetail extends HookWidget {
           if (transaction.state == TransactionState.Waiting)
             acceptCancelPaymentButtons()
         ],
-      ).constraints(maxWidth: 400).alignment(Alignment.center),
+      )
+          .backgroundColor(Colors.white)
+          .constraints(maxWidth: 400)
+          .alignment(Alignment.center),
     );
   }
 }

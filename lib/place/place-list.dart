@@ -60,7 +60,7 @@ class PlacesPage extends HookWidget {
     LocationService locationService = store.locationService;
     AuthStore authStore = store.authStore;
     Completer<GoogleMapController> controller = useMemoized(() => Completer());
-    // final cc = useState<GoogleMapController>();
+    
 
     final _goToUserLocation = useMemoized(
       () => () async {
@@ -88,9 +88,7 @@ class PlacesPage extends HookWidget {
               mapType: MapType.normal,
               initialCameraPosition: _initialPosition,
               onCameraMove: (position) {},
-              onMapCreated: (GoogleMapController _controller) {
-                controller.complete(_controller);
-              },
+              onMapCreated: (_controller) => controller.complete(_controller),
               myLocationButtonEnabled: true,
               mapToolbarEnabled: true,
               myLocationEnabled: true,

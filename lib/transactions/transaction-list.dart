@@ -35,25 +35,22 @@ class TransactionList extends HookWidget {
         actions: getActions(authStore),
       ),
       bottomNavigationBar: DefaultBottomNavigationBar(),
-      body: Padding(
-        padding: EdgeInsets.symmetric(vertical: 20, horizontal: 20),
-        child: Observer(
-          builder: (_) {
-            final transactions = transactionStore.filteredTransactions.toList();
-            return ListView.builder(
-              itemBuilder: (_, index) {
-                if (index == 0) return TransactionFilter();
-                final transaction = transactions[index - 1];
-                return Card(
-                  margin: EdgeInsets.symmetric(vertical: 6),
-                  child: TransactionListTile(transaction),
-                );
-              },
-              itemCount: transactions.length + 1,
-            ).constraints(maxWidth: 400).alignment(Alignment.center);
-          },
-        ),
-      ),
+      body: Observer(
+        builder: (_) {
+          final transactions = transactionStore.filteredTransactions.toList();
+          return ListView.builder(
+            itemBuilder: (_, index) {
+              if (index == 0) return TransactionFilter();
+              final transaction = transactions[index - 1];
+              return Card(
+                margin: EdgeInsets.symmetric(vertical: 6),
+                child: TransactionListTile(transaction),
+              );
+            },
+            itemCount: transactions.length + 1,
+          ).constraints(maxWidth: 400).alignment(Alignment.center);
+        },
+      ).padding(horizontal: 20),
     );
   }
 }
@@ -87,11 +84,15 @@ class TransactionListTile extends HookWidget {
       title: textWithIcon(Icons.location_on, Text(transaction.place.name)),
       leading: Column(
         mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Icon(Icons.attach_money).padding(bottom: 6),
+          Icon(
+            Icons.attach_money,
+            color: Colors.green[700],
+          ).padding(bottom: 6),
           Text(transaction.costString()),
         ],
-      ),
+      ).constraints(minWidth: 60),
       subtitle: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         mainAxisSize: MainAxisSize.min,
