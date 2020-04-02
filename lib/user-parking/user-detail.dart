@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:mobx/mobx.dart';
 import 'package:parks/common/root-store.dart';
 import 'package:parks/common/scaffold.dart';
 import 'package:parks/common/text-with-icon.dart';
@@ -45,7 +44,7 @@ class PaymentMethodListTile extends HookWidget {
 class _Item<T> {
   bool isExpanded;
   Widget contractedWidget;
-  ObservableList<T> list;
+  Iterable<T> list;
   Widget Function(T) expandedWidgetFn;
 
   _Item(
@@ -104,7 +103,7 @@ class UserParkingDetail extends HookWidget {
               Text("Are you sure you want to delete the car?")),
         ),
       ),
-      list: user.vehicles,
+      list: user.vehicles.values,
       isExpanded: true,
     );
 

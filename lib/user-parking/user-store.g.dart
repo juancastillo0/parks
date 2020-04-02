@@ -33,6 +33,14 @@ mixin _$UserStore on _UserStore, Store {
     return _$createVehicleAsyncAction.run(() => super.createVehicle(vehicle));
   }
 
+  final _$toggleVehicleStateAsyncAction = AsyncAction('toggleVehicleState');
+
+  @override
+  Future<dynamic> toggleVehicleState(VehicleModel vehicle) {
+    return _$toggleVehicleStateAsyncAction
+        .run(() => super.toggleVehicleState(vehicle));
+  }
+
   final _$deleteVehicleAsyncAction = AsyncAction('deleteVehicle');
 
   @override

@@ -42,7 +42,7 @@ abstract class _UserModel with Store {
 
   // Data
   @observable
-  ObservableList<VehicleModel> vehicles;
+  ObservableMap<String, VehicleModel> vehicles;
   @observable
   ObservableList<TransactionModel> transactions;
   @observable
@@ -63,7 +63,7 @@ var _car2 = VehicleModel(model: "Toyota", plate: "UIS 267", active: false);
 var allUsers = [
   UserModel(
     userId: "1",
-    vehicles: ObservableList.of([_car, _car2]),
+    vehicles: ObservableMap.of({_car.plate: _car, _car2.plate: _car2}),
     email: "juan@mail.com",
     name: "Juan Manuel",
     phone: 3104902048,

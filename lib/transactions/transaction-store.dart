@@ -100,12 +100,21 @@ class TransactionStore extends _TransactionStore with _$TransactionStore {
 }
 
 abstract class _TransactionStore with Store {
-  _TransactionStore({this.user});
+  _TransactionStore({this.user}) {
+    selectedTransaction = user.transactions.first;
+  }
 
   @observable
   UserModel user;
   @observable
   TransactionFilterStore filter = TransactionFilterStore();
+  @observable
+  TransactionModel selectedTransaction;
+
+  @action
+  setSelectedTransaction(TransactionModel transaction) {
+    selectedTransaction = transaction;
+  }
 
   @action
   resetFilter() {

@@ -256,8 +256,38 @@ mixin _$TransactionStore on _TransactionStore, Store {
     }, _$filterAtom, name: '${_$filterAtom.name}_set');
   }
 
+  final _$selectedTransactionAtom =
+      Atom(name: '_TransactionStore.selectedTransaction');
+
+  @override
+  TransactionModel get selectedTransaction {
+    _$selectedTransactionAtom.context
+        .enforceReadPolicy(_$selectedTransactionAtom);
+    _$selectedTransactionAtom.reportObserved();
+    return super.selectedTransaction;
+  }
+
+  @override
+  set selectedTransaction(TransactionModel value) {
+    _$selectedTransactionAtom.context.conditionallyRunInAction(() {
+      super.selectedTransaction = value;
+      _$selectedTransactionAtom.reportChanged();
+    }, _$selectedTransactionAtom,
+        name: '${_$selectedTransactionAtom.name}_set');
+  }
+
   final _$_TransactionStoreActionController =
       ActionController(name: '_TransactionStore');
+
+  @override
+  dynamic setSelectedTransaction(TransactionModel transaction) {
+    final _$actionInfo = _$_TransactionStoreActionController.startAction();
+    try {
+      return super.setSelectedTransaction(transaction);
+    } finally {
+      _$_TransactionStoreActionController.endAction(_$actionInfo);
+    }
+  }
 
   @override
   dynamic resetFilter() {
@@ -272,7 +302,7 @@ mixin _$TransactionStore on _TransactionStore, Store {
   @override
   String toString() {
     final string =
-        'user: ${user.toString()},filter: ${filter.toString()},filteredTransactions: ${filteredTransactions.toString()},vehiclesInTransactions: ${vehiclesInTransactions.toString()},placesInTransactions: ${placesInTransactions.toString()},costInterval: ${costInterval.toString()},timeInterval: ${timeInterval.toString()}';
+        'user: ${user.toString()},filter: ${filter.toString()},selectedTransaction: ${selectedTransaction.toString()},filteredTransactions: ${filteredTransactions.toString()},vehiclesInTransactions: ${vehiclesInTransactions.toString()},placesInTransactions: ${placesInTransactions.toString()},costInterval: ${costInterval.toString()},timeInterval: ${timeInterval.toString()}';
     return '{$string}';
   }
 }

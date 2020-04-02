@@ -16,12 +16,20 @@ abstract class _UserStore with Store {
 
   @action
   Future createVehicle(VehicleModel vehicle) async {
-    user.vehicles.add(vehicle);
+    user.vehicles.putIfAbsent(vehicle.plate, () => vehicle);
+  }
+
+  @action
+  Future toggleVehicleState(VehicleModel vehicle) async {
+    user.vehicles.update(vehicle.plate, (value) {
+      value.active = !value.active;
+      return value;
+    });
   }
 
   @action
   Future deleteVehicle(String plate) async {
-    user.vehicles.removeWhere((vehicle) => vehicle.plate == plate);
+    user.vehicles.remove(plate);
   }
 
   @action

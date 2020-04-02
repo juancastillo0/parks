@@ -13,7 +13,14 @@ class TransactionPage extends HookWidget {
   final TransactionModel transaction;
 
   @override
-  Widget build(BuildContext _context) => TransactionDetail(transaction);
+  Widget build(ctx) => Scaffold(
+        appBar: AppBar(
+          title: Text("Transaction"),
+          actions: getActions(useAuthStore(ctx)),
+        ),
+        bottomNavigationBar: DefaultBottomNavigationBar(),
+        body: TransactionDetail(transaction),
+      );
 }
 
 class TransactionDetail extends HookWidget {
@@ -22,89 +29,100 @@ class TransactionDetail extends HookWidget {
 
   @override
   Widget build(ctx) {
-    final authStore = useAuthStore(ctx);
     final textTheme = Theme.of(ctx).textTheme;
     final isCompleted = transaction.state == TransactionState.Completed;
     final duration = isCompleted
         ? timeago.format(transaction.timestamp,
             clock: transaction.endTimestamp, locale: 'en_short')
         : "${transaction.state.toString().split(".")[1]}: ${timeago.format(transaction.timestamp, locale: 'en_short')}";
-
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("Transaction"),
-        actions: getActions(authStore),
-      ),
-      bottomNavigationBar: DefaultBottomNavigationBar(),
-      body: ListView(
-        children: [
-          SizedBox(height: 15),
-          TransactionDetailColumn(
-            "Place",
-            Icons.location_on,
-            Column(
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                Text(
-                  transaction.place.name,
-                  style: textTheme.headline5,
-                ),
-                SizedBox(height: 8),
-                Text(
-                  transaction.place.address,
-                  style: textTheme.subtitle1,
-                )
-              ],
-            ),
+    if (transaction == null) {
+      return Center(
+        child: Text("Select a transaction", style: textTheme.headline6),
+      );
+    }
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        SizedBox(height: 15),
+        TransactionDetailColumn(
+          "Place",
+          Icons.location_on,
+          Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              Text(
+                transaction.place.name,
+                style: textTheme.headline5,
+              ),
+              SizedBox(height: 8),
+              Text(
+                transaction.place.address,
+                style: textTheme.subtitle1,
+              )
+            ],
           ),
-          TransactionDetailColumn(
-            "Cost",
-            Icons.attach_money,
-            Text(
-              "${transaction.costString()} COP",
-              style: textTheme.headline5,
-            ),
+        ),
+        Divider(
+          height: 20,
+          thickness: 1,
+        ).padding(top: 8),
+        TransactionDetailColumn(
+          "Cost",
+          Icons.attach_money,
+          Text(
+            "${transaction.costString()} COP",
+            style: textTheme.headline5,
           ),
-          TransactionDetailColumn(
-            "Vehicle",
-            Icons.directions_car,
-            Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
+        ),
+        Divider(
+          height: 20,
+          thickness: 1,
+        ).padding(top: 8),
+        TransactionDetailColumn(
+          "Vehicle",
+          Icons.directions_car,
+          Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                transaction.vehicle.plate,
+                style: textTheme.headline5,
+              ),
+              SizedBox(height: 8),
+              Text(
+                transaction.vehicle.model,
+                style: textTheme.subtitle1,
+              )
+            ],
+          ),
+        ),
+        Divider(
+          height: 20,
+          thickness: 1,
+        ).padding(top: 8),
+        TransactionDetailColumn(
+          "Duration",
+          Icons.timer,
+          Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(duration, style: textTheme.headline5),
+              if (isCompleted)
                 Text(
-                  transaction.vehicle.plate,
-                  style: textTheme.headline5,
-                ),
-                SizedBox(height: 8),
-                Text(
-                  transaction.vehicle.model,
-                  style: textTheme.subtitle1,
-                )
-              ],
-            ),
+                  "Completed ${timeago.format(transaction.timestamp)}",
+                ).padding(vertical: 8)
+            ],
           ),
-          TransactionDetailColumn(
-            "Duration",
-            Icons.timer,
-            Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(duration, style: textTheme.headline5),
-                if (isCompleted)
-                  Text(
-                    "Completed ${timeago.format(transaction.timestamp)}",
-                  ).padding(vertical: 8)
-              ],
-            ),
-          ),
-          if (transaction.state == TransactionState.Waiting)
-            acceptCancelPaymentButtons()
-        ],
-      )
-          .backgroundColor(Colors.white)
-          .constraints(maxWidth: 400)
-          .alignment(Alignment.center),
-    );
+        ),
+        SizedBox(height: 20),
+        if (transaction.state == TransactionState.Waiting)
+          acceptCancelPaymentButtons()
+      ],
+    )
+        .scrollable(scrollDirection: Axis.vertical)
+        .backgroundColor(Colors.white)
+        .constraints(maxWidth: 400)
+        .alignment(Alignment.center);
   }
 }
 
@@ -155,10 +173,6 @@ class TransactionDetailColumn extends HookWidget {
           )
         ]).padding(bottom: 12, top: 12),
         info,
-        Divider(
-          height: 20,
-          thickness: 1,
-        ).padding(top: 8)
       ],
     );
   }

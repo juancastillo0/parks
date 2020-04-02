@@ -145,37 +145,41 @@ class TransactionFilter extends HookWidget {
     final titleStyle = Theme.of(ctx).textTheme.subtitle1;
 
     if (!open.value) {
-      return Row(mainAxisSize: MainAxisSize.max, children: [
-        FlatButton.icon(
-          onPressed: toggleOpen,
-          icon: Icon(Icons.tune),
-          label: Text("Filters"),
-        ),
-        Flexible(
-          child: Wrap(
-            spacing: 4,
-            children: transactionStore.filter.places
-                .map((e) => Chip(
-                      label: Text(e.name),
-                      onDeleted: () => transactionStore.filter.places.remove(e),
-                    ))
-                .followedBy(transactionStore.filter.vehicles.map((e) => Chip(
-                      label: Text(e.plate),
-                      onDeleted: () =>
-                          transactionStore.filter.vehicles.remove(e),
-                    )))
-                .toList(),
-          )
-              .scrollable(scrollDirection: Axis.horizontal)
-              .constraints(maxHeight: 50),
-        ),
-      ]);
+      return Row(
+        mainAxisSize: MainAxisSize.max,
+        children: [
+          FlatButton.icon(
+            onPressed: toggleOpen,
+            icon: Icon(Icons.tune),
+            label: Text("Filters"),
+          ),
+          Flexible(
+            child: Wrap(
+              spacing: 4,
+              children: transactionStore.filter.places
+                  .map((e) => Chip(
+                        label: Text(e.name),
+                        onDeleted: () =>
+                            transactionStore.filter.places.remove(e),
+                      ))
+                  .followedBy(transactionStore.filter.vehicles.map((e) => Chip(
+                        label: Text(e.plate),
+                        onDeleted: () =>
+                            transactionStore.filter.vehicles.remove(e),
+                      )))
+                  .toList(),
+            )
+                .scrollable(scrollDirection: Axis.horizontal)
+                .constraints(maxHeight: 50),
+          ),
+        ],
+      );
     }
 
     return ListView(
       shrinkWrap: true,
       physics: NeverScrollableScrollPhysics(),
-      padding: EdgeInsets.symmetric(horizontal: 10),
+      padding: EdgeInsets.symmetric(horizontal: 35),
       children: [
         SizedBox(height: 10),
         Observer(
@@ -231,25 +235,22 @@ class TransactionFilter extends HookWidget {
             );
           },
         ),
-        Padding(
-          padding: const EdgeInsets.symmetric(vertical: 8.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              FlatButton.icon(
-                onPressed: transactionStore.resetFilter,
-                icon: Icon(Icons.settings_backup_restore),
-                label: Text("Reset"),
-              ),
-              FlatButton.icon(
-                onPressed: toggleOpen,
-                icon: Icon(Icons.close),
-                label: Text("Close"),
-              ),
-            ],
-          ),
-        )
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            FlatButton.icon(
+              onPressed: transactionStore.resetFilter,
+              icon: Icon(Icons.settings_backup_restore),
+              label: Text("Reset"),
+            ),
+            FlatButton.icon(
+              onPressed: toggleOpen,
+              icon: Icon(Icons.close),
+              label: Text("Close"),
+            ),
+          ],
+        ).padding(top: 8, bottom: 20),
       ],
-    );
+    ).backgroundColor(Colors.white).padding(bottom: 15);
   }
 }

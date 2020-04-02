@@ -19,7 +19,7 @@ abstract class _RootStore with Store {
   _RootStore(UserModel user) {
     userStore = UserStore(user);
     transactionStore = TransactionStore(user: user);
-    notificationService = NotificationService(user.vehicles[0].plate);
+    notificationService = NotificationService(user.vehicles.values.first.plate);
   }
 
   @observable

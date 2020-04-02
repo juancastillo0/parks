@@ -7,16 +7,49 @@ import 'package:parks/common/scaffold.dart';
 import 'package:parks/common/text-with-icon.dart';
 import 'package:parks/routes.dart';
 import 'package:parks/routes.gr.dart';
+import 'package:parks/transactions/transaction-detail.dart';
 import 'package:parks/transactions/transaction-filter.dart';
 import 'package:parks/transactions/transaction-model.dart';
 import 'package:styled_widget/styled_widget.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
+const WIDTH_BREAKPOINT = 900;
+
 class TransactionsPage extends HookWidget {
   TransactionsPage({Key key}) : super(key: key);
 
   @override
-  Widget build(BuildContext _) => TransactionList();
+  Widget build(ctx) {
+    final mq = MediaQuery.of(ctx);
+    final authStore = useAuthStore(ctx);
+    final transactionStore = useTransactionStore(ctx);
+
+    Widget inner;
+    if (mq.size.width > WIDTH_BREAKPOINT) {
+      inner = Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          TransactionList(),
+          Observer(
+            builder: (_) =>
+                TransactionDetail(transactionStore.selectedTransaction),
+          )
+        ],
+      );
+    } else {
+      inner = TransactionList();
+    }
+
+    return Scaffold(
+      backgroundColor: Theme.of(ctx).backgroundColor,
+      appBar: AppBar(
+        title: Text("Transactions"),
+        actions: getActions(authStore),
+      ),
+      bottomNavigationBar: DefaultBottomNavigationBar(),
+      body: inner,
+    );
+  }
 }
 
 class TransactionList extends HookWidget {
@@ -26,32 +59,28 @@ class TransactionList extends HookWidget {
   Widget build(
     ctx,
   ) {
-    final authStore = useAuthStore();
     final transactionStore = useTransactionStore(ctx);
-    return Scaffold(
-      backgroundColor: Theme.of(ctx).backgroundColor,
-      appBar: AppBar(
-        title: Text("Transactions"),
-        actions: getActions(authStore),
-      ),
-      bottomNavigationBar: DefaultBottomNavigationBar(),
-      body: Observer(
-        builder: (_) {
-          final transactions = transactionStore.filteredTransactions.toList();
-          return ListView.builder(
-            itemBuilder: (_, index) {
-              if (index == 0) return TransactionFilter();
-              final transaction = transactions[index - 1];
-              return Card(
+    return Observer(
+      builder: (_) {
+        final transactions = transactionStore.filteredTransactions.toList();
+        return ListView.builder(
+          itemBuilder: (_, index) {
+            if (index == 0) return TransactionFilter();
+            final transaction = transactions[index - 1];
+
+            return Observer(
+              builder: (_) => Card(
                 margin: EdgeInsets.symmetric(vertical: 6),
                 child: TransactionListTile(transaction),
-              );
-            },
-            itemCount: transactions.length + 1,
-          ).constraints(maxWidth: 400).alignment(Alignment.center);
-        },
-      ).padding(horizontal: 20),
-    );
+                elevation:
+                    transactionStore.selectedTransaction == transaction ? 4 : 1,
+              ),
+            ).padding(bottom: index == transactions.length ? 20 : 0);
+          },
+          itemCount: transactions.length + 1,
+        ).constraints(maxWidth: 400).alignment(Alignment.center);
+      },
+    ).padding(horizontal: 20);
   }
 }
 
@@ -74,11 +103,16 @@ class TransactionListTile extends HookWidget {
 
   @override
   Widget build(context) {
+    final mq = MediaQuery.of(context);
     final navigator = useNavigator(context: context);
+    final transactionStore = useTransactionStore(context);
+    final isLargeScreen = mq.size.width > WIDTH_BREAKPOINT;
     return ListTile(
       onTap: () {
-        navigator.pushNamed(Routes.transactionDetail,
-            arguments: TransactionPageArguments(transaction: transaction));
+        isLargeScreen
+            ? transactionStore.setSelectedTransaction(transaction)
+            : navigator.pushNamed(Routes.transactionDetail,
+                arguments: TransactionPageArguments(transaction: transaction));
       },
       contentPadding: EdgeInsets.all(8),
       title: textWithIcon(Icons.location_on, Text(transaction.place.name)),

@@ -12,14 +12,14 @@ mixin _$UserModel on _UserModel, Store {
   final _$vehiclesAtom = Atom(name: '_UserModel.vehicles');
 
   @override
-  ObservableList<VehicleModel> get vehicles {
+  ObservableMap<String, VehicleModel> get vehicles {
     _$vehiclesAtom.context.enforceReadPolicy(_$vehiclesAtom);
     _$vehiclesAtom.reportObserved();
     return super.vehicles;
   }
 
   @override
-  set vehicles(ObservableList<VehicleModel> value) {
+  set vehicles(ObservableMap<String, VehicleModel> value) {
     _$vehiclesAtom.context.conditionallyRunInAction(() {
       super.vehicles = value;
       _$vehiclesAtom.reportChanged();

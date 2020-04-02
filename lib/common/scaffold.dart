@@ -66,6 +66,7 @@ class DefaultBottomNavigationBar extends HookWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       mainAxisSize: MainAxisSize.max,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: mainRoutes.map((routeMap) {
         final text = routeMap['text'];
         final name = routeMap['name'];
@@ -89,11 +90,13 @@ class DefaultBottomNavigationBar extends HookWidget {
               (route) => false,
             ),
             child: Text(text),
+            padding: EdgeInsets.all(0),
+            
           ).expanded();
         }
       }).toList(),
-    )
-        .backgroundColor(colorScheme.background)
+    ).constraints(maxHeight: 50)
+        .backgroundColor(colorScheme.surface)
         .elevation(10, shadowColor: Colors.grey[800], opacity: 0.7, angle: 20);
   }
 }

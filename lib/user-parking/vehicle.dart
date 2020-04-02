@@ -1,20 +1,31 @@
 import 'package:dart_json_mapper/dart_json_mapper.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:flutter_hooks/flutter_hooks.dart' as hooks;
+import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:mobx/mobx.dart';
+import 'package:parks/common/root-store.dart';
 import 'package:parks/routes.dart';
 import 'package:parks/user-parking/user-store.dart';
 import 'package:styled_widget/styled_widget.dart';
 
-@jsonSerializable
-class VehicleModel {
-  String plate;
-  String model;
-  bool active;
+part 'vehicle.g.dart';
 
-  VehicleModel({this.plate, this.model, this.active});
+class VehicleModel extends _VehicleModel with _$VehicleModel {
+  VehicleModel({plate, model, active})
+      : super(plate: plate, model: model, active: active);
 }
 
-class VehicleListTile extends HookWidget {
+@jsonSerializable
+abstract class _VehicleModel with Store {
+  String plate;
+  String model;
+  @observable
+  bool active;
+
+  _VehicleModel({this.plate, this.model, this.active});
+}
+
+class VehicleListTile extends hooks.HookWidget {
   const VehicleListTile(this.vehicle, {this.trailing, Key key})
       : super(key: key);
 
@@ -22,28 +33,31 @@ class VehicleListTile extends HookWidget {
   final IconButton trailing;
 
   @override
-  Widget build(_) {
-    return ListTile(
-      contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-      title: Text(vehicle.plate),
-      leading: Switch(
-        value: vehicle.active,
-        onChanged: (_) {},
+  Widget build(ctx) {
+    final userStore = useUserStore(ctx);
+    return Observer(
+      builder: (_) => ListTile(
+        contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+        title: Text(vehicle.plate),
+        leading: Switch(
+          value: vehicle.active,
+          onChanged: (_) => userStore.toggleVehicleState(vehicle),
+        ),
+        subtitle: Text(vehicle.model),
+        trailing: trailing,
       ),
-      subtitle: Text(vehicle.model),
-      trailing: trailing,
     );
   }
 }
 
-class CreateVehicleForm extends HookWidget {
+class CreateVehicleForm extends hooks.HookWidget {
   final UserStore userStore;
   const CreateVehicleForm(this.userStore);
 
   @override
   Widget build(BuildContext context) {
-    final plateC = useTextEditingController();
-    final modelC = useTextEditingController();
+    final plateC = hooks.useTextEditingController();
+    final modelC = hooks.useTextEditingController();
     final navigator = useNavigator(context: context);
 
     FormState();
