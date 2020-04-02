@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:month_picker_dialog/month_picker_dialog.dart';
 import 'package:parks/common/scaffold.dart';
+import 'package:parks/common/widgets.dart';
 import 'package:parks/routes.dart';
 import 'package:parks/user-parking/user-model.dart';
 import 'package:parks/user-parking/user-store.dart';
@@ -25,77 +26,83 @@ class CreatePaymentMethodForm extends HookWidget {
         title: Text("Create Payment Method"),
       ),
       bottomNavigationBar: DefaultBottomNavigationBar(),
-      body: Form(
-        child: ListView(
-          children: <Widget>[
-            TextFormField(
-              controller: name,
-              decoration: InputDecoration(
-                labelText: "Name",
-                border: OutlineInputBorder(),
-                isDense: true,
-              ),
-            ).padding(bottom: 22, top: 40),
-            TextFormField(
-              controller: provider,
-              decoration: InputDecoration(
-                labelText: "Provider",
-                border: OutlineInputBorder(),
-                isDense: true,
-              ),
-            ).padding(bottom: 22),
-            TextFormField(
-              controller: number,
-              obscureText: obscureText.value,
-              decoration: InputDecoration(
-                  labelText: "Number",
+      body: MaterialResponsiveWrapper(
+        child: Form(
+          child: ListView(
+            shrinkWrap: true,
+            padding: EdgeInsets.symmetric(
+              horizontal: 30,
+            ),
+            children: <Widget>[
+              TextFormField(
+                controller: name,
+                decoration: InputDecoration(
+                  labelText: "Name",
                   border: OutlineInputBorder(),
                   isDense: true,
-                  suffixIcon: IconButton(
-                    icon: Icon(Icons.remove_red_eye),
-                    onPressed: () => obscureText.value = !obscureText.value,
-                  )),
-            ).padding(bottom: 25),
-            Container(
-              padding: EdgeInsets.only(bottom: 25),
-              constraints: BoxConstraints.loose(Size(400, 100)),
-              child: Row(
+                ),
+              ).padding(bottom: 22, top: 40),
+              TextFormField(
+                controller: provider,
+                decoration: InputDecoration(
+                  labelText: "Provider",
+                  border: OutlineInputBorder(),
+                  isDense: true,
+                ),
+              ).padding(bottom: 22),
+              TextFormField(
+                controller: number,
+                obscureText: obscureText.value,
+                decoration: InputDecoration(
+                    labelText: "Number",
+                    border: OutlineInputBorder(),
+                    isDense: true,
+                    suffixIcon: IconButton(
+                      icon: Icon(Icons.remove_red_eye),
+                      onPressed: () => obscureText.value = !obscureText.value,
+                    )),
+              ).padding(bottom: 25),
+              Container(
+                padding: EdgeInsets.only(bottom: 25),
+                constraints: BoxConstraints.loose(Size(400, 100)),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [MonthPicker(expDate)],
+                ),
+              ),
+              Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 mainAxisSize: MainAxisSize.min,
-                children: [MonthPicker(expDate)],
-              ),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                RaisedButton(
-                  onPressed: () => navigator.pop(),
-                  child: Text("CANCEL"),
-                ),
-                SizedBox(
-                  width: 50,
-                ),
-                RaisedButton(
-                  onPressed: () {
-                    userStore.createPaymentMethod(
-                      PaymentMethod(
-                        name: name.text,
-                        type: PaymentMethodType.Credit,
-                        lastDigits:
-                            number.text.substring(number.text.length - 4),
-                        provider: provider.text,
-                      ),
-                    );
-                    navigator.pop();
-                  },
-                  child: Text("CREATE"),
-                )
-              ],
-            ).padding(bottom: 40)
-          ],
-        ).constraints(maxWidth: 400).alignment(Alignment.center)
-      ).padding(horizontal: 40),
+                children: <Widget>[
+                  RaisedButton(
+                    onPressed: () => navigator.pop(),
+                    child: Text("CANCEL"),
+                  ),
+                  SizedBox(
+                    width: 50,
+                  ),
+                  RaisedButton(
+                    onPressed: () {
+                      userStore.createPaymentMethod(
+                        PaymentMethod(
+                          name: name.text,
+                          type: PaymentMethodType.Credit,
+                          lastDigits:
+                              number.text.substring(number.text.length - 4),
+                          provider: provider.text,
+                        ),
+                      );
+                      navigator.pop();
+                    },
+                    child: Text("CREATE"),
+                  )
+                ],
+              ).padding(bottom: 40)
+            ],
+          ).constraints(maxWidth: 400).alignment(Alignment.center),
+        ),
+      ),
     );
   }
 }
@@ -121,7 +128,7 @@ class MonthPicker extends HookWidget {
           Icon(Icons.calendar_today),
           const SizedBox(width: 20),
           Text("Expiration Date:  ${expDate.value.month}/${expDate.value.year}")
-              .fontSize(18),
+              .fontSize(16),
           const SizedBox(width: 60),
           Icon(
             Icons.arrow_drop_down,

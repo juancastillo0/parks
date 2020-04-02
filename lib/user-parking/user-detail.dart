@@ -151,12 +151,13 @@ class UserParkingDetail extends HookWidget {
             style: useTextTheme().headline5,
           ).padding(top: 18, bottom: 20, horizontal: 20),
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               [
                 textWithIcon(Icons.email, Text("Email")),
                 Text(user.email).fontSize(16)
               ].toColumn(),
+              SizedBox(width: 60),
               [
                 textWithIcon(Icons.phone, Text("Phone")),
                 Text(user.phone.toString()).fontSize(16)

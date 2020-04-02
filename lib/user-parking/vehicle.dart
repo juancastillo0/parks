@@ -2,6 +2,7 @@ import 'package:dart_json_mapper/dart_json_mapper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart' as hooks;
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:hive/hive.dart';
 import 'package:mobx/mobx.dart';
 import 'package:parks/common/root-store.dart';
 import 'package:parks/routes.dart';
@@ -10,15 +11,19 @@ import 'package:styled_widget/styled_widget.dart';
 
 part 'vehicle.g.dart';
 
+@HiveType(typeId: 2)
 class VehicleModel extends _VehicleModel with _$VehicleModel {
   VehicleModel({plate, model, active})
       : super(plate: plate, model: model, active: active);
 }
 
 @jsonSerializable
-abstract class _VehicleModel with Store {
+abstract class _VehicleModel extends HiveObject with Store {
+  @HiveField(0)
   String plate;
+  @HiveField(1)
   String model;
+  @HiveField(2)
   @observable
   bool active;
 

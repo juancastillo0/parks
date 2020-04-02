@@ -23,13 +23,13 @@ class TransactionsPage extends HookWidget {
     final mq = MediaQuery.of(ctx);
     final authStore = useAuthStore(ctx);
     final transactionStore = useTransactionStore(ctx);
-
+    final bigSize = mq.size.width > WIDTH_BREAKPOINT;
     Widget inner;
-    if (mq.size.width > WIDTH_BREAKPOINT) {
+    if (bigSize) {
       inner = Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          TransactionList(),
+          TransactionList(bigSize),
           Observer(
             builder: (_) =>
                 TransactionDetail(transactionStore.selectedTransaction),
@@ -37,7 +37,7 @@ class TransactionsPage extends HookWidget {
         ],
       );
     } else {
-      inner = TransactionList();
+      inner = TransactionList(bigSize);
     }
 
     return Scaffold(
@@ -53,8 +53,8 @@ class TransactionsPage extends HookWidget {
 }
 
 class TransactionList extends HookWidget {
-  const TransactionList({Key key}) : super(key: key);
-
+  const TransactionList(this.bigSize, {Key key}) : super(key: key);
+  final bool bigSize;
   @override
   Widget build(
     ctx,
@@ -73,7 +73,10 @@ class TransactionList extends HookWidget {
                 margin: EdgeInsets.symmetric(vertical: 6),
                 child: TransactionListTile(transaction),
                 elevation:
-                    transactionStore.selectedTransaction == transaction ? 4 : 1,
+                    transactionStore.selectedTransaction == transaction &&
+                            bigSize
+                        ? 4
+                        : 1,
               ),
             ).padding(bottom: index == transactions.length ? 20 : 0);
           },

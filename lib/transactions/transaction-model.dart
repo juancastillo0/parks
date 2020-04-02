@@ -1,20 +1,44 @@
 import 'package:dart_json_mapper/dart_json_mapper.dart';
+import 'package:hive/hive.dart';
 import 'package:parks/common/utils.dart';
 import 'package:parks/place/place-store.dart';
 import 'package:parks/user-parking/vehicle.dart';
 
-enum TransactionState { Completed, Active, Waiting }
+part 'transaction-model.g.dart';
 
+@HiveType(typeId: 1)
+enum TransactionState {
+  @HiveField(0)
+  Completed,
+  @HiveField(1)
+  Active,
+  @HiveField(2)
+  Waiting
+}
+
+@HiveType(typeId: 0)
 @jsonSerializable
 class TransactionModel {
+  @HiveField(0)
   int id;
+
+  @HiveField(1)
   DateTime timestamp;
+
+  @HiveField(2)
   DateTime endTimestamp;
+
   Place place;
+
+  @HiveField(4)
   @JsonProperty(enumValues: TransactionState.values)
   TransactionState state;
-  VehicleModel vehicle;
+
+  @HiveField(5)
   double cost;
+
+  @HiveField(6)
+  VehicleModel vehicle;
 
   TransactionModel(
       {this.id,
