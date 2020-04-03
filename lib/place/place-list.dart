@@ -126,19 +126,15 @@ class PlacesPage extends HookWidget {
               itemCount: places.length,
             )
                 .backgroundColor(Colors.white)
+                .elevation(1.5, angle: pi)
                 .borderRadius(topLeft: 10, topRight: 10)
                 .constraints(
                     maxWidth: min(box.maxWidth - 26, 400),
                     maxHeight: box.maxHeight - 60)
-                .boxShadow(
-                    color: Colors.black12,
-                    blurRadius: 3,
-                    offset: Offset(0, -1),
-                    spreadRadius: 2)
                 .opacity(showList.value ? 1 : 0, animate: true)
                 .positioned(
                     top: showList.value ? 60 : box.maxHeight,
-                    left: (box.maxWidth - min(box.maxWidth - 26, 400))/2,
+                    left: (box.maxWidth - min(box.maxWidth - 26, 400)) / 2,
                     animate: true)
                 .animate(Duration(milliseconds: 200), Curves.easeInOut),
             FloatingActionButton.extended(

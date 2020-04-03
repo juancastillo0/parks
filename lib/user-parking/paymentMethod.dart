@@ -102,7 +102,7 @@ class CreatePaymentMethodForm extends HookWidget {
             ],
           ).constraints(maxWidth: 400).alignment(Alignment.center),
         ),
-      ),
+      ).alignment(Alignment.center),
     );
   }
 }

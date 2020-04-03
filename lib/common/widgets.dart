@@ -47,6 +47,8 @@ class MaterialResponsiveWrapper extends HookWidget {
           bottomLeft: Radius.circular(10),
           bottomRight: Radius.circular(10),
         ),
+        elevation: 2,
+        type: MaterialType.card,
         child: child,
       ).constraints(width: _breakpoint - 50);
     } else {
