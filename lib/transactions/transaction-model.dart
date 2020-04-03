@@ -23,13 +23,20 @@ class TransactionPlaceModel {
 
   @HiveField(0)
   String name;
-  @HiveField(1)
+  @HiveField(1) 
   String address;
 
   TransactionPlaceModel.fromPlace(Place place) {
     name = place.name;
     address = place.address;
   }
+
+  bool operator ==(other) {
+    return name == other.name;
+  }
+
+  @override
+  int get hashCode => name.hashCode;
 }
 
 @HiveType(typeId: 0)

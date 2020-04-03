@@ -15,6 +15,13 @@ part 'vehicle.g.dart';
 class VehicleModel extends _VehicleModel with _$VehicleModel {
   VehicleModel({plate, model, active})
       : super(plate: plate, model: model, active: active);
+
+  bool operator ==(other) {
+    return plate == other.plate;
+  }
+
+  @override
+  int get hashCode => plate.hashCode;
 }
 
 @jsonSerializable
