@@ -64,6 +64,7 @@ class TransactionList extends HookWidget {
       builder: (_) {
         final transactions = transactionStore.filteredTransactions.toList();
         return ListView.builder(
+          padding: EdgeInsets.symmetric(horizontal: 20),
           itemBuilder: (_, index) {
             if (index == 0) return TransactionFilter();
             final transaction = transactions[index - 1];
@@ -83,7 +84,7 @@ class TransactionList extends HookWidget {
           itemCount: transactions.length + 1,
         ).constraints(maxWidth: 400).alignment(Alignment.center);
       },
-    ).padding(horizontal: 20);
+    );
   }
 }
 

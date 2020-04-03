@@ -144,6 +144,6 @@ class TransactionFilter extends HookWidget {
           ],
         ).padding(top: 8, bottom: 20),
       ],
-    ).backgroundColor(Colors.white).padding(bottom: 15);
+    ).backgroundColor(Colors.white).elevation(3).padding(bottom: 15);
   }
 }
