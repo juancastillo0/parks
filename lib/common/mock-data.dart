@@ -10,7 +10,7 @@ var _car2 = VehicleModel(model: "Toyota", plate: "UIS 267", active: false);
 var mockTransactions = ObservableList.of([
   TransactionModel(
       id: 1,
-      place: mockPlaces[0],
+      place: TransactionPlaceModel.fromPlace(mockPlaces[0]),
       state: TransactionState.Completed,
       timestamp: DateTime.now().subtract(Duration(days: 2)),
       endTimestamp: DateTime.now().subtract(Duration(days: 1, hours: 23)),
@@ -18,7 +18,7 @@ var mockTransactions = ObservableList.of([
       cost: 8900),
   TransactionModel(
       id: 2,
-      place: mockPlaces[2],
+      place: TransactionPlaceModel.fromPlace(mockPlaces[2]),
       state: TransactionState.Completed,
       timestamp: DateTime.now().subtract(Duration(days: 1)),
       endTimestamp: DateTime.now().subtract(Duration(hours: 22, minutes: 12)),
@@ -26,7 +26,7 @@ var mockTransactions = ObservableList.of([
       cost: 8900),
   TransactionModel(
       id: 3,
-      place: mockPlaces[1],
+      place: TransactionPlaceModel.fromPlace(mockPlaces[1]),
       state: TransactionState.Waiting,
       timestamp: DateTime.now().subtract(Duration(minutes: 3)),
       endTimestamp: null,
@@ -34,7 +34,7 @@ var mockTransactions = ObservableList.of([
       cost: 12400),
   TransactionModel(
       id: 4,
-      place: mockPlaces[2],
+      place: TransactionPlaceModel.fromPlace(mockPlaces[2]),
       state: TransactionState.Active,
       timestamp: DateTime.now().subtract(Duration(minutes: 20)),
       endTimestamp: null,

@@ -5,8 +5,6 @@ import 'package:parks/routes.gr.dart';
 
 part 'store.g.dart';
 
-class AuthStore = _AuthStore with _$AuthStore;
-
 const ERROR_MESSAGES = {
   "ERROR_INVALID_EMAIL": "Correo inválido",
   "ERROR_WRONG_PASSWORD": "La combinación correo y contraseña no es válida",
@@ -17,6 +15,8 @@ const ERROR_MESSAGES = {
   "default":
       "Hubo un error en el servidor, por favor intenta de nuevo más tarde"
 };
+
+class AuthStore = _AuthStore with _$AuthStore;
 
 abstract class _AuthStore with Store {
   final _auth = FirebaseAuth.instance;
@@ -43,7 +43,8 @@ abstract class _AuthStore with Store {
     final currentRoute =
         _user != null || !wasLoggedIn ? Routes.home : Routes.auth;
     // Pop  all the stack
-    ExtendedNavigator.rootNavigator.pushNamedAndRemoveUntil(currentRoute, (_) => false);
+    ExtendedNavigator.rootNavigator
+        .pushNamedAndRemoveUntil(currentRoute, (_) => false);
   }
 
   @action
@@ -70,5 +71,3 @@ abstract class _AuthStore with Store {
     }
   }
 }
-
-

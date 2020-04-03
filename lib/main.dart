@@ -2,38 +2,22 @@ import 'package:auto_route/auto_route.dart';
 import 'package:dart_json_mapper/dart_json_mapper.dart';
 import 'package:dart_json_mapper_mobx/dart_json_mapper_mobx.dart';
 import 'package:flutter/material.dart';
-import 'package:hive/hive.dart';
-import 'package:hive_flutter/hive_flutter.dart';
+import 'package:parks/common/hive-utils.dart';
 import 'package:parks/common/mock-data.dart';
 import 'package:parks/common/root-store.dart';
 import 'package:parks/common/scaffold.dart';
 import 'package:parks/routes.gr.dart';
-import 'package:parks/transactions/transaction-model.dart';
-import 'package:parks/user-parking/user-model.dart';
-import 'package:parks/user-parking/vehicle.dart';
 import 'package:provider/provider.dart';
 
 import 'main.reflectable.dart' show initializeReflectable;
+
+
 
 void main() async {
   initializeReflectable();
   JsonMapper().useAdapter(mobXAdapter);
 
-  await Hive.initFlutter();
-  // Transactions
-  Hive.registerAdapter(TransactionModelAdapter());
-  Hive.registerAdapter(TransactionStateAdapter());
-  // User
-  Hive.registerAdapter(PaymentMethodTypeAdapter());
-  Hive.registerAdapter(PaymentMethodAdapter());
-  Hive.registerAdapter(VehicleModelAdapter());
-  Hive.registerAdapter(UserModelAdapter());
-
-  final userBox = await Hive.openBox<UserModel>("user");
-  // await userBox.clear();
-  print(userBox.values.toList());
-  // print(await userBox.add(allUsers[0]));
-  // print(userBox.getAt(0));
+  await initHive(mock: true);
 
   runApp(MyApp());
 }

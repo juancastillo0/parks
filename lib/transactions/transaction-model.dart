@@ -16,6 +16,22 @@ enum TransactionState {
   Waiting
 }
 
+@HiveType(typeId: 6)
+@jsonSerializable
+class TransactionPlaceModel {
+  TransactionPlaceModel({this.name, this.address});
+
+  @HiveField(0)
+  String name;
+  @HiveField(1)
+  String address;
+
+  TransactionPlaceModel.fromPlace(Place place) {
+    name = place.name;
+    address = place.address;
+  }
+}
+
 @HiveType(typeId: 0)
 @jsonSerializable
 class TransactionModel {
@@ -28,7 +44,8 @@ class TransactionModel {
   @HiveField(2)
   DateTime endTimestamp;
 
-  Place place;
+  @HiveField(3)
+  TransactionPlaceModel place;
 
   @HiveField(4)
   @JsonProperty(enumValues: TransactionState.values)

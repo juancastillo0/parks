@@ -47,11 +47,20 @@ class MaterialResponsiveWrapper extends HookWidget {
           bottomLeft: Radius.circular(10),
           bottomRight: Radius.circular(10),
         ),
-        
         child: child,
       ).constraints(width: _breakpoint - 50);
     } else {
       return child;
     }
+  }
+}
+
+Widget textWithIcon(IconData icon, Text text, {bool right: false}) {
+  if (right) {
+    return [text, Icon(icon).padding(left: 10)]
+        .toRow(mainAxisSize: MainAxisSize.min);
+  } else {
+    return [Icon(icon).padding(right: 6), text]
+        .toRow(mainAxisSize: MainAxisSize.min);
   }
 }

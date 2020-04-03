@@ -4,7 +4,7 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:parks/common/fields.dart';
 import 'package:parks/common/root-store.dart';
 import 'package:parks/common/utils.dart';
-import 'package:parks/place/place-store.dart';
+import 'package:parks/transactions/transaction-model.dart';
 import 'package:parks/user-parking/vehicle.dart';
 import 'package:styled_widget/styled_widget.dart';
 
@@ -15,7 +15,7 @@ class TransactionFilter extends HookWidget {
     final transactionStore = useTransactionStore(ctx);
     final open = useState(false);
     final openPlacesDialog = useMemoized(
-        () => multiSelectDialog<Place>(
+        () => multiSelectDialog<TransactionPlaceModel>(
               ctx,
               items: transactionStore.placesInTransactions,
               selected: transactionStore.filter.places,
@@ -76,7 +76,7 @@ class TransactionFilter extends HookWidget {
       children: [
         SizedBox(height: 10),
         Observer(
-          builder: (ctx) => MultiSelect<Place>(
+          builder: (ctx) => MultiSelect<TransactionPlaceModel>(
             idFn: (e) => e.name,
             items: transactionStore.placesInTransactions,
             openDialog: openPlacesDialog,

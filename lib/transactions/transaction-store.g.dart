@@ -80,14 +80,14 @@ mixin _$TransactionFilterStore on _TransactionFilterStore, Store {
   final _$placesAtom = Atom(name: '_TransactionFilterStore.places');
 
   @override
-  ObservableSet<Place> get places {
+  ObservableSet<TransactionPlaceModel> get places {
     _$placesAtom.context.enforceReadPolicy(_$placesAtom);
     _$placesAtom.reportObserved();
     return super.places;
   }
 
   @override
-  set places(ObservableSet<Place> value) {
+  set places(ObservableSet<TransactionPlaceModel> value) {
     _$placesAtom.context.conditionallyRunInAction(() {
       super.places = value;
       _$placesAtom.reportChanged();
@@ -203,12 +203,13 @@ mixin _$TransactionStore on _TransactionStore, Store {
       (_$vehiclesInTransactionsComputed ??=
               Computed<Set<VehicleModel>>(() => super.vehiclesInTransactions))
           .value;
-  Computed<Set<Place>> _$placesInTransactionsComputed;
+  Computed<Set<TransactionPlaceModel>> _$placesInTransactionsComputed;
 
   @override
-  Set<Place> get placesInTransactions => (_$placesInTransactionsComputed ??=
-          Computed<Set<Place>>(() => super.placesInTransactions))
-      .value;
+  Set<TransactionPlaceModel> get placesInTransactions =>
+      (_$placesInTransactionsComputed ??= Computed<Set<TransactionPlaceModel>>(
+              () => super.placesInTransactions))
+          .value;
   Computed<Interval<double>> _$costIntervalComputed;
 
   @override
@@ -225,14 +226,14 @@ mixin _$TransactionStore on _TransactionStore, Store {
   final _$transactionsAtom = Atom(name: '_TransactionStore.transactions');
 
   @override
-  List<TransactionModel> get transactions {
+  ObservableList<TransactionModel> get transactions {
     _$transactionsAtom.context.enforceReadPolicy(_$transactionsAtom);
     _$transactionsAtom.reportObserved();
     return super.transactions;
   }
 
   @override
-  set transactions(List<TransactionModel> value) {
+  set transactions(ObservableList<TransactionModel> value) {
     _$transactionsAtom.context.conditionallyRunInAction(() {
       super.transactions = value;
       _$transactionsAtom.reportChanged();

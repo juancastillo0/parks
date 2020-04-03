@@ -40,6 +40,33 @@ class TransactionStateAdapter extends TypeAdapter<TransactionState> {
   }
 }
 
+class TransactionPlaceModelAdapter extends TypeAdapter<TransactionPlaceModel> {
+  @override
+  final typeId = 6;
+
+  @override
+  TransactionPlaceModel read(BinaryReader reader) {
+    var numOfFields = reader.readByte();
+    var fields = <int, dynamic>{
+      for (var i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
+    };
+    return TransactionPlaceModel(
+      name: fields[0] as String,
+      address: fields[1] as String,
+    );
+  }
+
+  @override
+  void write(BinaryWriter writer, TransactionPlaceModel obj) {
+    writer
+      ..writeByte(2)
+      ..writeByte(0)
+      ..write(obj.name)
+      ..writeByte(1)
+      ..write(obj.address);
+  }
+}
+
 class TransactionModelAdapter extends TypeAdapter<TransactionModel> {
   @override
   final typeId = 0;
@@ -54,6 +81,7 @@ class TransactionModelAdapter extends TypeAdapter<TransactionModel> {
       id: fields[0] as int,
       timestamp: fields[1] as DateTime,
       endTimestamp: fields[2] as DateTime,
+      place: fields[3] as TransactionPlaceModel,
       state: fields[4] as TransactionState,
       vehicle: fields[6] as VehicleModel,
       cost: fields[5] as double,
@@ -63,13 +91,15 @@ class TransactionModelAdapter extends TypeAdapter<TransactionModel> {
   @override
   void write(BinaryWriter writer, TransactionModel obj) {
     writer
-      ..writeByte(6)
+      ..writeByte(7)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
       ..write(obj.timestamp)
       ..writeByte(2)
       ..write(obj.endTimestamp)
+      ..writeByte(3)
+      ..write(obj.place)
       ..writeByte(4)
       ..write(obj.state)
       ..writeByte(5)

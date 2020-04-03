@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart' as material;
 import 'package:mobx/mobx.dart';
+import 'package:parks/common/hive-utils.dart';
 import 'package:parks/common/utils.dart';
 import 'package:parks/place/place-store.dart';
 import 'package:parks/transactions/transaction-model.dart';
-import 'package:parks/user-parking/user-model.dart';
 import 'package:parks/user-parking/vehicle.dart';
 
 part 'transaction-store.g.dart';
@@ -79,7 +79,7 @@ abstract class _TransactionFilterStore with Store {
   }
 
   @observable
-  ObservableSet<Place> places = ObservableSet();
+  ObservableSet<TransactionPlaceModel> places = ObservableSet();
 
   @observable
   ObservableSet<VehicleModel> vehicles = ObservableSet();
@@ -96,19 +96,22 @@ abstract class _TransactionFilterStore with Store {
 }
 
 class TransactionStore extends _TransactionStore with _$TransactionStore {
-  TransactionStore({List<TransactionModel> transactions})
-      : super(transactions: transactions);
+  TransactionStore({List<TransactionModel> transactions}) : super();
 }
 
 abstract class _TransactionStore with Store {
-  _TransactionStore({this.transactions}) {
+  _TransactionStore() {
+    final box = getTransactionsBox();
+    transactions = ObservableList.of(box.values.toList());
     selectedTransaction = transactions.first;
+
+    filter = TransactionFilterStore();
   }
 
   @observable
-  List<TransactionModel> transactions;
+  ObservableList<TransactionModel> transactions;
   @observable
-  TransactionFilterStore filter = TransactionFilterStore();
+  TransactionFilterStore filter;
   @observable
   TransactionModel selectedTransaction;
 
@@ -139,10 +142,10 @@ abstract class _TransactionStore with Store {
   }
 
   @computed
-  Set<Place> get placesInTransactions {
+  Set<TransactionPlaceModel> get placesInTransactions {
     return transactions.fold(
       Set(),
-      (Set<Place> p, e) {
+      (Set p, e) {
         p.add(e.place);
         return p;
       },

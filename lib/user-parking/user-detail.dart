@@ -5,7 +5,6 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:parks/common/mock-data.dart';
 import 'package:parks/common/root-store.dart';
 import 'package:parks/common/scaffold.dart';
-import 'package:parks/common/text-with-icon.dart';
 import 'package:parks/common/widgets.dart';
 import 'package:parks/routes.dart';
 import 'package:parks/routes.gr.dart';
