@@ -4,6 +4,7 @@ import 'package:mobx/mobx.dart';
 import 'package:parks/auth/store.dart';
 import 'package:parks/common/location-service.dart';
 import 'package:parks/common/notification-service.dart';
+import 'package:parks/transactions/transaction-model.dart';
 import 'package:parks/transactions/transaction-store.dart';
 import 'package:parks/user-parking/user-model.dart';
 import 'package:parks/user-parking/user-store.dart';
@@ -12,13 +13,14 @@ import 'package:provider/provider.dart';
 part 'root-store.g.dart';
 
 class RootStore extends _RootStore with _$RootStore {
-  RootStore(UserModel user) : super(user);
+  RootStore(UserModel user, List<TransactionModel> transactions)
+      : super(user, transactions);
 }
 
 abstract class _RootStore with Store {
-  _RootStore(UserModel user) {
+  _RootStore(UserModel user, List<TransactionModel> transactions) {
     userStore = UserStore(user);
-    transactionStore = TransactionStore(user: user);
+    transactionStore = TransactionStore(transactions: transactions);
     notificationService = NotificationService(user.vehicles.values.first.plate);
   }
 

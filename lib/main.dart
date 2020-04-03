@@ -4,6 +4,7 @@ import 'package:dart_json_mapper_mobx/dart_json_mapper_mobx.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:parks/common/mock-data.dart';
 import 'package:parks/common/root-store.dart';
 import 'package:parks/common/scaffold.dart';
 import 'package:parks/routes.gr.dart';
@@ -84,7 +85,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
         providers: [
-          Provider.value(value: RootStore(allUsers[0])),
+          Provider.value(value: RootStore(mockUser, mockTransactions)),
         ],
         child: WillPopScope(
           onWillPop: () async {

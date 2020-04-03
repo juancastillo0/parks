@@ -222,21 +222,21 @@ mixin _$TransactionStore on _TransactionStore, Store {
           Computed<Interval<DateTime>>(() => super.timeInterval))
       .value;
 
-  final _$userAtom = Atom(name: '_TransactionStore.user');
+  final _$transactionsAtom = Atom(name: '_TransactionStore.transactions');
 
   @override
-  UserModel get user {
-    _$userAtom.context.enforceReadPolicy(_$userAtom);
-    _$userAtom.reportObserved();
-    return super.user;
+  List<TransactionModel> get transactions {
+    _$transactionsAtom.context.enforceReadPolicy(_$transactionsAtom);
+    _$transactionsAtom.reportObserved();
+    return super.transactions;
   }
 
   @override
-  set user(UserModel value) {
-    _$userAtom.context.conditionallyRunInAction(() {
-      super.user = value;
-      _$userAtom.reportChanged();
-    }, _$userAtom, name: '${_$userAtom.name}_set');
+  set transactions(List<TransactionModel> value) {
+    _$transactionsAtom.context.conditionallyRunInAction(() {
+      super.transactions = value;
+      _$transactionsAtom.reportChanged();
+    }, _$transactionsAtom, name: '${_$transactionsAtom.name}_set');
   }
 
   final _$filterAtom = Atom(name: '_TransactionStore.filter');
@@ -302,7 +302,7 @@ mixin _$TransactionStore on _TransactionStore, Store {
   @override
   String toString() {
     final string =
-        'user: ${user.toString()},filter: ${filter.toString()},selectedTransaction: ${selectedTransaction.toString()},filteredTransactions: ${filteredTransactions.toString()},vehiclesInTransactions: ${vehiclesInTransactions.toString()},placesInTransactions: ${placesInTransactions.toString()},costInterval: ${costInterval.toString()},timeInterval: ${timeInterval.toString()}';
+        'transactions: ${transactions.toString()},filter: ${filter.toString()},selectedTransaction: ${selectedTransaction.toString()},filteredTransactions: ${filteredTransactions.toString()},vehiclesInTransactions: ${vehiclesInTransactions.toString()},placesInTransactions: ${placesInTransactions.toString()},costInterval: ${costInterval.toString()},timeInterval: ${timeInterval.toString()}';
     return '{$string}';
   }
 }

@@ -96,16 +96,17 @@ abstract class _TransactionFilterStore with Store {
 }
 
 class TransactionStore extends _TransactionStore with _$TransactionStore {
-  TransactionStore({UserModel user}) : super(user: user);
+  TransactionStore({List<TransactionModel> transactions})
+      : super(transactions: transactions);
 }
 
 abstract class _TransactionStore with Store {
-  _TransactionStore({this.user}) {
-    selectedTransaction = user.transactions.first;
+  _TransactionStore({this.transactions}) {
+    selectedTransaction = transactions.first;
   }
 
   @observable
-  UserModel user;
+  List<TransactionModel> transactions;
   @observable
   TransactionFilterStore filter = TransactionFilterStore();
   @observable
@@ -123,12 +124,12 @@ abstract class _TransactionStore with Store {
 
   @computed
   Iterable<TransactionModel> get filteredTransactions {
-    return user.transactions.where(filter.valid);
+    return transactions.where(filter.valid);
   }
 
   @computed
   Set<VehicleModel> get vehiclesInTransactions {
-    return user.transactions.fold(
+    return transactions.fold(
       Set(),
       (Set<VehicleModel> p, e) {
         p.add(e.vehicle);
@@ -139,7 +140,7 @@ abstract class _TransactionStore with Store {
 
   @computed
   Set<Place> get placesInTransactions {
-    return user.transactions.fold(
+    return transactions.fold(
       Set(),
       (Set<Place> p, e) {
         p.add(e.place);
@@ -151,13 +152,13 @@ abstract class _TransactionStore with Store {
   @computed
   Interval<double> get costInterval {
     final interval = Interval(double.infinity, double.negativeInfinity);
-    return interval.fromIter(user.transactions.map((t) => t.cost));
+    return interval.fromIter(transactions.map((t) => t.cost));
   }
 
   @computed
   Interval<DateTime> get timeInterval {
     final interval =
         Interval(DateTime.now(), DateTime.fromMillisecondsSinceEpoch(0));
-    return interval.fromIter(user.transactions.map((t) => t.timestamp));
+    return interval.fromIter(transactions.map((t) => t.timestamp));
   }
 }

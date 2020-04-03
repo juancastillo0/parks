@@ -4,8 +4,8 @@ import 'package:auto_route/auto_route.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:http/http.dart';
+import 'package:parks/common/mock-data.dart';
 import 'package:parks/routes.gr.dart';
-import 'package:parks/user-parking/user-model.dart';
 
 class NotificationService {
   final fcm = FirebaseMessaging();
@@ -34,8 +34,8 @@ class NotificationService {
       onResume: (message) async {
         print("onResume: $message");
         ExtendedNavigator.rootNavigator.pushNamed(Routes.transactionDetail,
-            arguments: TransactionPageArguments(
-                transaction: allUsers[0].transactions[0]));
+            arguments:
+                TransactionPageArguments(transaction: mockTransactions[0]));
       },
     );
     subscribeToTopic(plate);

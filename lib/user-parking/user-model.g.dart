@@ -104,27 +104,10 @@ mixin _$UserModel on _UserModel, Store {
     }, _$paymentMethodsAtom, name: '${_$paymentMethodsAtom.name}_set');
   }
 
-  final _$transactionsAtom = Atom(name: '_UserModel.transactions');
-
-  @override
-  ObservableList<TransactionModel> get transactions {
-    _$transactionsAtom.context.enforceReadPolicy(_$transactionsAtom);
-    _$transactionsAtom.reportObserved();
-    return super.transactions;
-  }
-
-  @override
-  set transactions(ObservableList<TransactionModel> value) {
-    _$transactionsAtom.context.conditionallyRunInAction(() {
-      super.transactions = value;
-      _$transactionsAtom.reportChanged();
-    }, _$transactionsAtom, name: '${_$transactionsAtom.name}_set');
-  }
-
   @override
   String toString() {
     final string =
-        'vehicles: ${vehicles.toString()},paymentMethods: ${paymentMethods.toString()},transactions: ${transactions.toString()}';
+        'vehicles: ${vehicles.toString()},paymentMethods: ${paymentMethods.toString()}';
     return '{$string}';
   }
 }

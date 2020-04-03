@@ -1,6 +1,8 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:parks/common/mock-data.dart';
 import 'package:parks/common/root-store.dart';
 import 'package:parks/common/scaffold.dart';
 import 'package:parks/common/text-with-icon.dart';
@@ -168,18 +170,19 @@ class UserParkingDetail extends HookWidget {
               .padding(bottom: 50)
               .constraints(maxWidth: 400)
               .alignment(Alignment.center),
-          RaisedButton(
-            child: Text(
-              "Test Notification",
-            ),
-            onPressed: () => store.notificationService.testNotification(
-                user.transactions
-                    .firstWhere(
-                        (element) => element.state == TransactionState.Waiting)
-                    .vehicle
-                    .plate,
-                4),
-          )
+          if (!kIsWeb)
+            RaisedButton(
+              child: Text(
+                "Test Notification",
+              ),
+              onPressed: () => store.notificationService.testNotification(
+                  mockTransactions
+                      .firstWhere((element) =>
+                          element.state == TransactionState.Waiting)
+                      .vehicle
+                      .plate,
+                  4),
+            )
         ],
       ).scrollable(),
     );

@@ -7,6 +7,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:parks/auth/store.dart';
 import 'package:parks/common/location-service.dart';
+import 'package:parks/common/mock-data.dart';
 import 'package:parks/common/root-store.dart';
 import 'package:parks/common/scaffold.dart';
 import 'package:parks/main.dart';
@@ -29,7 +30,7 @@ var _markers = (Completer<GoogleMapController> controller) => <Marker>[
           snippet: "Sunt quae consectetur voluptatibus maxime facere et culpa.",
         ),
       ),
-      ...places.map((e) {
+      ...mockPlaces.map((e) {
         final markerId = MarkerId(e.key.toString());
         return Marker(
           markerId: markerId,
@@ -60,7 +61,6 @@ class PlacesPage extends HookWidget {
     LocationService locationService = store.locationService;
     AuthStore authStore = store.authStore;
     Completer<GoogleMapController> controller = useMemoized(() => Completer());
-    
 
     final _goToUserLocation = useMemoized(
       () => () async {
@@ -97,7 +97,7 @@ class PlacesPage extends HookWidget {
         [controller]);
 
     final showList = useState(false);
-
+    final places = mockPlaces;
     return Scaffold(
       appBar: AppBar(
         title: Text("Places"),
@@ -138,14 +138,18 @@ class PlacesPage extends HookWidget {
               heroTag: null,
               key: Key("Filter"),
               onPressed: _goToUserLocation,
-              label: Text("Filter", style: Theme.of(ctx).textTheme.subtitle1.copyWith(fontSize: 18)),
+              label: Text("Filter",
+                  style:
+                      Theme.of(ctx).textTheme.subtitle1.copyWith(fontSize: 18)),
               icon: Icon(Icons.tune),
             ).positioned(bottom: 20, right: 20),
             FloatingActionButton.extended(
               heroTag: null,
               key: Key("List"),
               onPressed: () => showList.value = !showList.value,
-              label: Text("List", style: Theme.of(ctx).textTheme.subtitle1.copyWith(fontSize: 18)),
+              label: Text("List",
+                  style:
+                      Theme.of(ctx).textTheme.subtitle1.copyWith(fontSize: 18)),
               icon: Icon(Icons.list),
             ).positioned(bottom: 20, left: 20)
           ],
