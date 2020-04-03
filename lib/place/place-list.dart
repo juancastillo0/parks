@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -76,7 +77,6 @@ class PlacesPage extends HookWidget {
           );
         }
       },
-      [controller],
     );
 
     final ticker = useSingleTickerProvider();
@@ -84,20 +84,21 @@ class PlacesPage extends HookWidget {
         useMemoized(() => TabController(length: 3, vsync: ticker));
 
     final _map = useMemoized(
-        () => GoogleMap(
-              mapType: MapType.normal,
-              initialCameraPosition: _initialPosition,
-              onCameraMove: (position) {},
-              onMapCreated: (_controller) => controller.complete(_controller),
-              myLocationButtonEnabled: true,
-              mapToolbarEnabled: true,
-              myLocationEnabled: true,
-              markers: _markers(controller),
-            ),
-        [controller]);
+      () => GoogleMap(
+        mapType: MapType.normal,
+        initialCameraPosition: _initialPosition,
+        onCameraMove: (position) {},
+        onMapCreated: (_controller) => controller.complete(_controller),
+        myLocationButtonEnabled: true,
+        mapToolbarEnabled: true,
+        myLocationEnabled: true,
+        markers: _markers(controller),
+      ),
+    );
 
     final showList = useState(false);
     final places = mockPlaces;
+
     return Scaffold(
       appBar: AppBar(
         title: Text("Places"),
@@ -121,17 +122,23 @@ class PlacesPage extends HookWidget {
             ListView.separated(
               padding: EdgeInsets.symmetric(vertical: 20),
               itemBuilder: (_, index) => PlaceListTile(places[index]),
-              separatorBuilder: (_, __) => Divider(height: 12, thickness: 1),
+              separatorBuilder: (_, __) => Divider(height: 16, thickness: 1),
               itemCount: places.length,
             )
                 .backgroundColor(Colors.white)
                 .borderRadius(topLeft: 10, topRight: 10)
                 .constraints(
-                    maxWidth: box.maxWidth - 26, maxHeight: box.maxHeight - 60)
-                .elevation(5)
+                    maxWidth: min(box.maxWidth - 26, 400),
+                    maxHeight: box.maxHeight - 60)
+                .boxShadow(
+                    color: Colors.black12,
+                    blurRadius: 3,
+                    offset: Offset(0, -1),
+                    spreadRadius: 2)
+                .opacity(showList.value ? 1 : 0, animate: true)
                 .positioned(
                     top: showList.value ? 60 : box.maxHeight,
-                    left: 13,
+                    left: (box.maxWidth - min(box.maxWidth - 26, 400))/2,
                     animate: true)
                 .animate(Duration(milliseconds: 200), Curves.easeInOut),
             FloatingActionButton.extended(
@@ -140,7 +147,7 @@ class PlacesPage extends HookWidget {
               onPressed: _goToUserLocation,
               label: Text("Filter",
                   style:
-                      Theme.of(ctx).textTheme.subtitle1.copyWith(fontSize: 18)),
+                      Theme.of(ctx).textTheme.subtitle2.copyWith(fontSize: 16)),
               icon: Icon(Icons.tune),
             ).positioned(bottom: 20, right: 20),
             FloatingActionButton.extended(
@@ -149,7 +156,7 @@ class PlacesPage extends HookWidget {
               onPressed: () => showList.value = !showList.value,
               label: Text("List",
                   style:
-                      Theme.of(ctx).textTheme.subtitle1.copyWith(fontSize: 18)),
+                      Theme.of(ctx).textTheme.subtitle2.copyWith(fontSize: 16)),
               icon: Icon(Icons.list),
             ).positioned(bottom: 20, left: 20)
           ],
