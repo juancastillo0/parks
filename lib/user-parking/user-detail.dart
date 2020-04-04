@@ -73,7 +73,7 @@ class UserParkingDetail extends HookWidget {
                     .textAlignment(TextAlign.center)
                     .padding(bottom: 12)
                     .border(bottom: 1, color: Colors.black12),
-            contentPadding: EdgeInsets.all(30),
+            contentPadding: EdgeInsets.symmetric(vertical: 30, horizontal: 35),
             children: [
               CreateVehicleForm(userStore),
             ],
