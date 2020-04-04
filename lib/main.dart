@@ -11,8 +11,6 @@ import 'package:provider/provider.dart';
 
 import 'main.reflectable.dart' show initializeReflectable;
 
-
-
 void main() async {
   initializeReflectable();
   JsonMapper().useAdapter(mobXAdapter);
@@ -43,7 +41,7 @@ void main() async {
 //   brightness: Brightness.light,
 // );
 
-var colorScheme = ColorScheme.dark(
+var colorScheme = ColorScheme.light(
   primary: Color(0xff263238),
   primaryVariant: Color(0xffafc2cb),
   onPrimary: Colors.white,

@@ -14,6 +14,7 @@ class PlacePage extends HookWidget {
   Widget build(ctx) {
     final authStore = useAuthStore(ctx);
     final textTheme = Theme.of(ctx).textTheme;
+    final mq = MediaQuery.of(ctx);
     return Scaffold(
       appBar: AppBar(
         title: Text("${place.address}"),
@@ -24,7 +25,7 @@ class PlacePage extends HookWidget {
         children: [
           Image(
             image: AssetImage('assets/place-image.png'),
-          ),
+          ).constraints(maxHeight: mq.size.height * 0.3),
           Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -52,7 +53,9 @@ class PlacePage extends HookWidget {
                   Text("8 Reviews", style: TextStyle(fontSize: 18)),
                   Icon(Icons.arrow_drop_down)
                 ],
-              ).padding(vertical: 8.0, horizontal: 40),
+              )
+                  .constraints(maxWidth: 400)
+                  .padding(vertical: 8.0, horizontal: 40),
             ],
           ).padding(horizontal: 20)
         ],

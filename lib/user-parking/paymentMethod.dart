@@ -27,81 +27,79 @@ class CreatePaymentMethodForm extends HookWidget {
       ),
       bottomNavigationBar: DefaultBottomNavigationBar(),
       body: MaterialResponsiveWrapper(
-        child: Form(
-          child: ListView(
-            shrinkWrap: true,
-            padding: EdgeInsets.symmetric(
-              horizontal: 30,
-            ),
-            children: <Widget>[
-              TextFormField(
-                controller: name,
-                decoration: InputDecoration(
-                  labelText: "Name",
-                  border: OutlineInputBorder(),
-                  isDense: true,
-                ),
-              ).padding(bottom: 22, top: 40),
-              TextFormField(
-                controller: provider,
-                decoration: InputDecoration(
-                  labelText: "Provider",
-                  border: OutlineInputBorder(),
-                  isDense: true,
-                ),
-              ).padding(bottom: 22),
-              TextFormField(
-                controller: number,
-                obscureText: obscureText.value,
-                decoration: InputDecoration(
-                    labelText: "Number",
-                    border: OutlineInputBorder(),
-                    isDense: true,
-                    suffixIcon: IconButton(
-                      icon: Icon(Icons.remove_red_eye),
-                      onPressed: () => obscureText.value = !obscureText.value,
-                    )),
-              ).padding(bottom: 25),
-              Container(
-                padding: EdgeInsets.only(bottom: 25),
-                constraints: BoxConstraints.loose(Size(400, 100)),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [MonthPicker(expDate)],
-                ),
+        breakpoint: 575,
+        child: Column(
+          children: <Widget>[
+            TextFormField(
+              controller: name,
+              decoration: InputDecoration(
+                labelText: "Name",
+                border: OutlineInputBorder(),
+                isDense: true,
               ),
-              Row(
+            ).padding(bottom: 22, top: 40),
+            TextFormField(
+              controller: provider,
+              decoration: InputDecoration(
+                labelText: "Provider",
+                border: OutlineInputBorder(),
+                isDense: true,
+              ),
+            ).padding(bottom: 22),
+            TextFormField(
+              controller: number,
+              obscureText: obscureText.value,
+              decoration: InputDecoration(
+                  labelText: "Number",
+                  border: OutlineInputBorder(),
+                  isDense: true,
+                  suffixIcon: IconButton(
+                    icon: Icon(Icons.remove_red_eye),
+                    onPressed: () => obscureText.value = !obscureText.value,
+                  )),
+            ).padding(bottom: 25),
+            Container(
+              padding: EdgeInsets.only(bottom: 25),
+              constraints: BoxConstraints.loose(Size(400, 100)),
+              child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  RaisedButton(
-                    onPressed: () => navigator.pop(),
-                    child: Text("CANCEL"),
-                  ),
-                  SizedBox(
-                    width: 50,
-                  ),
-                  RaisedButton(
-                    onPressed: () {
-                      userStore.createPaymentMethod(
-                        PaymentMethod(
-                          name: name.text,
-                          type: PaymentMethodType.Credit,
-                          lastDigits:
-                              number.text.substring(number.text.length - 4),
-                          provider: provider.text,
-                        ),
-                      );
-                      navigator.pop();
-                    },
-                    child: Text("CREATE"),
-                  )
-                ],
-              ).padding(bottom: 40)
-            ],
-          ).constraints(maxWidth: 400).alignment(Alignment.center),
-        ),
+                children: [MonthPicker(expDate)],
+              ),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                RaisedButton(
+                  onPressed: () => navigator.pop(),
+                  child: Text("CANCEL"),
+                ),
+                SizedBox(
+                  width: 50,
+                ),
+                RaisedButton(
+                  onPressed: () {
+                    userStore.createPaymentMethod(
+                      PaymentMethod(
+                        name: name.text,
+                        type: PaymentMethodType.Credit,
+                        lastDigits:
+                            number.text.substring(number.text.length - 4),
+                        provider: provider.text,
+                      ),
+                    );
+                    navigator.pop();
+                  },
+                  child: Text("CREATE"),
+                )
+              ],
+            ).padding(bottom: 40)
+          ],
+        )
+            .padding(horizontal: 30)
+            .scrollable(scrollDirection: Axis.vertical)
+            .constraints(maxWidth: 400),
       ).alignment(Alignment.center),
     );
   }

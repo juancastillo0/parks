@@ -11,7 +11,6 @@ import 'package:parks/common/location-service.dart';
 import 'package:parks/common/mock-data.dart';
 import 'package:parks/common/root-store.dart';
 import 'package:parks/common/scaffold.dart';
-import 'package:parks/main.dart';
 import 'package:parks/place/place-store.dart';
 import 'package:parks/routes.dart';
 import 'package:parks/routes.gr.dart';
@@ -51,6 +50,17 @@ var _markers = (Completer<GoogleMapController> controller) => <Marker>[
       })
     ].toSet();
 
+Widget animateList(
+    Widget list, BoxConstraints box, ValueNotifier<bool> showList) {
+  return list
+      .opacity(showList.value ? 1 : 0, animate: true)
+      .positioned(
+          top: showList.value ? 60 : box.maxHeight,
+          left: (box.maxWidth - min(box.maxWidth - 26, 400)) / 2,
+          animate: true)
+      .animate(Duration(milliseconds: 200), Curves.easeInOut);
+}
+
 class PlacesPage extends HookWidget {
   const PlacesPage({Key key}) : super(key: key);
   static const _initialPosition =
@@ -79,10 +89,6 @@ class PlacesPage extends HookWidget {
       },
     );
 
-    final ticker = useSingleTickerProvider();
-    final tabController =
-        useMemoized(() => TabController(length: 3, vsync: ticker));
-
     final _map = useMemoized(
       () => GoogleMap(
         mapType: MapType.normal,
@@ -99,65 +105,83 @@ class PlacesPage extends HookWidget {
     final showList = useState(false);
     final places = mockPlaces;
 
+    final mq = MediaQuery.of(ctx);
+    final bigScreen = mq.size.width > 900;
     return Scaffold(
       appBar: AppBar(
         title: Text("Places"),
-        actions: [
-          IconButton(onPressed: () {}, icon: Icon(Icons.map)),
-          IconButton(onPressed: () {}, icon: Icon(Icons.list)),
-          IconButton(onPressed: () {}, icon: Icon(Icons.tune)),
-          ...getActions(authStore)
-        ],
-        bottom: TabBar(
-          controller: tabController,
-          labelColor: colorScheme.onPrimary,
-          tabs: placesTabs,
-        ),
+        actions: getActions(authStore),
       ),
       bottomNavigationBar: DefaultBottomNavigationBar(),
       body: LayoutBuilder(
-        builder: (ctx, box) => Stack(
-          children: [
-            _map,
-            ListView.separated(
-              padding: EdgeInsets.symmetric(vertical: 20),
-              itemBuilder: (_, index) => PlaceListTile(places[index]),
-              separatorBuilder: (_, __) => Divider(height: 16, thickness: 1),
-              itemCount: places.length,
-            )
-                .backgroundColor(Colors.white)
-                .elevation(1.5, angle: pi)
-                .borderRadius(topLeft: 10, topRight: 10)
-                .constraints(
-                    maxWidth: min(box.maxWidth - 26, 400),
-                    maxHeight: box.maxHeight - 60)
-                .opacity(showList.value ? 1 : 0, animate: true)
-                .positioned(
-                    top: showList.value ? 60 : box.maxHeight,
-                    left: (box.maxWidth - min(box.maxWidth - 26, 400)) / 2,
-                    animate: true)
-                .animate(Duration(milliseconds: 200), Curves.easeInOut),
-            FloatingActionButton.extended(
-              heroTag: null,
-              key: Key("Filter"),
-              onPressed: _goToUserLocation,
-              label: Text("Filter",
-                  style:
-                      Theme.of(ctx).textTheme.subtitle2.copyWith(fontSize: 16)),
-              icon: Icon(Icons.tune),
-            ).positioned(bottom: 20, right: 20),
-            FloatingActionButton.extended(
-              heroTag: null,
-              key: Key("List"),
-              onPressed: () => showList.value = !showList.value,
-              label: Text("List",
-                  style:
-                      Theme.of(ctx).textTheme.subtitle2.copyWith(fontSize: 16)),
-              icon: Icon(Icons.list),
-            ).positioned(bottom: 20, left: 20)
-          ],
-        ),
+        builder: (ctx, box) {
+          final _list = ListView.separated(
+            itemBuilder: (_, index) => index == 0
+                ? PlaceListTile(places[index]).padding(top: 20)
+                : index == places.length - 1
+                    ? PlaceListTile(places[index]).padding(bottom: 20)
+                    : PlaceListTile(places[index]),
+            separatorBuilder: (_, __) => Divider(height: 16, thickness: 1),
+            itemCount: places.length,
+          )
+              .borderRadius(topLeft: bigScreen ? 0 : 10, topRight: 10)
+              .elevation(1)
+              .backgroundColor(Colors.white)
+              .constraints(
+                maxWidth: min(box.maxWidth - 26, 400),
+                maxHeight: bigScreen ? double.infinity : box.maxHeight - 60,
+              );
+
+          return bigScreen
+              ? Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Column(
+                      mainAxisSize: MainAxisSize.max,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        FlatButton.icon(
+                          onPressed: () {},
+                          icon: Icon(Icons.tune),
+                          label: Text("Filter"),
+                        ).constraints(height: 50),
+                        _list.flexible()
+                      ],
+                    ),
+                    _map.expanded()
+                  ],
+                )
+              : Stack(
+                  children: [_map, animateList(_list, box, showList)],
+                );
+        },
       ),
+      floatingActionButton: bigScreen
+          ? null
+          : Stack(children: [
+              FloatingActionButton.extended(
+                heroTag: null,
+                key: Key("Filter"),
+                onPressed: _goToUserLocation,
+                label: Text("Filter",
+                    style: Theme.of(ctx)
+                        .textTheme
+                        .subtitle2
+                        .copyWith(fontSize: 16)),
+                icon: Icon(Icons.tune),
+              ).positioned(bottom: 5, right: 5),
+              FloatingActionButton.extended(
+                heroTag: null,
+                key: Key("List"),
+                onPressed: () => showList.value = !showList.value,
+                label: Text("List",
+                    style: Theme.of(ctx)
+                        .textTheme
+                        .subtitle2
+                        .copyWith(fontSize: 16)),
+                icon: Icon(Icons.list),
+              ).positioned(bottom: 5, left: 36)
+            ]),
     );
   }
 }
@@ -196,15 +220,3 @@ class PlaceListTile extends HookWidget {
     ).padding(bottom: 8);
   }
 }
-
-var placesTabs = [
-  FlatButton(
-      onPressed: null,
-      child: Text("Map", style: TextStyle(color: colorScheme.onPrimary))),
-  FlatButton(
-      onPressed: null,
-      child: Text("List", style: TextStyle(color: colorScheme.onPrimary))),
-  FlatButton(
-      onPressed: null,
-      child: Text("Filter", style: TextStyle(color: colorScheme.onPrimary))),
-];

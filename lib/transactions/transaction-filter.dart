@@ -44,29 +44,25 @@ class TransactionFilter extends HookWidget {
           FlatButton.icon(
             onPressed: toggleOpen,
             icon: Icon(Icons.tune),
-            label: Text("Filters"),
+            label: Text("Filter"),
           ),
-          Flexible(
-            child: Wrap(
-              spacing: 4,
-              children: transactionStore.filter.places
-                  .map((e) => Chip(
-                        label: Text(e.name),
-                        onDeleted: () =>
-                            transactionStore.filter.places.remove(e),
-                      ))
-                  .followedBy(transactionStore.filter.vehicles.map((e) => Chip(
-                        label: Text(e.plate),
-                        onDeleted: () =>
-                            transactionStore.filter.vehicles.remove(e),
-                      )))
-                  .toList(),
-            )
-                .scrollable(scrollDirection: Axis.horizontal)
-                .constraints(maxHeight: 50),
-          ),
+          SizedBox(width:3),
+          Wrap(
+            spacing: 4,
+            children: transactionStore.filter.places
+                .map((e) => Chip(
+                      label: Text(e.name),
+                      onDeleted: () => transactionStore.filter.places.remove(e),
+                    ))
+                .followedBy(transactionStore.filter.vehicles.map((e) => Chip(
+                      label: Text(e.plate),
+                      onDeleted: () =>
+                          transactionStore.filter.vehicles.remove(e),
+                    )))
+                .toList(),
+          ).scrollable(scrollDirection: Axis.horizontal).flexible(),
         ],
-      );
+      ).constraints(height: 50);
     }
 
     return ListView(

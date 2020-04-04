@@ -41,18 +41,14 @@ class MaterialResponsiveWrapper extends HookWidget {
     final mq = MediaQuery.of(ctx);
     final _breakpoint = breakpoint ?? 600;
     if (mq.size.width > _breakpoint) {
-      return Material(
-        color: Colors.white,
-        borderRadius: BorderRadius.only(
-          bottomLeft: Radius.circular(10),
-          bottomRight: Radius.circular(10),
-        ),
+      return Card(
         elevation: 2,
-        type: MaterialType.card,
         child: child,
-      ).constraints(width: _breakpoint - 50);
+      ).alignment(Alignment.center);
     } else {
-      return child;
+      return Container(
+        child: child.alignment(Alignment.center),
+      ).backgroundColor(Theme.of(ctx).colorScheme.surface);
     }
   }
 }
