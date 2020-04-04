@@ -87,7 +87,7 @@ class CreateVehicleForm extends hooks.HookWidget {
               border: OutlineInputBorder(),
               isDense: true,
             ),
-          ).padding(bottom: 22),
+          ).padding(bottom: 24),
           TextFormField(
             controller: modelC,
             decoration: InputDecoration(
@@ -96,7 +96,7 @@ class CreateVehicleForm extends hooks.HookWidget {
               border: OutlineInputBorder(),
               isDense: true,
             ),
-          ).padding(bottom: 22),
+          ).padding(bottom: 30),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
