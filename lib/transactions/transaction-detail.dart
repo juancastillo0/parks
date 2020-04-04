@@ -116,7 +116,17 @@ class TransactionDetail extends HookWidget {
         ),
         SizedBox(height: 20),
         if (transaction.state == TransactionState.Waiting)
-          acceptCancelPaymentButtons()
+          acceptCancelPaymentButtons().padding(vertical: 20)
+        else if (transaction.state == TransactionState.Active)
+          Padding(
+            padding: EdgeInsets.symmetric(vertical: 20),
+            child: RaisedButton(
+              child:
+                  Text("I'll be there in 5 min!", style: textTheme.subtitle1),
+              color: Theme.of(ctx).colorScheme.secondary,
+              onPressed: () {},
+            ),
+          )
       ],
     )
         .scrollable(scrollDirection: Axis.vertical)
@@ -148,7 +158,7 @@ Widget acceptCancelPaymentButtons() {
         color: Colors.green[700],
       )
     ],
-  ).padding(vertical: 20);
+  );
 }
 
 class TransactionDetailColumn extends HookWidget {
