@@ -23,7 +23,7 @@ class TransactionPlaceModel {
 
   @HiveField(0)
   String name;
-  @HiveField(1) 
+  @HiveField(1)
   String address;
 
   TransactionPlaceModel.fromPlace(Place place) {
@@ -32,11 +32,11 @@ class TransactionPlaceModel {
   }
 
   bool operator ==(other) {
-    return name == other.name;
+    return address == other.address;
   }
 
   @override
-  int get hashCode => name.hashCode;
+  int get hashCode => address.hashCode;
 }
 
 @HiveType(typeId: 0)
