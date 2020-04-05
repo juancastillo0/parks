@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hive/hive.dart';
 import 'package:month_picker_dialog/month_picker_dialog.dart';
+import 'package:parks/common/root-store.dart';
 import 'package:parks/common/scaffold.dart';
 import 'package:parks/common/widgets.dart';
 import 'package:parks/routes.dart';
-import 'package:parks/user-parking/user-store.dart';
 import 'package:styled_widget/styled_widget.dart';
 
 part 'paymentMethod.g.dart';
@@ -34,8 +34,7 @@ class PaymentMethod {
 }
 
 class CreatePaymentMethodForm extends HookWidget {
-  final UserStore userStore;
-  CreatePaymentMethodForm(this.userStore);
+  CreatePaymentMethodForm({Key key}) : super(key: key);
 
   @override
   Widget build(ctx) {
@@ -45,6 +44,7 @@ class CreatePaymentMethodForm extends HookWidget {
     final obscureText = useState(true);
     final expDate = useState(DateTime.now().add(Duration(days: 365 * 2)));
     final navigator = useNavigator(ctx);
+    final userStore = useUserStore(ctx);
 
     return Scaffold(
       appBar: AppBar(

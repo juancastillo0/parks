@@ -6,6 +6,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:http/http.dart';
 import 'package:parks/common/mock-data.dart';
 import 'package:parks/routes.gr.dart';
+import 'package:parks/transactions/transaction-model.dart';
 
 class NotificationService {
   final fcm = FirebaseMessaging();
@@ -34,8 +35,10 @@ class NotificationService {
       onResume: (message) async {
         print("onResume: $message");
         ExtendedNavigator.rootNavigator.pushNamed(Routes.transactionDetail,
-            arguments:
-                TransactionPageArguments(transaction: mockTransactions[0]));
+            arguments: TransactionPageArguments(
+              transaction: mockTransactions.firstWhere(
+                  (element) => element.state == TransactionState.Waiting),
+            ));
       },
     );
     subscribeToTopic(plate);

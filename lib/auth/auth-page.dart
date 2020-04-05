@@ -132,9 +132,7 @@ class _AuthPageState extends State<AuthPage> {
 
   Widget continueNoAuth() {
     return FlatButton(
-      onPressed: () => ExtendedNavigator.rootNavigator.pushNamed(
-        Routes.home,
-      ),
+      onPressed: () => ExtendedNavigator.rootNavigator.pushNamed(Routes.home),
       child: Text("Continue without an account")
           .fontSize(16)
           .fontWeight(FontWeight.bold),

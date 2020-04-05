@@ -121,10 +121,7 @@ class UserParkingDetail extends HookWidget {
         ),
         trailing: IconButton(
           icon: Icon(Icons.add_circle_outline),
-          onPressed: () => navigator.pushNamed(
-            Routes.createPaymentMethod,
-            arguments: userStore,
-          ),
+          onPressed: () => navigator.pushNamed(Routes.createPaymentMethod),
         ),
       ),
       expandedWidgetFn: (v) => Observer(
