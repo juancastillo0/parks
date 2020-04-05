@@ -1,6 +1,7 @@
 import 'package:hive/hive.dart';
 import 'package:mobx/mobx.dart';
 import 'package:parks/common/hive-utils.dart';
+import 'package:parks/user-parking/paymentMethod.dart';
 import 'package:parks/user-parking/user-model.dart';
 import 'package:parks/user-parking/vehicle.dart';
 

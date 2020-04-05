@@ -36,9 +36,9 @@ ExtendedNavigatorState getNavigator() {
   return ExtendedNavigator.rootNavigator;
 }
 
-ExtendedNavigatorState useNavigator({BuildContext context}) {
+ExtendedNavigatorState useNavigator([BuildContext context]) {
   if (context == null) {
     context = useContext();
   }
-  return ExtendedNavigator.of(context);
+  return Navigator.of(context);
 }

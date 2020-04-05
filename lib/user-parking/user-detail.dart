@@ -9,7 +9,7 @@ import 'package:parks/common/widgets.dart';
 import 'package:parks/routes.dart';
 import 'package:parks/routes.gr.dart';
 import 'package:parks/transactions/transaction-model.dart';
-import 'package:parks/user-parking/user-model.dart';
+import 'package:parks/user-parking/paymentMethod.dart';
 import 'package:parks/user-parking/vehicle.dart';
 import 'package:styled_widget/styled_widget.dart';
 
@@ -57,23 +57,25 @@ class _Item<T> {
 
 class UserParkingDetail extends HookWidget {
   @override
-  Widget build(BuildContext context) {
-    final store = useStore(context);
-    final userStore = useUserStore(context);
+  Widget build(ctx) {
+    final store = useStore(ctx);
+    final userStore = useUserStore(ctx);
     final user = userStore.user;
-    final navigator = useNavigator(context: context);
+    final navigator = useNavigator(ctx);
+    final mq = MediaQuery.of(ctx);
 
     final showCreateVehicleDialog = useMemoized(
       () => () async {
         await showDialog(
-          context: context,
+          context: ctx,
           builder: (ctx) => SimpleDialog(
             title:
-                Text("Create Vehicle", style: Theme.of(ctx).textTheme.headline5)
+                Text("Create Vehicle", style: Theme.of(ctx).textTheme.headline6)
                     .textAlignment(TextAlign.center)
                     .padding(bottom: 12)
                     .border(bottom: 1, color: Colors.black12),
-            contentPadding: EdgeInsets.symmetric(vertical: 30, horizontal: 35),
+            contentPadding:
+                EdgeInsets.only(top: 20, left: 30, right: 30, bottom: 10),
             children: [
               CreateVehicleForm(userStore),
             ],
@@ -97,10 +99,10 @@ class UserParkingDetail extends HookWidget {
         v,
         trailing: IconButton(
           icon: Icon(Icons.delete),
-          onPressed: deleteDialog(
-              context,
-              () => userStore.deleteVehicle(v.plate),
-              Text("Delete Vehicle"),
+          onPressed: deleteDialog(ctx, () async {
+            await userStore.deleteVehicle(v.plate);
+            navigator.pop();
+          }, Text("Delete Vehicle"),
               Text("Are you sure you want to delete the car?")),
         ),
       ),
@@ -111,8 +113,11 @@ class UserParkingDetail extends HookWidget {
     final paymentMethods = _Item(
       contractedWidget: ListTile(
         title: Observer(
-          builder: (_) => textWithIcon(Icons.payment,
-              Text("Payment Methods (${user.paymentMethods.length})")),
+          builder: (_) => textWithIcon(
+              Icons.payment,
+              Text(mq.size.width > 350
+                  ? "Payment Methods (${user.paymentMethods.length})"
+                  : "Payment (${user.paymentMethods.length})")),
         ),
         trailing: IconButton(
           icon: Icon(Icons.add_circle_outline),
@@ -127,10 +132,10 @@ class UserParkingDetail extends HookWidget {
           v,
           IconButton(
             icon: Icon(Icons.delete),
-            onPressed: deleteDialog(
-                context,
-                () => userStore.deletePaymentMethod(v),
-                Text("Delete Payment Method"),
+            onPressed: deleteDialog(ctx, () async {
+              await userStore.deletePaymentMethod(v);
+              navigator.pop();
+            }, Text("Delete Payment Method"),
                 Text("Are you sure you want to delete the payment method?")),
           ),
         ),
@@ -138,7 +143,7 @@ class UserParkingDetail extends HookWidget {
       list: user.paymentMethods,
     );
 
-    final authStore = useAuthStore(context);
+    final authStore = useAuthStore(ctx);
     return Scaffold(
       appBar: AppBar(
         title: Text("Profile"),

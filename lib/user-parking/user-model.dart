@@ -1,31 +1,10 @@
 import 'package:dart_json_mapper/dart_json_mapper.dart';
 import 'package:hive/hive.dart';
 import 'package:mobx/mobx.dart';
+import 'package:parks/user-parking/paymentMethod.dart';
 import 'package:parks/user-parking/vehicle.dart';
 
 part "user-model.g.dart";
-
-@HiveType(typeId: 5)
-enum PaymentMethodType {
-  @HiveField(0)
-  Credit
-}
-
-@HiveType(typeId: 4)
-@jsonSerializable
-class PaymentMethod {
-  @HiveField(0)
-  String name;
-  @HiveField(1)
-  @JsonProperty(enumValues: PaymentMethodType.values)
-  PaymentMethodType type;
-  @HiveField(2)
-  String lastDigits;
-  @HiveField(3)
-  String provider;
-
-  PaymentMethod({this.name, this.type, this.lastDigits, this.provider});
-}
 
 @jsonSerializable
 class UserModel extends _UserModel with _$UserModel {

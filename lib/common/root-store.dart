@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart' as hooks;
 import 'package:mobx/mobx.dart';
-import 'package:parks/auth/store.dart';
+import 'package:parks/auth/auth-store.dart';
 import 'package:parks/common/location-service.dart';
 import 'package:parks/common/notification-service.dart';
 import 'package:parks/transactions/transaction-model.dart';

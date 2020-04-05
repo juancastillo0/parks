@@ -1,7 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:parks/auth/store.dart';
+import 'package:parks/auth/auth-store.dart';
 import 'package:parks/routes.gr.dart';
 import 'package:provider/provider.dart';
 import 'package:styled_widget/styled_widget.dart';
@@ -26,7 +26,7 @@ class _AuthPageState extends State<AuthPage> {
     super.didChangeDependencies();
     // Dependency injection
     authStore = Provider.of<AuthStore>(context, listen: false);
-    if (authStore.user != null) {
+    if (authStore.token != null) {
       // Go to home if the user is logged in
       Future.delayed(Duration.zero, () {
         ExtendedNavigator.rootNavigator.pushNamed(Routes.home);

@@ -1,9 +1,8 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:mobx/mobx.dart';
 import 'package:parks/routes.gr.dart';
 
-part 'store.g.dart';
+part 'auth-store.g.dart';
 
 const ERROR_MESSAGES = {
   "ERROR_INVALID_EMAIL": "Correo inválido",
@@ -19,49 +18,44 @@ const ERROR_MESSAGES = {
 class AuthStore = _AuthStore with _$AuthStore;
 
 abstract class _AuthStore with Store {
-  final _auth = FirebaseAuth.instance;
-
-  _AuthStore() {
-    _auth.onAuthStateChanged.listen(updateUser);
-  }
-
   @observable
-  FirebaseUser user;
+  String token;
   @observable
   String error;
   @observable
   bool loading = false;
 
   @action
-  updateUser(FirebaseUser _user) async {
-    final wasLoggedIn = user != null;
-    user = _user;
+  updateToken(String _token) async {
+    final wasLoggedIn = token != null;
+    token = _token;
     loading = false;
     error = null;
 
     // Switch pages
     final currentRoute =
-        _user != null || !wasLoggedIn ? Routes.home : Routes.auth;
+        _token != null || !wasLoggedIn ? Routes.home : Routes.auth;
+
     // Pop  all the stack
-    ExtendedNavigator.rootNavigator
-        .pushNamedAndRemoveUntil(currentRoute, (_) => false);
+    if (ExtendedNavigator.rootNavigator != null) {
+      ExtendedNavigator.rootNavigator
+          .pushNamedAndRemoveUntil(currentRoute, (_) => false);
+    }
   }
 
   @action
   Future<void> signIn(String email, String password) async {
     if (loading) return;
     loading = true;
-    try {
-      await _auth.signInWithEmailAndPassword(email: email, password: password);
-    } catch (e) {
+    try {} catch (e) {
       error = ERROR_MESSAGES[e.code] ?? ERROR_MESSAGES["default"];
       loading = false;
     }
   }
 
   @action
-  Future<void> signOut() {
-    return _auth.signOut();
+  void signOut() {
+    updateToken(null);
   }
 
   @action

@@ -1,25 +1,50 @@
+import 'package:dart_json_mapper/dart_json_mapper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:hive/hive.dart';
 import 'package:month_picker_dialog/month_picker_dialog.dart';
 import 'package:parks/common/scaffold.dart';
 import 'package:parks/common/widgets.dart';
 import 'package:parks/routes.dart';
-import 'package:parks/user-parking/user-model.dart';
 import 'package:parks/user-parking/user-store.dart';
 import 'package:styled_widget/styled_widget.dart';
+
+part 'paymentMethod.g.dart';
+
+@HiveType(typeId: 5)
+enum PaymentMethodType {
+  @HiveField(0)
+  Credit
+}
+
+@HiveType(typeId: 4)
+@jsonSerializable
+class PaymentMethod {
+  @HiveField(0)
+  String name;
+  @HiveField(1)
+  @JsonProperty(enumValues: PaymentMethodType.values)
+  PaymentMethodType type;
+  @HiveField(2)
+  String lastDigits;
+  @HiveField(3)
+  String provider;
+
+  PaymentMethod({this.name, this.type, this.lastDigits, this.provider});
+}
 
 class CreatePaymentMethodForm extends HookWidget {
   final UserStore userStore;
   CreatePaymentMethodForm(this.userStore);
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(ctx) {
     final name = useTextEditingController();
     final number = useTextEditingController();
     final provider = useTextEditingController();
     final obscureText = useState(true);
     final expDate = useState(DateTime.now().add(Duration(days: 365 * 2)));
-    final navigator = useNavigator(context: context);
+    final navigator = useNavigator(ctx);
 
     return Scaffold(
       appBar: AppBar(

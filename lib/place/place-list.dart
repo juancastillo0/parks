@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:parks/auth/store.dart';
+import 'package:parks/auth/auth-store.dart';
 import 'package:parks/common/location-service.dart';
 import 'package:parks/common/mock-data.dart';
 import 'package:parks/common/root-store.dart';
@@ -192,7 +192,7 @@ class PlaceListTile extends HookWidget {
 
   @override
   Widget build(ctx) {
-    final navigator = useNavigator(context: ctx);
+    final navigator = useNavigator( ctx);
     return ListTile(
       title: Text(place.name, style: useTextTheme().headline6).gestures(
           onTap: () => navigator.pushNamed(

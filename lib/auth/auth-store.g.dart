@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'store.dart';
+part of 'auth-store.dart';
 
 // **************************************************************************
 // StoreGenerator
@@ -9,21 +9,21 @@ part of 'store.dart';
 // ignore_for_file: non_constant_identifier_names, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic
 
 mixin _$AuthStore on _AuthStore, Store {
-  final _$userAtom = Atom(name: '_AuthStore.user');
+  final _$tokenAtom = Atom(name: '_AuthStore.token');
 
   @override
-  FirebaseUser get user {
-    _$userAtom.context.enforceReadPolicy(_$userAtom);
-    _$userAtom.reportObserved();
-    return super.user;
+  String get token {
+    _$tokenAtom.context.enforceReadPolicy(_$tokenAtom);
+    _$tokenAtom.reportObserved();
+    return super.token;
   }
 
   @override
-  set user(FirebaseUser value) {
-    _$userAtom.context.conditionallyRunInAction(() {
-      super.user = value;
-      _$userAtom.reportChanged();
-    }, _$userAtom, name: '${_$userAtom.name}_set');
+  set token(String value) {
+    _$tokenAtom.context.conditionallyRunInAction(() {
+      super.token = value;
+      _$tokenAtom.reportChanged();
+    }, _$tokenAtom, name: '${_$tokenAtom.name}_set');
   }
 
   final _$errorAtom = Atom(name: '_AuthStore.error');
@@ -60,11 +60,11 @@ mixin _$AuthStore on _AuthStore, Store {
     }, _$loadingAtom, name: '${_$loadingAtom.name}_set');
   }
 
-  final _$updateUserAsyncAction = AsyncAction('updateUser');
+  final _$updateTokenAsyncAction = AsyncAction('updateToken');
 
   @override
-  Future updateUser(FirebaseUser _user) {
-    return _$updateUserAsyncAction.run(() => super.updateUser(_user));
+  Future updateToken(String _token) {
+    return _$updateTokenAsyncAction.run(() => super.updateToken(_token));
   }
 
   final _$signInAsyncAction = AsyncAction('signIn');
@@ -77,7 +77,7 @@ mixin _$AuthStore on _AuthStore, Store {
   final _$_AuthStoreActionController = ActionController(name: '_AuthStore');
 
   @override
-  Future<void> signOut() {
+  void signOut() {
     final _$actionInfo = _$_AuthStoreActionController.startAction();
     try {
       return super.signOut();
@@ -99,7 +99,7 @@ mixin _$AuthStore on _AuthStore, Store {
   @override
   String toString() {
     final string =
-        'user: ${user.toString()},error: ${error.toString()},loading: ${loading.toString()}';
+        'token: ${token.toString()},error: ${error.toString()},loading: ${loading.toString()}';
     return '{$string}';
   }
 }

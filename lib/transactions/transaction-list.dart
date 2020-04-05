@@ -108,10 +108,10 @@ class TransactionListTile extends HookWidget {
   final TransactionModel transaction;
 
   @override
-  Widget build(context) {
-    final mq = MediaQuery.of(context);
-    final navigator = useNavigator(context: context);
-    final transactionStore = useTransactionStore(context);
+  Widget build(ctx) {
+    final mq = MediaQuery.of(ctx);
+    final navigator = useNavigator(ctx);
+    final transactionStore = useTransactionStore(ctx);
     final isLargeScreen = mq.size.width > WIDTH_BREAKPOINT;
     return ListTile(
       onTap: () {

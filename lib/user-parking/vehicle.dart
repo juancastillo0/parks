@@ -66,11 +66,10 @@ class CreateVehicleForm extends hooks.HookWidget {
   final UserStore userStore;
   const CreateVehicleForm(this.userStore);
 
-  @override
-  Widget build(BuildContext context) {
+  Widget build(ctx) {
     final plateC = hooks.useTextEditingController();
     final modelC = hooks.useTextEditingController();
-    final navigator = useNavigator(context: context);
+    final navigator = useNavigator(ctx);
 
     FormState();
     return Form(
@@ -96,25 +95,19 @@ class CreateVehicleForm extends hooks.HookWidget {
               border: OutlineInputBorder(),
               isDense: true,
             ),
-          ).padding(bottom: 30),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+          ).padding(bottom: 15),
+          ButtonBar(
+            alignment: MainAxisAlignment.end,
             children: <Widget>[
-              RaisedButton(
+              FlatButton(
                 onPressed: () => navigator.pop(),
                 child: Text("CANCEL"),
               ),
-              SizedBox(
-                width: 50,
-              ),
-              RaisedButton(
-                onPressed: () {
-                  userStore.createVehicle(
+              FlatButton(
+                onPressed: () async {
+                  await userStore.createVehicle(
                     VehicleModel(
-                      active: true,
-                      model: modelC.text,
-                      plate: plateC.text,
-                    ),
+                        active: true, model: modelC.text, plate: plateC.text),
                   );
                   navigator.pop();
                 },

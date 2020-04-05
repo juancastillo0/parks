@@ -8,8 +8,8 @@ Future Function() deleteDialog(BuildContext context, void Function() onPressed,
   return () async {
     await showDialog(
       context: context,
-      builder: (context) {
-        final navigator = useNavigator(context: context);
+      builder: (ctx) {
+        final navigator = useNavigator(ctx);
         return AlertDialog(
           title: title,
           content: content,
