@@ -75,13 +75,14 @@ class CreatePaymentMethodForm extends HookWidget {
               controller: number,
               obscureText: obscureText.value,
               decoration: InputDecoration(
-                  labelText: "Number",
-                  border: OutlineInputBorder(),
-                  isDense: true,
-                  suffixIcon: IconButton(
-                    icon: Icon(Icons.remove_red_eye),
-                    onPressed: () => obscureText.value = !obscureText.value,
-                  )),
+                labelText: "Number",
+                border: OutlineInputBorder(),
+                isDense: true,
+                suffixIcon: IconButton(
+                  icon: Icon(Icons.remove_red_eye),
+                  onPressed: () => obscureText.value = !obscureText.value,
+                ),
+              ),
             ).padding(bottom: 25),
             Container(
               padding: EdgeInsets.only(bottom: 25),

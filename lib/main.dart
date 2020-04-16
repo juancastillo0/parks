@@ -32,48 +32,6 @@ void main() async {
   runApp(MyApp());
 }
 
-// var colorScheme = ColorScheme.light(
-//   primary: Colors.lightBlue[50],
-//   primaryVariant: Color(0xffafc2cb),
-//   onPrimary: Colors.black,
-//   //
-//   secondary: Color(0xff00838f),
-//   secondaryVariant: Color(0xff005662),
-//   onSecondary: Colors.white,
-//   //
-//   background: Colors.white,
-//   onBackground: Colors.black,
-//   //
-//   error: Colors.red[200],
-//   onError: Colors.black,
-//   //
-//   surface: Colors.lightBlue[50],
-//   onSurface: Colors.black,
-//   //
-//   brightness: Brightness.light,
-// );
-
-var colorScheme = ColorScheme.light(
-  primary: Color(0xff263238),
-  primaryVariant: Color(0xffafc2cb),
-  onPrimary: Colors.white,
-  //
-  secondary: Color(0xffbedbf4),
-  secondaryVariant: Color(0xff8da9c1),
-  onSecondary: Colors.black,
-  //
-  background: Color(0xffeeeeee),
-  onBackground: Colors.black,
-  //
-  error: Colors.red[800],
-  onError: Colors.black,
-  //
-  surface: Color(0xffffffff),
-  onSurface: Colors.black,
-  //
-  brightness: Brightness.light,
-);
-
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -95,17 +53,57 @@ class MyApp extends StatelessWidget {
             title: 'Flutter Demo',
             theme: ThemeData.from(
               colorScheme: colorScheme,
-              // textSelectionColor: Colors.black,
-              // primaryColor: colorScheme.primary,
-              // accentColor: colorScheme.secondary,
-              // accentColorBrightness: Brightness.light,
-              // backgroundColor: colorScheme.background,
-              // primaryColorBrightness: Brightness.light,
-              // brightness: colorScheme.brightness,
-              // primaryColorDark: Colors.black
+            ).copyWith(
+              inputDecorationTheme: InputDecorationTheme(
+                isDense: true,
+                border: OutlineInputBorder(),
+                labelStyle: TextStyle(fontSize: 18),
+              ),
             ),
             builder: ExtendedNavigator<Router>(router: Router()),
           ),
         ));
   }
 }
+
+var colorScheme = ColorScheme.light(
+  primary: Color(0xff263238),
+  primaryVariant: Color(0xffafc2cb),
+  onPrimary: Colors.white,
+  //
+  secondary: Color(0xffbedbf4),
+  secondaryVariant: Color(0xff8da9c1),
+  onSecondary: Colors.black,
+  //
+  background: Color(0xffeeeeee),
+  onBackground: Colors.black,
+  //
+  error: Colors.red[800],
+  onError: Colors.white,
+  //
+  surface: Color(0xffffffff),
+  onSurface: Colors.black,
+  //
+  brightness: Brightness.light,
+);
+
+// var colorScheme = ColorScheme.light(
+//   primary: Colors.lightBlue[50],
+//   primaryVariant: Color(0xffafc2cb),
+//   onPrimary: Colors.black,
+//   //
+//   secondary: Color(0xff00838f),
+//   secondaryVariant: Color(0xff005662),
+//   onSecondary: Colors.white,
+//   //
+//   background: Colors.white,
+//   onBackground: Colors.black,
+//   //
+//   error: Colors.red[200],
+//   onError: Colors.black,
+//   //
+//   surface: Colors.lightBlue[50],
+//   onSurface: Colors.black,
+//   //
+//   brightness: Brightness.light,
+// );
