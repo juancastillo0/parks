@@ -29,6 +29,7 @@ abstract class _VehicleModel extends HiveObject with Store {
   @HiveField(0)
   String plate;
   @HiveField(1)
+  @JsonProperty(name:"description")
   String model;
   @HiveField(2)
   @observable

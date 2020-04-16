@@ -1,5 +1,7 @@
 import 'package:dart_json_mapper/dart_json_mapper.dart';
+import 'package:get_it/get_it.dart';
 import 'package:hive/hive.dart';
+import 'package:parks/common/root-store.dart';
 import 'package:parks/common/utils.dart';
 import 'package:parks/place/place-store.dart';
 import 'package:parks/user-parking/vehicle.dart';
@@ -25,10 +27,13 @@ class TransactionPlaceModel {
   String name;
   @HiveField(1)
   String address;
+  @HiveField(2)
+  String id;
 
   TransactionPlaceModel.fromPlace(PlaceModel place) {
     name = place.name;
     address = place.address;
+    id = place.id;
   }
 
   bool operator ==(other) {
@@ -46,12 +51,15 @@ class TransactionModel {
   int id;
 
   @HiveField(1)
+  @JsonProperty(name: "startTime")
   DateTime timestamp;
 
   @HiveField(2)
+  @JsonProperty(name: "endTime")
   DateTime endTimestamp;
 
   @HiveField(3)
+  @JsonProperty(name: "parking_lot_id", converter: TransactionPlaceConverter())
   TransactionPlaceModel place;
 
   @HiveField(4)
@@ -95,5 +103,21 @@ class TransactionModel {
 
     // Never happens
     return 0;
+  }
+}
+
+class TransactionPlaceConverter
+    implements ICustomConverter<TransactionPlaceModel> {
+  const TransactionPlaceConverter();
+
+  @override
+  TransactionPlaceModel fromJSON(jsonValue, [JsonProperty jsonProperty]) {
+    final _rootStore = GetIt.instance.get<RootStore>();
+    throw UnimplementedError();
+  }
+
+  @override
+  toJSON(TransactionPlaceModel object, [JsonProperty jsonProperty]) {
+    return object.id;
   }
 }

@@ -20,13 +20,20 @@ enum PaymentMethodType {
 @HiveType(typeId: 4)
 @jsonSerializable
 class PaymentMethod {
+  @JsonProperty(name: "description")
   @HiveField(0)
   String name;
+
   @HiveField(1)
-  @JsonProperty(enumValues: PaymentMethodType.values)
+  @JsonProperty(
+    enumValues: PaymentMethodType.values,
+    defaultValue: PaymentMethodType.Credit,
+  )
   PaymentMethodType type;
+
   @HiveField(2)
   String lastDigits;
+
   @HiveField(3)
   String provider;
 

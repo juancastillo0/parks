@@ -23,11 +23,11 @@ abstract class Result<T> implements _$Result<T> {
 }
 
 class AuthBack {
-  final client = GetIt.instance.get<BackClient>();
+  final _client = GetIt.instance.get<BackClient>();
 
   Future<Result<String>> signIn(String email, String password) async {
     final body = {"email": email, "password": password};
-    final resp = await client.post("/users/login", body: body);
+    final resp = await _client.post("/users/login", body: body);
     return resp.mapOk<String>(
       (resp) {
         if (resp.statusCode == 200) {
@@ -47,7 +47,7 @@ class AuthBack {
   Future<Result<String>> signUp(
       String name, String email, String password) async {
     final body = {"name": name, "email": email, "password": password};
-    final resp = await client.post("/users", body: body);
+    final resp = await _client.post("/users", body: body);
     return resp.mapOk<String>(
       (resp) {
         if (resp.statusCode == 201) {

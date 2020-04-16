@@ -26,18 +26,25 @@ void main() async {
   _enablePlatformOverrideForDesktop();
   initializeReflectable();
   JsonMapper().useAdapter(mobXAdapter);
+
   GetIt.instance.registerSingleton<BackClient>(BackClient());
+  final rootStore = RootStore(mockUser, mockTransactions);
+  GetIt.instance.registerSingleton<RootStore>(rootStore);
+
   await initHive(mock: true);
 
-  runApp(MyApp());
+  runApp(MyApp(rootStore));
 }
 
 class MyApp extends StatelessWidget {
+  MyApp(this.rootStore);
+  final RootStore rootStore;
+
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
         providers: [
-          Provider.value(value: RootStore(mockUser, mockTransactions)),
+          Provider.value(value: rootStore),
         ],
         child: WillPopScope(
           onWillPop: () async {
