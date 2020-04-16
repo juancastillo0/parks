@@ -19,6 +19,10 @@ class BackClient {
   String baseUrl = "http://192.168.1.102:3000";
   String token;
 
+  bool get isAuthorized {
+    return token != null;
+  }
+
   bool get isConnected {
     return connState != ConnectivityResult.none;
   }
@@ -31,7 +35,7 @@ class BackClient {
     baseUrl = _baseUrl;
   }
 
-  Map<String, String> get _headers {
+  Map<String, String> get _defaultHeaders {
     return {
       'Content-type': 'application/json',
       'Accept': 'application/json',
@@ -39,10 +43,35 @@ class BackClient {
     };
   }
 
-  Future<Result<http.Response>> post(String url, {Map<String, dynamic> body}) {
+  Future<Result<http.Response>> post(String url,
+      {Map<String, dynamic> body, Map<String, String> headers}) {
     final _body = json.encode(body);
+    final _headers = _defaultHeaders;
+    if (headers != null) _headers.addAll(headers);
+
     final request =
         () => _client.post("$baseUrl$url", body: _body, headers: _headers);
+
+    return _requestWrapper(request, true);
+  }
+
+  Future<Result<http.Response>> put(String url,
+      {Map<String, dynamic> body, Map<String, String> headers}) {
+    final _body = json.encode(body);
+    final _headers = _defaultHeaders;
+    if (headers != null) _headers.addAll(headers);
+
+    final request =
+        () => _client.put("$baseUrl$url", body: _body, headers: _headers);
+
+    return _requestWrapper(request, true);
+  }
+
+  Future<Result<http.Response>> get(String url, {Map<String, String> headers}) {
+    final _headers = _defaultHeaders;
+    if (headers != null) _headers.addAll(headers);
+
+    final request = () => _client.get("$baseUrl$url", headers: _headers);
 
     return _requestWrapper(request, true);
   }
@@ -63,7 +92,7 @@ class BackClient {
     }
   }
 
-  Future<void> _updateConnectivityState(ConnectivityResult event) async {
+  _updateConnectivityState(ConnectivityResult event) async {
     if (event != ConnectivityResult.none) {
       try {
         final result = await InternetAddress.lookup('google.com');
