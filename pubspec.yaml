@@ -26,7 +26,6 @@ dependencies:
 
   # Firebase
   firebase_core:
-  firebase_auth:
   firebase_messaging:
   cloud_functions:
 
@@ -52,6 +51,8 @@ dependencies:
   js: ^0.6.0
   location: ^2.5.0
   google_maps_flutter:
+  get_it: ^4.0.1
+  connectivity: ^0.4.8+2
 
   # Hive
   hive: ^1.4.1+1

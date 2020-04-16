@@ -1,7 +1,12 @@
+import 'dart:io';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:dart_json_mapper/dart_json_mapper.dart';
 import 'package:dart_json_mapper_mobx/dart_json_mapper_mobx.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
+import 'package:parks/common/back-client.dart';
 import 'package:parks/common/hive-utils.dart';
 import 'package:parks/common/mock-data.dart';
 import 'package:parks/common/root-store.dart';
@@ -11,10 +16,17 @@ import 'package:provider/provider.dart';
 
 import 'main.reflectable.dart' show initializeReflectable;
 
+void _enablePlatformOverrideForDesktop() {
+  if (!kIsWeb && (Platform.isWindows || Platform.isLinux)) {
+    debugDefaultTargetPlatformOverride = TargetPlatform.fuchsia;
+  }
+}
+
 void main() async {
+  _enablePlatformOverrideForDesktop();
   initializeReflectable();
   JsonMapper().useAdapter(mobXAdapter);
-
+  GetIt.instance.registerSingleton<BackClient>(BackClient());
   await initHive(mock: true);
 
   runApp(MyApp());

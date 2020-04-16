@@ -90,8 +90,10 @@ class __$DataCopyWithImpl<T, $Res> extends _$ResultCopyWithImpl<T, $Res>
   }
 }
 
-class _$_Data<T> with DiagnosticableTreeMixin implements _Data<T> {
-  const _$_Data(this.value) : assert(value != null);
+class _$_Data<T> extends _Data<T> with DiagnosticableTreeMixin {
+  const _$_Data(this.value)
+      : assert(value != null),
+        super._();
 
   @override
   final T value;
@@ -176,7 +178,8 @@ class _$_Data<T> with DiagnosticableTreeMixin implements _Data<T> {
   }
 }
 
-abstract class _Data<T> implements Result<T> {
+abstract class _Data<T> extends Result<T> {
+  const _Data._() : super._();
   const factory _Data(T value) = _$_Data<T>;
 
   T get value;
@@ -207,8 +210,10 @@ class __$ErrorCopyWithImpl<T, $Res> extends _$ResultCopyWithImpl<T, $Res>
   }
 }
 
-class _$_Error<T> with DiagnosticableTreeMixin implements _Error<T> {
-  const _$_Error(this.message) : assert(message != null);
+class _$_Error<T> extends _Error<T> with DiagnosticableTreeMixin {
+  const _$_Error(this.message)
+      : assert(message != null),
+        super._();
 
   @override
   final String message;
@@ -293,7 +298,8 @@ class _$_Error<T> with DiagnosticableTreeMixin implements _Error<T> {
   }
 }
 
-abstract class _Error<T> implements Result<T> {
+abstract class _Error<T> extends Result<T> {
+  const _Error._() : super._();
   const factory _Error(String message) = _$_Error<T>;
 
   String get message;
