@@ -9,62 +9,45 @@ part of 'auth-store.dart';
 // ignore_for_file: non_constant_identifier_names, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic
 
 mixin _$AuthStore on _AuthStore, Store {
-  final _$tokenAtom = Atom(name: '_AuthStore.token');
+  Computed<bool> _$isAuthenticatedComputed;
 
   @override
-  String get token {
-    _$tokenAtom.context.enforceReadPolicy(_$tokenAtom);
-    _$tokenAtom.reportObserved();
-    return super.token;
+  bool get isAuthenticated => (_$isAuthenticatedComputed ??=
+          Computed<bool>(() => super.isAuthenticated))
+      .value;
+  Computed<bool> _$isLoadingComputed;
+
+  @override
+  bool get isLoading =>
+      (_$isLoadingComputed ??= Computed<bool>(() => super.isLoading)).value;
+  Computed<String> _$errorComputed;
+
+  @override
+  String get error =>
+      (_$errorComputed ??= Computed<String>(() => super.error)).value;
+
+  final _$stateAtom = Atom(name: '_AuthStore.state');
+
+  @override
+  AuthState get state {
+    _$stateAtom.context.enforceReadPolicy(_$stateAtom);
+    _$stateAtom.reportObserved();
+    return super.state;
   }
 
   @override
-  set token(String value) {
-    _$tokenAtom.context.conditionallyRunInAction(() {
-      super.token = value;
-      _$tokenAtom.reportChanged();
-    }, _$tokenAtom, name: '${_$tokenAtom.name}_set');
-  }
-
-  final _$errorAtom = Atom(name: '_AuthStore.error');
-
-  @override
-  String get error {
-    _$errorAtom.context.enforceReadPolicy(_$errorAtom);
-    _$errorAtom.reportObserved();
-    return super.error;
-  }
-
-  @override
-  set error(String value) {
-    _$errorAtom.context.conditionallyRunInAction(() {
-      super.error = value;
-      _$errorAtom.reportChanged();
-    }, _$errorAtom, name: '${_$errorAtom.name}_set');
-  }
-
-  final _$loadingAtom = Atom(name: '_AuthStore.loading');
-
-  @override
-  bool get loading {
-    _$loadingAtom.context.enforceReadPolicy(_$loadingAtom);
-    _$loadingAtom.reportObserved();
-    return super.loading;
-  }
-
-  @override
-  set loading(bool value) {
-    _$loadingAtom.context.conditionallyRunInAction(() {
-      super.loading = value;
-      _$loadingAtom.reportChanged();
-    }, _$loadingAtom, name: '${_$loadingAtom.name}_set');
+  set state(AuthState value) {
+    _$stateAtom.context.conditionallyRunInAction(() {
+      super.state = value;
+      _$stateAtom.reportChanged();
+    }, _$stateAtom, name: '${_$stateAtom.name}_set');
   }
 
   final _$updateTokenAsyncAction = AsyncAction('updateToken');
 
   @override
-  Future updateToken(String _token) {
-    return _$updateTokenAsyncAction.run(() => super.updateToken(_token));
+  Future updateToken(String token) {
+    return _$updateTokenAsyncAction.run(() => super.updateToken(token));
   }
 
   final _$signInAsyncAction = AsyncAction('signIn');
@@ -72,6 +55,13 @@ mixin _$AuthStore on _AuthStore, Store {
   @override
   Future<void> signIn(String email, String password) {
     return _$signInAsyncAction.run(() => super.signIn(email, password));
+  }
+
+  final _$signUpAsyncAction = AsyncAction('signUp');
+
+  @override
+  Future<void> signUp(String name, String email, String password) {
+    return _$signUpAsyncAction.run(() => super.signUp(name, email, password));
   }
 
   final _$_AuthStoreActionController = ActionController(name: '_AuthStore');
@@ -99,7 +89,7 @@ mixin _$AuthStore on _AuthStore, Store {
   @override
   String toString() {
     final string =
-        'token: ${token.toString()},error: ${error.toString()},loading: ${loading.toString()}';
+        'state: ${state.toString()},isAuthenticated: ${isAuthenticated.toString()},isLoading: ${isLoading.toString()},error: ${error.toString()}';
     return '{$string}';
   }
 }

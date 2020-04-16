@@ -7,7 +7,7 @@ import 'package:parks/place/place-store.dart';
 import 'package:styled_widget/styled_widget.dart';
 
 class PlacePage extends HookWidget {
-  final Place place;
+  final PlaceModel place;
 
   PlacePage({Key key, this.place}) : super(key: key);
 
@@ -34,7 +34,7 @@ class PlacePage extends HookWidget {
               fit: BoxFit.cover,
             ),
           ])
-              .constraints(maxHeight: mq.size.height * 0.4)
+              .constrained(maxHeight: mq.size.height * 0.4)
               .scrollable(scrollDirection: Axis.horizontal),
           MaterialResponsiveWrapper(
             breakpoint: 600,
@@ -66,12 +66,12 @@ class PlacePage extends HookWidget {
                     Icon(Icons.arrow_drop_down)
                   ],
                 )
-                    .constraints(maxWidth: 400)
+                    .constrained(maxWidth: 400)
                     .padding(top: 8.0, horizontal: 40, bottom: 20),
               ],
             )
                 .padding(horizontal: 20)
-                .constraints(maxWidth: 550)
+                .constrained(maxWidth: 550)
                 .scrollable(scrollDirection: Axis.vertical),
           ).flexible()
         ],

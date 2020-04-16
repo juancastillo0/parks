@@ -84,7 +84,7 @@ class TransactionList extends HookWidget {
             ).padding(bottom: index == transactions.length ? 20 : 0);
           },
           itemCount: transactions.length + 1,
-        ).constraints(maxWidth: 400).alignment(Alignment.center);
+        ).constrained(maxWidth: 400).alignment(Alignment.center);
       },
     );
   }
@@ -132,7 +132,7 @@ class TransactionListTile extends HookWidget {
           ).padding(bottom: 6),
           Text(transaction.costString()),
         ],
-      ).constraints(minWidth: 60),
+      ).constrained(minWidth: 60),
       subtitle: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         mainAxisSize: MainAxisSize.min,

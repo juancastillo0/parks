@@ -76,7 +76,7 @@ class DefaultBottomNavigationBar extends HookWidget {
             child: Text(text).fontWeight(FontWeight.bold),
             disabledTextColor: Colors.black,
           )
-              .decoration(
+              .decorated(
                 border: Border(
                   top: BorderSide(color: colorScheme.secondary, width: 3),
                 ),
@@ -93,10 +93,10 @@ class DefaultBottomNavigationBar extends HookWidget {
           ).expanded();
         }
       }).toList(),
-    )
-        .constraints(maxHeight: 50)
-        .backgroundColor(colorScheme.surface)
-        .elevation(10, shadowColor: Colors.grey[800], opacity: 0.7, angle: 20);
+    ).constrained(maxHeight: 50).backgroundColor(colorScheme.surface).elevation(
+          10,
+          shadowColor: Colors.grey[800],
+        );
   }
 }
 

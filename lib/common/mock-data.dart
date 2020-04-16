@@ -60,7 +60,7 @@ var mockUser = UserModel(
 );
 
 var mockPlaces = [
-  Place(
+  PlaceModel(
     key: 1,
     name: "National Park",
     description:
@@ -70,7 +70,7 @@ var mockPlaces = [
     latitud: 4.669515485820514,
     longitud: -74.05895933919157,
   ),
-  Place(
+  PlaceModel(
     key: 2,
     name: "Local Park",
     description:
@@ -80,7 +80,7 @@ var mockPlaces = [
     latitud: 4.610515485820514,
     longitud: -74.07895933919157,
   ),
-  Place(
+  PlaceModel(
     key: 3,
     name: "Virrey Park",
     description:

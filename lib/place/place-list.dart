@@ -127,7 +127,7 @@ class PlacesPage extends HookWidget {
               .borderRadius(topLeft: bigScreen ? 0 : 10, topRight: 10)
               .elevation(1)
               .backgroundColor(Colors.white)
-              .constraints(
+              .constrained(
                 maxWidth: min(box.maxWidth - 26, 400),
                 maxHeight: bigScreen ? double.infinity : box.maxHeight - 60,
               );
@@ -144,7 +144,7 @@ class PlacesPage extends HookWidget {
                           onPressed: () {},
                           icon: Icon(Icons.tune),
                           label: Text("Filter"),
-                        ).constraints(height: 50),
+                        ).constrained(height: 50),
                         _list.flexible()
                       ],
                     ),
@@ -187,7 +187,7 @@ class PlacesPage extends HookWidget {
 }
 
 class PlaceListTile extends HookWidget {
-  final Place place;
+  final PlaceModel place;
   PlaceListTile(this.place);
 
   @override

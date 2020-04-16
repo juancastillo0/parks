@@ -1,8 +1,12 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:flutter/foundation.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:mobx/mobx.dart';
+import 'package:parks/auth/auth-back.dart';
 import 'package:parks/routes.gr.dart';
 
-part 'auth-store.g.dart';
+part 'auth-store.freezed.dart';
+part 'auth-store.g.dart'; 
 
 const ERROR_MESSAGES = {
   "ERROR_INVALID_EMAIL": "Correo inválido",
@@ -15,53 +19,108 @@ const ERROR_MESSAGES = {
       "Hubo un error en el servidor, por favor intenta de nuevo más tarde"
 };
 
+@freezed
+abstract class AuthState with _$AuthState {
+  const factory AuthState(String token) = Authenticated;
+  const factory AuthState.err(String message) = Error;
+  const factory AuthState.loading() = Loading;
+  const factory AuthState.none() = None;
+}
+
 class AuthStore = _AuthStore with _$AuthStore;
 
 abstract class _AuthStore with Store {
+  final AuthBack back = AuthBack();
+
   @observable
-  String token;
-  @observable
-  String error;
-  @observable
-  bool loading = false;
+  AuthState state = AuthState.none();
+
+  @computed
+  bool get isAuthenticated {
+    return state.maybeWhen(
+      (token) => true,
+      orElse: () => false,
+    );
+  }
+
+  @computed
+  bool get isLoading {
+    return state.maybeWhen(
+      (token) => false,
+      loading: () => true,
+      orElse: () => false,
+    );
+  }
+
+  @computed
+  String get error {
+    return state.maybeWhen(
+      (token) => null,
+      err: (err) => err,
+      orElse: () => null,
+    );
+  }
 
   @action
-  updateToken(String _token) async {
-    final wasLoggedIn = token != null;
-    token = _token;
-    loading = false;
-    error = null;
+  updateToken(String token) async {
+    state = AuthState(token);
 
-    // Switch pages
-    final currentRoute =
-        _token != null || !wasLoggedIn ? Routes.home : Routes.auth;
-
-    // Pop  all the stack
     if (ExtendedNavigator.rootNavigator != null) {
+      // Pop all the stack
       ExtendedNavigator.rootNavigator
-          .pushNamedAndRemoveUntil(currentRoute, (_) => false);
+          .pushNamedAndRemoveUntil(Routes.home, (_) => false);
     }
   }
 
   @action
   Future<void> signIn(String email, String password) async {
-    if (loading) return;
-    loading = true;
-    try {} catch (e) {
-      error = ERROR_MESSAGES[e.code] ?? ERROR_MESSAGES["default"];
-      loading = false;
+    if (state.maybeWhen((token) => true, orElse: () => false)) return;
+    state = AuthState.loading();
+    try {
+      final res = await back.signIn(email, password);
+      res.when(
+        (value) => updateToken(value),
+        err: (err) => state = AuthState.err(err),
+      );
+    } catch (e) {
+      print(e);
+      state =
+          AuthState.err( ERROR_MESSAGES["default"]);
+    }
+  }
+
+  @action
+  Future<void> signUp(String name, String email, String password) async {
+    if (isLoading) return;
+    state = AuthState.loading();
+    try {
+      final res = await back.signUp(name, email, password);
+      res.when(
+        (value) => updateToken(value),
+        err: (err) => state = AuthState.err(err),
+      );
+    } catch (e) {
+      print(e);
+      state =
+          AuthState.err( ERROR_MESSAGES["default"]);
     }
   }
 
   @action
   void signOut() {
-    updateToken(null);
+    state = AuthState.none();
+
+    if (ExtendedNavigator.rootNavigator != null) {
+      // Pop all the stack
+      ExtendedNavigator.rootNavigator
+          .pushNamedAndRemoveUntil(Routes.auth, (_) => false);
+    }
   }
 
   @action
   void resetError() {
     if (error != null) {
-      error = null;
+      state = AuthState.none();
     }
   }
 }

@@ -124,7 +124,7 @@ class CreatePaymentMethodForm extends HookWidget {
         )
             .padding(horizontal: 30)
             .scrollable(scrollDirection: Axis.vertical)
-            .constraints(maxWidth: 400),
+            .constrained(maxWidth: 400),
       ).alignment(Alignment.center),
     );
   }

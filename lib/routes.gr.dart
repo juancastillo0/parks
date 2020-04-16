@@ -43,7 +43,7 @@ class Router extends RouterBase {
         }
         final typedArgs = args as AuthPageArguments ?? AuthPageArguments();
         return MaterialPageRoute<dynamic>(
-          builder: (_) => AuthPage(key: typedArgs.key, title: typedArgs.title),
+          builder: (_) => AuthPage(key: typedArgs.key),
           settings: settings,
         );
       case Routes.placeDetail:
@@ -56,12 +56,12 @@ class Router extends RouterBase {
           settings: settings,
         );
       case Routes.places:
-        if (hasInvalidArgs<Key>(args)) {
-          return misTypedArgsRoute<Key>(args);
+        if (hasInvalidArgs<PlacesPageArguments>(args)) {
+          return misTypedArgsRoute<PlacesPageArguments>(args);
         }
-        final typedArgs = args as Key;
+        final typedArgs = args as PlacesPageArguments ?? PlacesPageArguments();
         return MaterialPageRoute<dynamic>(
-          builder: (_) => PlacesPage(key: typedArgs),
+          builder: (_) => PlacesPage(key: typedArgs.key),
           settings: settings,
         );
       case Routes.profile:
@@ -70,12 +70,13 @@ class Router extends RouterBase {
           settings: settings,
         );
       case Routes.home:
-        if (hasInvalidArgs<Key>(args)) {
-          return misTypedArgsRoute<Key>(args);
+        if (hasInvalidArgs<TransactionsPageArguments>(args)) {
+          return misTypedArgsRoute<TransactionsPageArguments>(args);
         }
-        final typedArgs = args as Key;
+        final typedArgs =
+            args as TransactionsPageArguments ?? TransactionsPageArguments();
         return MaterialPageRoute<dynamic>(
-          builder: (_) => TransactionsPage(key: typedArgs),
+          builder: (_) => TransactionsPage(key: typedArgs.key),
           settings: settings,
         );
       case Routes.transactionDetail:
@@ -90,12 +91,13 @@ class Router extends RouterBase {
           settings: settings,
         );
       case Routes.createPaymentMethod:
-        if (hasInvalidArgs<Key>(args)) {
-          return misTypedArgsRoute<Key>(args);
+        if (hasInvalidArgs<CreatePaymentMethodFormArguments>(args)) {
+          return misTypedArgsRoute<CreatePaymentMethodFormArguments>(args);
         }
-        final typedArgs = args as Key;
+        final typedArgs = args as CreatePaymentMethodFormArguments ??
+            CreatePaymentMethodFormArguments();
         return MaterialPageRoute<dynamic>(
-          builder: (_) => CreatePaymentMethodForm(key: typedArgs),
+          builder: (_) => CreatePaymentMethodForm(key: typedArgs.key),
           settings: settings,
           fullscreenDialog: true,
         );
@@ -112,15 +114,26 @@ class Router extends RouterBase {
 //AuthPage arguments holder class
 class AuthPageArguments {
   final Key key;
-  final String title;
-  AuthPageArguments({this.key, this.title});
+  AuthPageArguments({this.key});
 }
 
 //PlacePage arguments holder class
 class PlacePageArguments {
   final Key key;
-  final Place place;
+  final PlaceModel place;
   PlacePageArguments({this.key, this.place});
+}
+
+//PlacesPage arguments holder class
+class PlacesPageArguments {
+  final Key key;
+  PlacesPageArguments({this.key});
+}
+
+//TransactionsPage arguments holder class
+class TransactionsPageArguments {
+  final Key key;
+  TransactionsPageArguments({this.key});
 }
 
 //TransactionPage arguments holder class
@@ -128,4 +141,10 @@ class TransactionPageArguments {
   final TransactionModel transaction;
   final Key key;
   TransactionPageArguments({this.transaction, this.key});
+}
+
+//CreatePaymentMethodForm arguments holder class
+class CreatePaymentMethodFormArguments {
+  final Key key;
+  CreatePaymentMethodFormArguments({this.key});
 }

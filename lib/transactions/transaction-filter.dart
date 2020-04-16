@@ -62,7 +62,7 @@ class TransactionFilter extends HookWidget {
                 .toList(),
           ).scrollable(scrollDirection: Axis.horizontal).flexible(),
         ],
-      ).constraints(height: 50);
+      ).constrained(height: 50);
     }
 
     return ListView(

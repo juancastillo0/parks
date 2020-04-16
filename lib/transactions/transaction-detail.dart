@@ -131,7 +131,7 @@ class TransactionDetail extends HookWidget {
     )
         .scrollable(scrollDirection: Axis.vertical)
         .backgroundColor(Colors.white)
-        .constraints(maxWidth: 400)
+        .constrained(maxWidth: 400)
         .alignment(Alignment.center);
   }
 }

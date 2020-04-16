@@ -94,7 +94,7 @@ class MultiSelect<T> extends HookWidget {
                     .toList(),
               )
                   .scrollable(scrollDirection: Axis.horizontal)
-                  .constraints(maxWidth: box.maxWidth - 50, maxHeight: 50),
+                  .constrained(maxWidth: box.maxWidth - 50, maxHeight: 50),
               IconButton(
                 constraints: BoxConstraints.expand(width: 50, height: 50),
                 onPressed: openDialog,

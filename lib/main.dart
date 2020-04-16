@@ -53,7 +53,7 @@ var colorScheme = ColorScheme.light(
   background: Color(0xffeeeeee),
   onBackground: Colors.black,
   //
-  error: Colors.red[100],
+  error: Colors.red[800],
   onError: Colors.black,
   //
   surface: Color(0xffffffff),

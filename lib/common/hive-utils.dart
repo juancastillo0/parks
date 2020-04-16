@@ -1,6 +1,7 @@
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:parks/common/mock-data.dart';
+import 'package:parks/place/place-store.dart';
 import 'package:parks/transactions/transaction-model.dart';
 import 'package:parks/user-parking/paymentMethod.dart';
 import 'package:parks/user-parking/user-model.dart';
@@ -12,6 +13,9 @@ const PLACES_BOX = "places";
 
 Future initHive({bool mock = false}) async {
   await Hive.initFlutter();
+
+  // Places
+  Hive.registerAdapter(PlaceModelAdapter());
 
   // Transactions
   Hive.registerAdapter(TransactionModelAdapter());
@@ -46,4 +50,8 @@ Box<TransactionModel> getTransactionsBox() {
 
 Box<UserModel> getUserBox() {
   return Hive.box<UserModel>(USER_BOX);
+}
+
+Box<PlaceModel> getPlacesBox() {
+  return Hive.box<PlaceModel>(PLACES_BOX);
 }

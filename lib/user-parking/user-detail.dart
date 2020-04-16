@@ -169,7 +169,7 @@ class UserParkingDetail extends HookWidget {
           ).padding(bottom: 26),
           ExpandibleList([cars, paymentMethods])
               .padding(bottom: 50)
-              .constraints(maxWidth: 400)
+              .constrained(maxWidth: 400)
               .alignment(Alignment.center),
           if (!kIsWeb)
             RaisedButton(

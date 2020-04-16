@@ -1,9 +1,13 @@
 class StringValidMessages {
-  String minLength = "Minimum length";
-  String maxLength = "Maximum length";
-  String pattern = "Invalid pattern";
+  String minLength;
+  String maxLength;
+  String pattern;
 
-  StringValidMessages({this.minLength, this.maxLength, this.pattern});
+  StringValidMessages({
+    this.minLength = "Minimum length",
+    this.maxLength = "Maximum length",
+    this.pattern = "Invalid pattern",
+  });
 }
 
 class StringValidErrors {
@@ -23,13 +27,14 @@ class StringValid {
 
   StringValidMessages messages;
 
-  StringValid({int minLength, int maxLength, RegExp pattern, this.messages}) {
+  StringValid({int minLength, int maxLength, RegExp pattern, StringValidMessages messagesp}) {
     _minLength = minLength;
     _maxLength = maxLength;
     _pattern = pattern;
     if (minLength != null) _callbacks.add(errorMinLength);
     if (maxLength != null) _callbacks.add(errorMaxLength);
     if (pattern != null) _callbacks.add(errorPattern);
+    messages = messagesp ?? StringValidMessages();
   }
 
   String firstError(String val) {

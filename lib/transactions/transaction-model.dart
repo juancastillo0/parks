@@ -26,7 +26,7 @@ class TransactionPlaceModel {
   @HiveField(1)
   String address;
 
-  TransactionPlaceModel.fromPlace(Place place) {
+  TransactionPlaceModel.fromPlace(PlaceModel place) {
     name = place.name;
     address = place.address;
   }

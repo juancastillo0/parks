@@ -1,41 +1,51 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:parks/auth/auth-store.dart';
+import 'package:parks/common/root-store.dart';
 import 'package:parks/routes.gr.dart';
-import 'package:provider/provider.dart';
+import 'package:parks/validators/validators.dart';
 import 'package:styled_widget/styled_widget.dart';
 
-class AuthPage extends StatefulWidget {
-  AuthPage({Key key, this.title}) : super(key: key);
-  final String title;
+class AuthPage extends HookWidget {
+  AuthPage({
+    Key key,
+  }) : super(key: key);
 
   @override
-  _AuthPageState createState() => _AuthPageState();
-}
+  Widget build(ctx) {
+    final _email = useTextEditingController();
+    final _password = useTextEditingController();
+    final _name = useTextEditingController();
+    final _password2 = useTextEditingController();
+    final _formKey = useMemoized(() => GlobalKey<FormState>(), []);
+    final isSigningUp = useState(false);
+    final autovalid = useState(false);
+    final _isSigningUp = isSigningUp.value;
+    final authStore = useAuthStore(ctx);
+    final _authenticate = useMemoized(
+      () => () {
+        final formState = _formKey.currentState;
+        autovalid.value = true;
+        if (formState.validate()) {
+          if (_isSigningUp) {
+            authStore.signUp(_name.text, _email.text, _password.text);
+          } else {
+            authStore.signIn(_email.text, _password.text);
+          }
+        }
+      },
+      [_isSigningUp],
+    );
 
-class _AuthPageState extends State<AuthPage> {
-  String _email, _password, _name, _password2;
-  final _formKey = GlobalKey<FormState>();
-  AuthStore authStore;
-  // Is signing up or logging in
-  var _isSigningUp = false;
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    // Dependency injection
-    authStore = Provider.of<AuthStore>(context, listen: false);
-    if (authStore.token != null) {
+    if (authStore.isAuthenticated) {
       // Go to home if the user is logged in
       Future.delayed(Duration.zero, () {
         ExtendedNavigator.rootNavigator.pushNamed(Routes.home);
       });
+      return Container();
     }
-  }
-
-  @override
-  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(_isSigningUp ? "Sign up" : "Log in"),
@@ -43,6 +53,7 @@ class _AuthPageState extends State<AuthPage> {
       body: Center(
         child: Form(
           onChanged: () => authStore.resetError(),
+          autovalidate: autovalid.value,
           key: _formKey,
           child: Container(
             width: 400,
@@ -55,12 +66,17 @@ class _AuthPageState extends State<AuthPage> {
                 if (_isSigningUp)
                   TextFormField(
                     key: Key("name"),
-                    onSaved: (name) => _name = name,
+                    controller: _name,
+                    validator: StringValid(minLength: 3).firstError,
                     decoration: InputDecoration(labelText: "Name"),
                   ),
                 TextFormField(
                   key: Key("email"),
-                  onSaved: (email) => _email = email,
+                  controller: _email,
+                  validator: StringValid(
+                    minLength: 5,
+                    pattern: RegExp(r'^[\w]+@[\w]+(\.[\w]+)+$'),
+                  ).firstError,
                   decoration: InputDecoration(labelText: "Email"),
                 ),
 
@@ -68,20 +84,22 @@ class _AuthPageState extends State<AuthPage> {
 
                 TextFormField(
                   key: Key("password"),
-                  onSaved: (password) => _password = password,
+                  controller: _password,
                   decoration: InputDecoration(labelText: "Password"),
+                  validator: StringValid(minLength: 3).firstError,
                   obscureText: true,
                 ),
                 if (_isSigningUp)
                   TextFormField(
                     key: Key("password2"),
-                    onSaved: (password2) => _password2 = password2,
+                    controller: _password2,
                     decoration:
                         InputDecoration(labelText: "Verification Password"),
                     validator: (password2) {
+                      print(password2);
                       if (!_isSigningUp) return null;
                       if (password2.length == 0) return "Required";
-                      if (password2 != _password)
+                      if (password2 != _password.text)
                         return "The passwords don't match";
                       return null;
                     },
@@ -92,16 +110,17 @@ class _AuthPageState extends State<AuthPage> {
 
                 Observer(
                     builder: (_) => RaisedButton(
-                          onPressed: authStore.loading ? null : _authenticate,
-                          child: authStore.loading
+                          onPressed: authStore.isLoading ? null : _authenticate,
+                          child: authStore.isLoading
                               ? LinearProgressIndicator()
                               : Text((_isSigningUp ? "Sign up" : "Log in")),
                         )).padding(top: 24, bottom: 14),
 
                 // Backend error
-                mainError(),
+                mainError(authStore),
                 // Toggle _isSigningUp
-                redirectSignInSignUp(),
+                redirectSignInSignUp(
+                    _isSigningUp, () => isSigningUp.value = !_isSigningUp),
                 // Continue with out auth
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -116,20 +135,6 @@ class _AuthPageState extends State<AuthPage> {
     );
   }
 
-  void _authenticate() {
-    final formState = _formKey.currentState;
-    if (formState.validate()) {
-      formState.save();
-      authStore.signIn(_email, _password);
-    }
-  }
-
-  void _toggleSignUp() {
-    setState(() {
-      _isSigningUp = !_isSigningUp;
-    });
-  }
-
   Widget continueNoAuth() {
     return FlatButton(
       onPressed: () => ExtendedNavigator.rootNavigator.pushNamed(Routes.home),
@@ -139,7 +144,7 @@ class _AuthPageState extends State<AuthPage> {
     );
   }
 
-  Widget mainError() {
+  Widget mainError(AuthStore authStore) {
     return Observer(
       builder: (_) {
         return (authStore.error != null
@@ -153,7 +158,7 @@ class _AuthPageState extends State<AuthPage> {
     );
   }
 
-  Widget redirectSignInSignUp() {
+  Widget redirectSignInSignUp(bool _isSigningUp, Function _toggleSignUp) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
