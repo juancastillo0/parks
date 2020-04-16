@@ -17,7 +17,7 @@ class PlaceModelAdapter extends TypeAdapter<PlaceModel> {
       for (var i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return PlaceModel(
-      key: fields[0] as int,
+      id: fields[0] as String,
       name: fields[1] as String,
       latitud: fields[2] as double,
       longitud: fields[3] as double,
@@ -32,7 +32,7 @@ class PlaceModelAdapter extends TypeAdapter<PlaceModel> {
     writer
       ..writeByte(7)
       ..writeByte(0)
-      ..write(obj.key)
+      ..write(obj.id)
       ..writeByte(1)
       ..write(obj.name)
       ..writeByte(2)

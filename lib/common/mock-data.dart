@@ -44,7 +44,7 @@ var mockTransactions = ObservableList.of([
 ]);
 
 var mockUser = UserModel(
-  userId: "1",
+  id: "1",
   vehicles: ObservableMap.of({_car.plate: _car, _car2.plate: _car2}),
   email: "juan@mail.com",
   name: "Juan Manuel",
@@ -61,7 +61,7 @@ var mockUser = UserModel(
 
 var mockPlaces = [
   PlaceModel(
-    key: 1,
+    id: "1",
     name: "National Park",
     description:
         "Sed culpa consequuntur labore in. Quis quia recusandae amet. Consectetur doloribus sit omnis temporibus officia. Earum ipsum tempora occaecati fugit. Deserunt facilis autem occaecati consequatur iure maxime ut.",
@@ -71,7 +71,7 @@ var mockPlaces = [
     longitud: -74.05895933919157,
   ),
   PlaceModel(
-    key: 2,
+    id: "2",
     name: "Local Park",
     description:
         "Qui ratione officiis repellat. Et maiores facilis optio excepturi animi. Ut consequatur consequatur non omnis. Omnis ut ad enim quia in sit. Facere temporibus ipsam nesciunt recusandae ex qui dolores eos.",
@@ -81,7 +81,7 @@ var mockPlaces = [
     longitud: -74.07895933919157,
   ),
   PlaceModel(
-    key: 3,
+    id: "3",
     name: "Virrey Park",
     description:
         "Voluptas placeat quia itaque consequatur reprehenderit sunt ipsa eligendi. Sed est pariatur consequatur voluptas sunt omnis non numquam veritatis. Praesentium est molestiae aut et. Quos nobis dolor enim est.",

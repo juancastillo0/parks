@@ -31,7 +31,7 @@ var _markers = (Completer<GoogleMapController> controller) => <Marker>[
         ),
       ),
       ...mockPlaces.map((e) {
-        final markerId = MarkerId(e.key.toString());
+        final markerId = MarkerId(e.id.toString());
         return Marker(
           markerId: markerId,
           consumeTapEvents: true,

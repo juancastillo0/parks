@@ -7,7 +7,7 @@ part 'place-store.g.dart';
 @HiveType(typeId: 8)
 class PlaceModel {
   @HiveField(0)
-  int key;
+  String id;
   @HiveField(1)
   String name;
   @HiveField(2)
@@ -22,7 +22,7 @@ class PlaceModel {
   double rating;
 
   PlaceModel({
-    this.key,
+    this.id,
     this.name,
     this.latitud,
     this.longitud,
