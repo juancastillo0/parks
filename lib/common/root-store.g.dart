@@ -26,6 +26,23 @@ mixin _$RootStore on _RootStore, Store {
     }, _$authStoreAtom, name: '${_$authStoreAtom.name}_set');
   }
 
+  final _$placeStoreAtom = Atom(name: '_RootStore.placeStore');
+
+  @override
+  PlaceStore get placeStore {
+    _$placeStoreAtom.context.enforceReadPolicy(_$placeStoreAtom);
+    _$placeStoreAtom.reportObserved();
+    return super.placeStore;
+  }
+
+  @override
+  set placeStore(PlaceStore value) {
+    _$placeStoreAtom.context.conditionallyRunInAction(() {
+      super.placeStore = value;
+      _$placeStoreAtom.reportChanged();
+    }, _$placeStoreAtom, name: '${_$placeStoreAtom.name}_set');
+  }
+
   final _$userStoreAtom = Atom(name: '_RootStore.userStore');
 
   @override
@@ -100,7 +117,7 @@ mixin _$RootStore on _RootStore, Store {
   @override
   String toString() {
     final string =
-        'authStore: ${authStore.toString()},userStore: ${userStore.toString()},transactionStore: ${transactionStore.toString()},locationService: ${locationService.toString()},notificationService: ${notificationService.toString()}';
+        'authStore: ${authStore.toString()},placeStore: ${placeStore.toString()},userStore: ${userStore.toString()},transactionStore: ${transactionStore.toString()},locationService: ${locationService.toString()},notificationService: ${notificationService.toString()}';
     return '{$string}';
   }
 }

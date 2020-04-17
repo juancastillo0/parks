@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:parks/auth/auth-store.dart';
+import 'package:parks/common/root-store.dart';
 import 'package:parks/main.dart';
 import 'package:parks/routes.dart';
 import 'package:parks/routes.gr.dart';
@@ -49,8 +50,8 @@ String getCurrentRoute([NavigatorState navigator]) {
 }
 
 const mainRoutes = [
-  {"name": Routes.home, "text": "Transactions"},
-  {"name": Routes.places, "text": "Parkings"},
+  {"name": Routes.transactions, "text": "Transactions"},
+  {"name": Routes.home, "text": "Parkings"},
   {"name": Routes.profile, "text": "Settings"}
 ];
 
@@ -61,6 +62,18 @@ class DefaultBottomNavigationBar extends HookWidget {
   Widget build(ctx) {
     final navigator = useNavigator(ctx);
     final route = getCurrentRoute(navigator);
+    final authStore = useAuthStore(ctx);
+
+    if (!authStore.isAuthenticated &&
+        route != Routes.home &&
+        route != Routes.auth) {
+      Future.delayed(
+        Duration.zero,
+        () => navigator.pushNamed(
+          Routes.auth,
+        ),
+      );
+    }
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -84,10 +97,12 @@ class DefaultBottomNavigationBar extends HookWidget {
               .expanded();
         } else {
           return FlatButton(
-            onPressed: () => navigator.pushNamedAndRemoveUntil(
-              name,
-              (route) => false,
-            ),
+            onPressed: !authStore.isAuthenticated && name != Routes.home
+                ? null
+                : () => navigator.pushNamedAndRemoveUntil(
+                      name,
+                      (route) => false,
+                    ),
             child: Text(text),
             padding: EdgeInsets.all(0),
           ).expanded();

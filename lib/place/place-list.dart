@@ -6,9 +6,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:mobx/mobx.dart';
 import 'package:parks/auth/auth-store.dart';
 import 'package:parks/common/location-service.dart';
-import 'package:parks/common/mock-data.dart';
 import 'package:parks/common/root-store.dart';
 import 'package:parks/common/scaffold.dart';
 import 'package:parks/place/place-store.dart';
@@ -16,7 +16,9 @@ import 'package:parks/routes.dart';
 import 'package:parks/routes.gr.dart';
 import 'package:styled_widget/styled_widget.dart';
 
-var _markers = (Completer<GoogleMapController> controller) => <Marker>[
+var _markers = (Completer<GoogleMapController> controller,
+        ObservableMap<String, PlaceModel> places) =>
+    <Marker>[
       Marker(
         markerId: MarkerId("-1"),
         consumeTapEvents: true,
@@ -30,7 +32,7 @@ var _markers = (Completer<GoogleMapController> controller) => <Marker>[
           snippet: "Sunt quae consectetur voluptatibus maxime facere et culpa.",
         ),
       ),
-      ...mockPlaces.map((e) {
+      ...places.values.map((e) {
         final markerId = MarkerId(e.id.toString());
         return Marker(
           markerId: markerId,
@@ -98,12 +100,11 @@ class PlacesPage extends HookWidget {
         myLocationButtonEnabled: true,
         mapToolbarEnabled: true,
         myLocationEnabled: true,
-        markers: _markers(controller),
+        markers: _markers(controller, store.placeStore.places),
       ),
     );
 
     final showList = useState(false);
-    final places = mockPlaces;
 
     final mq = MediaQuery.of(ctx);
     final bigScreen = mq.size.width > 900;
@@ -115,6 +116,7 @@ class PlacesPage extends HookWidget {
       bottomNavigationBar: DefaultBottomNavigationBar(),
       body: LayoutBuilder(
         builder: (ctx, box) {
+          final places = store.placeStore.places.values.toList();
           final _list = ListView.separated(
             itemBuilder: (_, index) => index == 0
                 ? PlaceListTile(places[index]).padding(top: 20)
@@ -192,7 +194,7 @@ class PlaceListTile extends HookWidget {
 
   @override
   Widget build(ctx) {
-    final navigator = useNavigator( ctx);
+    final navigator = useNavigator(ctx);
     return ListTile(
       title: Text(place.name, style: useTextTheme().headline6).gestures(
           onTap: () => navigator.pushNamed(

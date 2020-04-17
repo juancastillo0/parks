@@ -226,14 +226,14 @@ mixin _$TransactionStore on _TransactionStore, Store {
   final _$transactionsAtom = Atom(name: '_TransactionStore.transactions');
 
   @override
-  ObservableList<TransactionModel> get transactions {
+  ObservableMap<String, TransactionModel> get transactions {
     _$transactionsAtom.context.enforceReadPolicy(_$transactionsAtom);
     _$transactionsAtom.reportObserved();
     return super.transactions;
   }
 
   @override
-  set transactions(ObservableList<TransactionModel> value) {
+  set transactions(ObservableMap<String, TransactionModel> value) {
     _$transactionsAtom.context.conditionallyRunInAction(() {
       super.transactions = value;
       _$transactionsAtom.reportChanged();
@@ -275,6 +275,13 @@ mixin _$TransactionStore on _TransactionStore, Store {
       _$selectedTransactionAtom.reportChanged();
     }, _$selectedTransactionAtom,
         name: '${_$selectedTransactionAtom.name}_set');
+  }
+
+  final _$fetchTransactionsAsyncAction = AsyncAction('fetchTransactions');
+
+  @override
+  Future fetchTransactions() {
+    return _$fetchTransactionsAsyncAction.run(() => super.fetchTransactions());
   }
 
   final _$_TransactionStoreActionController =

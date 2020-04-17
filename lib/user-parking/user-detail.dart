@@ -62,6 +62,10 @@ class UserParkingDetail extends HookWidget {
     final userStore = useUserStore(ctx);
     final user = userStore.user;
     final navigator = useNavigator(ctx);
+    useEffect(() {
+      userStore.fetchUser();
+      return null;
+    }, []);
     final mq = MediaQuery.of(ctx);
 
     final showCreateVehicleDialog = useMemoized(

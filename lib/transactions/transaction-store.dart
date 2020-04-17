@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart' as material;
+import 'package:hive/hive.dart';
 import 'package:mobx/mobx.dart';
 import 'package:parks/common/hive-utils.dart';
 import 'package:parks/common/utils.dart';
-import 'package:parks/place/place-store.dart';
+import 'package:parks/transactions/transaction-back.dart';
 import 'package:parks/transactions/transaction-model.dart';
 import 'package:parks/user-parking/vehicle.dart';
 
@@ -101,19 +102,35 @@ class TransactionStore extends _TransactionStore with _$TransactionStore {
 
 abstract class _TransactionStore with Store {
   _TransactionStore() {
-    final box = getTransactionsBox();
-    transactions = ObservableList.of(box.values.toList());
-    selectedTransaction = transactions.first;
+    _box = getTransactionsBox();
+    transactions = ObservableMap.of(
+      Map.fromEntries(_box.values.map((e) => MapEntry(e.id, e))),
+    );
+    selectedTransaction = transactions.values.first;
 
     filter = TransactionFilterStore();
   }
 
+  final _back = TransactionBack();
+  Box<TransactionModel> _box;
+
   @observable
-  ObservableList<TransactionModel> transactions;
+  ObservableMap<String, TransactionModel> transactions;
   @observable
   TransactionFilterStore filter;
   @observable
   TransactionModel selectedTransaction;
+
+  @action
+  fetchTransactions() async {
+    final resp = await _back.transactions();
+    final value = resp.okOrNull();
+    if (value != null) {
+      final map = Map.fromEntries(value.map((e) => MapEntry(e.id, e)));
+      transactions.addAll(map);
+      await _box.putAll(map);
+    }
+  }
 
   @action
   setSelectedTransaction(TransactionModel transaction) {
@@ -127,12 +144,12 @@ abstract class _TransactionStore with Store {
 
   @computed
   Iterable<TransactionModel> get filteredTransactions {
-    return transactions.where(filter.valid);
+    return transactions.values.where(filter.valid);
   }
 
   @computed
   Set<VehicleModel> get vehiclesInTransactions {
-    return transactions.fold(
+    return transactions.values.fold(
       Set(),
       (Set<VehicleModel> p, e) {
         p.add(e.vehicle);
@@ -143,7 +160,7 @@ abstract class _TransactionStore with Store {
 
   @computed
   Set<TransactionPlaceModel> get placesInTransactions {
-    return transactions.fold(
+    return transactions.values.fold(
       Set(),
       (Set p, e) {
         p.add(e.place);
@@ -155,13 +172,13 @@ abstract class _TransactionStore with Store {
   @computed
   Interval<double> get costInterval {
     final interval = Interval(double.infinity, double.negativeInfinity);
-    return interval.fromIter(transactions.map((t) => t.cost));
+    return interval.fromIter(transactions.values.map((t) => t.cost));
   }
 
   @computed
   Interval<DateTime> get timeInterval {
     final interval =
         Interval(DateTime.now(), DateTime.fromMillisecondsSinceEpoch(0));
-    return interval.fromIter(transactions.map((t) => t.timestamp));
+    return interval.fromIter(transactions.values.map((t) => t.timestamp));
   }
 }

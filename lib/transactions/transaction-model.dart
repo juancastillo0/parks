@@ -48,7 +48,7 @@ class TransactionPlaceModel {
 @jsonSerializable
 class TransactionModel {
   @HiveField(0)
-  int id;
+  String id;
 
   @HiveField(1)
   @JsonProperty(name: "startTime")
@@ -112,8 +112,13 @@ class TransactionPlaceConverter
 
   @override
   TransactionPlaceModel fromJSON(jsonValue, [JsonProperty jsonProperty]) {
-    final _rootStore = GetIt.instance.get<RootStore>();
-    throw UnimplementedError();
+    final rootStore = GetIt.instance.get<RootStore>();
+    final place = rootStore.placeStore.places[jsonValue];
+    if (place != null) {
+      return TransactionPlaceModel.fromPlace(place);
+    } else {
+      return null;
+    }
   }
 
   @override

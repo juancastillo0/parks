@@ -47,3 +47,34 @@ class PlaceModelAdapter extends TypeAdapter<PlaceModel> {
       ..write(obj.rating);
   }
 }
+
+// **************************************************************************
+// StoreGenerator
+// **************************************************************************
+
+// ignore_for_file: non_constant_identifier_names, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic
+
+mixin _$PlaceStore on _PlaceStore, Store {
+  final _$placesAtom = Atom(name: '_PlaceStore.places');
+
+  @override
+  ObservableMap<String, PlaceModel> get places {
+    _$placesAtom.context.enforceReadPolicy(_$placesAtom);
+    _$placesAtom.reportObserved();
+    return super.places;
+  }
+
+  @override
+  set places(ObservableMap<String, PlaceModel> value) {
+    _$placesAtom.context.conditionallyRunInAction(() {
+      super.places = value;
+      _$placesAtom.reportChanged();
+    }, _$placesAtom, name: '${_$placesAtom.name}_set');
+  }
+
+  @override
+  String toString() {
+    final string = 'places: ${places.toString()}';
+    return '{$string}';
+  }
+}

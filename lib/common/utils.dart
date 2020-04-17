@@ -1,3 +1,8 @@
+import 'package:flutter/foundation.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
+
+part 'utils.freezed.dart';
+
 class Interval<T extends Comparable> {
   T min;
   T max;
@@ -31,4 +36,19 @@ String currencyString(double cost) {
     prev += size;
   }
   return ans.join(",");
+}
+
+@freezed
+abstract class Result<T> implements _$Result<T> {
+  const Result._();
+  const factory Result(T value) = _Data<T>;
+  const factory Result.err(String message) = _Error<T>;
+
+  Result<K> mapOk<K>(Result<K> Function(T) f) {
+    return this.when(f, err: (err) => Result.err(err));
+  }
+
+  T okOrNull() {
+    return this.when((v) => v, err: (err) => null);
+  }
 }

@@ -31,6 +31,7 @@ Future initHive({bool mock = false}) async {
   final userBox = await Hive.openBox<UserModel>(USER_BOX);
   final transactionsBox =
       await Hive.openBox<TransactionModel>(TRANSACTIONS_BOX);
+  final placesBox = await Hive.openBox<PlaceModel>(PLACES_BOX);
 
   if (mock) {
     if (userBox.length != 1) {
@@ -39,7 +40,13 @@ Future initHive({bool mock = false}) async {
     }
     if (transactionsBox.length != mockTransactions.length) {
       await transactionsBox.clear();
-      await transactionsBox.addAll(mockTransactions);
+      await transactionsBox.putAll(
+        Map.fromEntries(mockTransactions.map((e) => MapEntry(e.id, e))),
+      );
+    }
+    if (placesBox.length != mockPlaces.length) {
+      await placesBox.clear();
+      await placesBox.addAll(mockPlaces);
     }
   }
 }

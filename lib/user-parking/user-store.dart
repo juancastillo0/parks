@@ -2,6 +2,7 @@ import 'package:hive/hive.dart';
 import 'package:mobx/mobx.dart';
 import 'package:parks/common/hive-utils.dart';
 import 'package:parks/user-parking/paymentMethod.dart';
+import 'package:parks/user-parking/user-back.dart';
 import 'package:parks/user-parking/user-model.dart';
 import 'package:parks/user-parking/vehicle.dart';
 
@@ -11,21 +12,33 @@ class UserStore extends _UserStore with _$UserStore {
   UserStore(UserModel user) : super();
 }
 
+enum PersistenceState { Persisted, Waiting }
+
 abstract class _UserStore with Store {
   _UserStore() {
-    box = getUserBox();
-    user = box.getAt(0);
+    _box = getUserBox();
+    user = _box.getAt(0);
+
+    reaction((_reaction) => user, _persistUser);
   }
 
-  Box<UserModel> box;
-
+  UserBack _back = UserBack();
+  Box<UserModel> _box;
+  @observable
+  PersistenceState persistenceState = PersistenceState.Persisted;
   @observable
   UserModel user;
 
   @action
+  Future fetchUser() async {
+    final res = await _back.userInfo();
+    final _user = res.okOrNull();
+    if (_user != null) user = _user;
+  }
+
+  @action
   Future createVehicle(VehicleModel vehicle) async {
     user.vehicles.putIfAbsent(vehicle.plate, () => vehicle);
-    await box.putAt(0, user);
   }
 
   @action
@@ -34,24 +47,26 @@ abstract class _UserStore with Store {
       value.active = !value.active;
       return value;
     });
-    await box.putAt(0, user);
   }
 
   @action
   Future deleteVehicle(String plate) async {
     user.vehicles.remove(plate);
-    await box.putAt(0, user);
   }
 
   @action
   Future createPaymentMethod(PaymentMethod method) async {
     user.paymentMethods.add(method);
-    await box.putAt(0, user);
   }
 
   @action
   Future deletePaymentMethod(PaymentMethod method) async {
     user.paymentMethods.removeWhere((m) => m.name == method.name);
-    await box.putAt(0, user);
+  }
+
+  @action
+  _persistUser(UserModel _user) async {
+    await _box.putAt(0, _user);
+    persistenceState = PersistenceState.Persisted;
   }
 }

@@ -80,7 +80,7 @@ class TransactionModelAdapter extends TypeAdapter<TransactionModel> {
       for (var i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return TransactionModel(
-      id: fields[0] as int,
+      id: fields[0] as String,
       timestamp: fields[1] as DateTime,
       endTimestamp: fields[2] as DateTime,
       place: fields[3] as TransactionPlaceModel,

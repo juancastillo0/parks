@@ -17,14 +17,14 @@ class $Router {
 
   // Places
   PlacePage placeDetail;
-  PlacesPage places;
+  @initial
+  PlacesPage home;
 
   // User
   UserParkingDetail profile;
 
   // Transactions
-  @initial
-  TransactionsPage home;
+  TransactionsPage transactions;
   TransactionPage transactionDetail;
 
   // Payment

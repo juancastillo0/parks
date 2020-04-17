@@ -1,26 +1,9 @@
 import 'dart:convert';
 
-import 'package:flutter/foundation.dart';
-import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:get_it/get_it.dart';
 import 'package:parks/common/back-client.dart';
+import 'package:parks/common/utils.dart';
 
-part 'auth-back.freezed.dart';
-
-@freezed
-abstract class Result<T> implements _$Result<T> {
-  const Result._();
-  const factory Result(T value) = _Data<T>;
-  const factory Result.err(String message) = _Error<T>;
-
-  // Result<K> mapOk<K>(Result<K> Function(T) f) {
-  //   return this.map((v) => f(v.value), err: (err) => err as Result<K>);
-  // }
-
-  Result<K> mapOk<K>(Result<K> Function(T) f) {
-    return this.when(f, err: (err) => Result.err(err));
-  }
-}
 
 class AuthBack {
   final _client = GetIt.instance.get<BackClient>();

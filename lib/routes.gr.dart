@@ -20,9 +20,9 @@ import 'package:parks/user-parking/paymentMethod.dart';
 abstract class Routes {
   static const auth = '/auth';
   static const placeDetail = '/place-detail';
-  static const places = '/places';
-  static const profile = '/profile';
   static const home = '/';
+  static const profile = '/profile';
+  static const transactions = '/transactions';
   static const transactionDetail = '/transaction-detail';
   static const createPaymentMethod = '/create-payment-method';
 }
@@ -55,7 +55,7 @@ class Router extends RouterBase {
           builder: (_) => PlacePage(key: typedArgs.key, place: typedArgs.place),
           settings: settings,
         );
-      case Routes.places:
+      case Routes.home:
         if (hasInvalidArgs<PlacesPageArguments>(args)) {
           return misTypedArgsRoute<PlacesPageArguments>(args);
         }
@@ -69,7 +69,7 @@ class Router extends RouterBase {
           builder: (_) => UserParkingDetail(),
           settings: settings,
         );
-      case Routes.home:
+      case Routes.transactions:
         if (hasInvalidArgs<TransactionsPageArguments>(args)) {
           return misTypedArgsRoute<TransactionsPageArguments>(args);
         }

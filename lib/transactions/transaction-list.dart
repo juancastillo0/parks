@@ -62,6 +62,11 @@ class TransactionList extends HookWidget {
     ctx,
   ) {
     final transactionStore = useTransactionStore(ctx);
+    useEffect(() {
+      transactionStore.fetchTransactions();
+      return null;
+    }, [],);
+
     return Observer(
       builder: (_) {
         final transactions = transactionStore.filteredTransactions.toList();

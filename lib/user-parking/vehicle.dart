@@ -28,12 +28,18 @@ class VehicleModel extends _VehicleModel with _$VehicleModel {
 abstract class _VehicleModel extends HiveObject with Store {
   @HiveField(0)
   String plate;
+
   @HiveField(1)
-  @JsonProperty(name:"description")
+  @JsonProperty(name: "description")
   String model;
+
   @HiveField(2)
   @observable
+  @JsonProperty(converter: ActiveVehicleModel())
   bool active;
+
+  @observable
+  bool saved = false;
 
   _VehicleModel({this.plate, this.model, this.active});
 }
@@ -60,6 +66,20 @@ class VehicleListTile extends hooks.HookWidget {
         trailing: trailing,
       ),
     );
+  }
+}
+
+class ActiveVehicleModel implements ICustomConverter<bool> {
+  const ActiveVehicleModel();
+
+  @override
+  bool fromJSON(jsonValue, [JsonProperty jsonProperty]) {
+    return jsonValue == "ACTIVE" ? true : false;
+  }
+
+  @override
+  toJSON(bool object, [JsonProperty jsonProperty]) {
+    return object ? "ACTIVE" : "INACTIVE";
   }
 }
 

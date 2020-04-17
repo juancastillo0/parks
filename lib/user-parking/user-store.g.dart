@@ -9,6 +9,23 @@ part of 'user-store.dart';
 // ignore_for_file: non_constant_identifier_names, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic
 
 mixin _$UserStore on _UserStore, Store {
+  final _$persistenceStateAtom = Atom(name: '_UserStore.persistenceState');
+
+  @override
+  PersistenceState get persistenceState {
+    _$persistenceStateAtom.context.enforceReadPolicy(_$persistenceStateAtom);
+    _$persistenceStateAtom.reportObserved();
+    return super.persistenceState;
+  }
+
+  @override
+  set persistenceState(PersistenceState value) {
+    _$persistenceStateAtom.context.conditionallyRunInAction(() {
+      super.persistenceState = value;
+      _$persistenceStateAtom.reportChanged();
+    }, _$persistenceStateAtom, name: '${_$persistenceStateAtom.name}_set');
+  }
+
   final _$userAtom = Atom(name: '_UserStore.user');
 
   @override
@@ -24,6 +41,13 @@ mixin _$UserStore on _UserStore, Store {
       super.user = value;
       _$userAtom.reportChanged();
     }, _$userAtom, name: '${_$userAtom.name}_set');
+  }
+
+  final _$fetchUserAsyncAction = AsyncAction('fetchUser');
+
+  @override
+  Future<dynamic> fetchUser() {
+    return _$fetchUserAsyncAction.run(() => super.fetchUser());
   }
 
   final _$createVehicleAsyncAction = AsyncAction('createVehicle');
@@ -64,9 +88,17 @@ mixin _$UserStore on _UserStore, Store {
         .run(() => super.deletePaymentMethod(method));
   }
 
+  final _$_persistUserAsyncAction = AsyncAction('_persistUser');
+
+  @override
+  Future _persistUser(UserModel _user) {
+    return _$_persistUserAsyncAction.run(() => super._persistUser(_user));
+  }
+
   @override
   String toString() {
-    final string = 'user: ${user.toString()}';
+    final string =
+        'persistenceState: ${persistenceState.toString()},user: ${user.toString()}';
     return '{$string}';
   }
 }

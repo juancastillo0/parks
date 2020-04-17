@@ -3,10 +3,15 @@ import 'dart:io';
 
 import 'package:connectivity/connectivity.dart';
 import 'package:http/http.dart' as http;
-import 'package:parks/auth/auth-back.dart';
+import 'package:mobx/mobx.dart';
+import 'package:parks/common/utils.dart';
 
-class BackClient {
-  BackClient() {
+part 'back-client.g.dart';
+
+class BackClient extends _BackClient with _$BackClient {}
+
+abstract class _BackClient with Store {
+  _BackClient() {
     _connectivity = Connectivity();
     _connectivity.checkConnectivity().then(_updateConnectivityState);
     _connectivity.onConnectivityChanged.listen(_updateConnectivityState);
@@ -15,22 +20,30 @@ class BackClient {
 
   http.Client _client;
   Connectivity _connectivity;
+
+  @observable
   ConnectivityResult connState;
+  @observable
   String baseUrl = "http://192.168.1.102:3000";
+  @observable
   String token;
 
+  @computed
   bool get isAuthorized {
     return token != null;
   }
 
+  @computed
   bool get isConnected {
     return connState != ConnectivityResult.none;
   }
 
+  @action
   setToken(String _token) {
     token = _token;
   }
 
+  @action
   setBaseUrl(String _baseUrl) {
     baseUrl = _baseUrl;
   }
@@ -43,6 +56,7 @@ class BackClient {
     };
   }
 
+  @action
   Future<Result<http.Response>> post(String url,
       {Map<String, dynamic> body, Map<String, String> headers}) {
     final _body = json.encode(body);
@@ -55,6 +69,7 @@ class BackClient {
     return _requestWrapper(request, true);
   }
 
+  @action
   Future<Result<http.Response>> put(String url,
       {Map<String, dynamic> body, Map<String, String> headers}) {
     final _body = json.encode(body);
@@ -67,6 +82,18 @@ class BackClient {
     return _requestWrapper(request, true);
   }
 
+  @action
+  Future<Result<http.Response>> delete(String url,
+      {Map<String, String> headers}) {
+    final _headers = _defaultHeaders;
+    if (headers != null) _headers.addAll(headers);
+
+    final request = () => _client.delete("$baseUrl$url", headers: _headers);
+
+    return _requestWrapper(request, true);
+  }
+
+  @action
   Future<Result<http.Response>> get(String url, {Map<String, String> headers}) {
     final _headers = _defaultHeaders;
     if (headers != null) _headers.addAll(headers);
@@ -76,6 +103,7 @@ class BackClient {
     return _requestWrapper(request, true);
   }
 
+  @action
   Future<Result<http.Response>> _requestWrapper(
       Future<http.Response> Function() request, bool retry) async {
     try {
@@ -92,6 +120,7 @@ class BackClient {
     }
   }
 
+  @action
   _updateConnectivityState(ConnectivityResult event) async {
     if (event != ConnectivityResult.none) {
       try {

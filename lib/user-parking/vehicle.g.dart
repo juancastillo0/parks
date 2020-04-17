@@ -59,9 +59,26 @@ mixin _$VehicleModel on _VehicleModel, Store {
     }, _$activeAtom, name: '${_$activeAtom.name}_set');
   }
 
+  final _$savedAtom = Atom(name: '_VehicleModel.saved');
+
+  @override
+  bool get saved {
+    _$savedAtom.context.enforceReadPolicy(_$savedAtom);
+    _$savedAtom.reportObserved();
+    return super.saved;
+  }
+
+  @override
+  set saved(bool value) {
+    _$savedAtom.context.conditionallyRunInAction(() {
+      super.saved = value;
+      _$savedAtom.reportChanged();
+    }, _$savedAtom, name: '${_$savedAtom.name}_set');
+  }
+
   @override
   String toString() {
-    final string = 'active: ${active.toString()}';
+    final string = 'active: ${active.toString()},saved: ${saved.toString()}';
     return '{$string}';
   }
 }
