@@ -17,7 +17,7 @@ enum PersistenceState { Persisted, Waiting }
 abstract class _UserStore with Store {
   _UserStore() {
     _box = getUserBox();
-    user = _box.getAt(0);
+    user = _box.get("user");
 
     reaction((_reaction) => user, _persistUser);
   }
@@ -65,8 +65,8 @@ abstract class _UserStore with Store {
   }
 
   @action
-  _persistUser(UserModel _user) async {
-    await _box.putAt(0, _user);
+  Future _persistUser(UserModel _user) async {
+    await _box.put("user", _user);
     persistenceState = PersistenceState.Persisted;
   }
 }

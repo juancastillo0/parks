@@ -86,7 +86,7 @@ class TransactionModelAdapter extends TypeAdapter<TransactionModel> {
       place: fields[3] as TransactionPlaceModel,
       state: fields[4] as TransactionState,
       vehicle: fields[6] as VehicleModel,
-      cost: fields[5] as double,
+      cost: fields[5] as int,
     );
   }
 

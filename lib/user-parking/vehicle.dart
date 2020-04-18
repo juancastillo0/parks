@@ -12,9 +12,13 @@ import 'package:styled_widget/styled_widget.dart';
 part 'vehicle.g.dart';
 
 @HiveType(typeId: 2)
+@jsonSerializable
 class VehicleModel extends _VehicleModel with _$VehicleModel {
-  VehicleModel({plate, model, active})
-      : super(plate: plate, model: model, active: active);
+  VehicleModel({plate, description, active})
+      : super(plate: plate, description: description, active: active);
+
+  @JsonProperty(name: "state", converter: ActiveVehicleModel())
+  bool active;
 
   bool operator ==(other) {
     return plate == other.plate;
@@ -24,24 +28,21 @@ class VehicleModel extends _VehicleModel with _$VehicleModel {
   int get hashCode => plate.hashCode;
 }
 
-@jsonSerializable
 abstract class _VehicleModel extends HiveObject with Store {
   @HiveField(0)
   String plate;
 
   @HiveField(1)
-  @JsonProperty(name: "description")
-  String model;
+  String description;
 
   @HiveField(2)
   @observable
-  @JsonProperty(converter: ActiveVehicleModel())
   bool active;
 
   @observable
   bool saved = false;
 
-  _VehicleModel({this.plate, this.model, this.active});
+  _VehicleModel({this.plate, this.description, this.active});
 }
 
 class VehicleListTile extends hooks.HookWidget {
@@ -59,10 +60,10 @@ class VehicleListTile extends hooks.HookWidget {
         contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
         title: Text(vehicle.plate),
         leading: Switch(
-          value: vehicle.active,
+          value: vehicle.active ?? true,
           onChanged: (_) => userStore.toggleVehicleState(vehicle),
         ),
-        subtitle: Text(vehicle.model),
+        subtitle: Text(vehicle.description),
         trailing: trailing,
       ),
     );
@@ -74,7 +75,7 @@ class ActiveVehicleModel implements ICustomConverter<bool> {
 
   @override
   bool fromJSON(jsonValue, [JsonProperty jsonProperty]) {
-    return jsonValue == "ACTIVE" ? true : false;
+    return jsonValue == "ACTIVE" || jsonValue == true ? true : false;
   }
 
   @override
@@ -89,7 +90,7 @@ class CreateVehicleForm extends hooks.HookWidget {
 
   Widget build(ctx) {
     final plateC = hooks.useTextEditingController();
-    final modelC = hooks.useTextEditingController();
+    final descriptionC = hooks.useTextEditingController();
     final navigator = useNavigator(ctx);
 
     FormState();
@@ -109,9 +110,9 @@ class CreateVehicleForm extends hooks.HookWidget {
             ),
           ).padding(bottom: 24),
           TextFormField(
-            controller: modelC,
+            controller: descriptionC,
             decoration: InputDecoration(
-              labelText: "Model",
+              labelText: "Description",
               labelStyle: TextStyle(fontSize: 18),
               border: OutlineInputBorder(),
               isDense: true,
@@ -128,7 +129,9 @@ class CreateVehicleForm extends hooks.HookWidget {
                 onPressed: () async {
                   await userStore.createVehicle(
                     VehicleModel(
-                        active: true, model: modelC.text, plate: plateC.text),
+                        active: true,
+                        description: descriptionC.text,
+                        plate: plateC.text),
                   );
                   navigator.pop();
                 },

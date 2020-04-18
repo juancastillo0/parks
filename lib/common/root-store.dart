@@ -23,10 +23,11 @@ abstract class _RootStore with Store {
     userStore = UserStore(user);
     transactionStore = TransactionStore(transactions: transactions);
     notificationService = NotificationService(user.vehicles.values.first.plate);
+    authStore = AuthStore(this);
   }
 
   @observable
-  AuthStore authStore = AuthStore();
+  AuthStore authStore;
   @observable
   PlaceStore placeStore = PlaceStore();
   @observable

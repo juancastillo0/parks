@@ -60,7 +60,6 @@ class UserParkingDetail extends HookWidget {
   Widget build(ctx) {
     final store = useStore(ctx);
     final userStore = useUserStore(ctx);
-    final user = userStore.user;
     final navigator = useNavigator(ctx);
     useEffect(() {
       userStore.fetchUser();
@@ -91,8 +90,8 @@ class UserParkingDetail extends HookWidget {
     final cars = _Item(
       contractedWidget: ListTile(
         title: Observer(
-          builder: (_) => textWithIcon(
-              Icons.directions_car, Text("Vehicles (${user.vehicles.length})")),
+          builder: (_) => textWithIcon(Icons.directions_car,
+              Text("Vehicles (${userStore.user.vehicles.length})")),
         ),
         trailing: IconButton(
           icon: Icon(Icons.add_circle_outline),
@@ -110,7 +109,7 @@ class UserParkingDetail extends HookWidget {
               Text("Are you sure you want to delete the car?")),
         ),
       ),
-      list: user.vehicles.values,
+      list: userStore.user.vehicles.values,
       isExpanded: true,
     );
 
@@ -120,8 +119,8 @@ class UserParkingDetail extends HookWidget {
           builder: (_) => textWithIcon(
               Icons.payment,
               Text(mq.size.width > 350
-                  ? "Payment Methods (${user.paymentMethods.length})"
-                  : "Payment (${user.paymentMethods.length})")),
+                  ? "Payment Methods (${userStore.user.paymentMethods.length})"
+                  : "Payment (${userStore.user.paymentMethods.length})")),
         ),
         trailing: IconButton(
           icon: Icon(Icons.add_circle_outline),
@@ -141,20 +140,18 @@ class UserParkingDetail extends HookWidget {
           ),
         ),
       ),
-      list: user.paymentMethods,
+      list: userStore.user.paymentMethods,
     );
 
-    final authStore = useAuthStore(ctx);
     return Scaffold(
-      appBar: AppBar(
+      appBar: DefaultAppBar(
         title: Text("Profile"),
-        actions: getActions(authStore),
       ),
       bottomNavigationBar: DefaultBottomNavigationBar(),
       body: Column(
         children: [
           Text(
-            user.name,
+            userStore.user.name,
             style: useTextTheme().headline5,
           ).padding(top: 18, bottom: 20, horizontal: 20),
           Row(
@@ -162,12 +159,13 @@ class UserParkingDetail extends HookWidget {
             children: [
               [
                 textWithIcon(Icons.email, Text("Email")),
-                Text(user.email).fontSize(16)
+                Text(userStore.user.email).fontSize(16)
               ].toColumn(),
               SizedBox(width: 60),
               [
                 textWithIcon(Icons.phone, Text("Phone")),
-                Text(user.phone.toString()).fontSize(16)
+                Text(userStore.user.phone?.toString() ?? "No phone")
+                    .fontSize(16)
               ].toColumn(),
             ],
           ).padding(bottom: 26),

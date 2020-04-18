@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:parks/common/root-store.dart';
 import 'package:parks/common/scaffold.dart';
 import 'package:parks/common/widgets.dart';
 import 'package:parks/place/place-store.dart';
@@ -13,13 +12,11 @@ class PlacePage extends HookWidget {
 
   @override
   Widget build(ctx) {
-    final authStore = useAuthStore(ctx);
     final textTheme = Theme.of(ctx).textTheme;
     final mq = MediaQuery.of(ctx);
     return Scaffold(
-      appBar: AppBar(
+      appBar: DefaultAppBar(
         title: Text("${place.address}"),
-        actions: getActions(authStore),
       ),
       bottomNavigationBar: DefaultBottomNavigationBar(),
       body: Column(

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:parks/common/root-store.dart';
 import 'package:parks/common/scaffold.dart';
 import 'package:parks/transactions/transaction-model.dart';
 import 'package:styled_widget/styled_widget.dart';
@@ -14,9 +13,8 @@ class TransactionPage extends HookWidget {
 
   @override
   Widget build(ctx) => Scaffold(
-        appBar: AppBar(
+        appBar: DefaultAppBar(
           title: Text("Transaction"),
-          actions: getActions(useAuthStore(ctx)),
         ),
         bottomNavigationBar: DefaultBottomNavigationBar(),
         body: TransactionDetail(transaction),
@@ -31,10 +29,13 @@ class TransactionDetail extends HookWidget {
   Widget build(ctx) {
     final textTheme = Theme.of(ctx).textTheme;
     final isCompleted = transaction.state == TransactionState.Completed;
+    final stateStr = transaction.state != null
+        ? transaction.state.toString().split(".")[1]
+        : "null";
     final duration = isCompleted
         ? timeago.format(transaction.timestamp,
             clock: transaction.endTimestamp, locale: 'en_short')
-        : "${transaction.state.toString().split(".")[1]}: ${timeago.format(transaction.timestamp, locale: 'en_short')}";
+        : "$stateStr: ${timeago.format(transaction.timestamp, locale: 'en_short')}";
     if (transaction == null) {
       return Center(
         child: Text("Select a transaction", style: textTheme.headline6),
@@ -90,7 +91,7 @@ class TransactionDetail extends HookWidget {
               ),
               SizedBox(height: 8),
               Text(
-                transaction.vehicle.model,
+                transaction.vehicle.description,
                 style: textTheme.subtitle1,
               )
             ],

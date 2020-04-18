@@ -44,9 +44,8 @@ class TransactionsPage extends HookWidget {
 
     return Scaffold(
       backgroundColor: Theme.of(ctx).backgroundColor,
-      appBar: AppBar(
+      appBar: DefaultAppBar(
         title: Text("Transactions"),
-        actions: getActions(authStore),
       ),
       bottomNavigationBar: DefaultBottomNavigationBar(),
       body: inner,
@@ -58,18 +57,22 @@ class TransactionList extends HookWidget {
   const TransactionList(this.bigScreen, {Key key}) : super(key: key);
   final bool bigScreen;
   @override
-  Widget build(
-    ctx,
-  ) {
+  Widget build(ctx) {
     final transactionStore = useTransactionStore(ctx);
     useEffect(() {
       transactionStore.fetchTransactions();
       return null;
-    }, [],);
+    }, []);
 
     return Observer(
       builder: (_) {
         final transactions = transactionStore.filteredTransactions.toList();
+        if (transactions.length == 0) {
+          return Center(
+              child: transactionStore.loading
+                  ? CircularProgressIndicator()
+                  : Text("You don't have Transactions"));
+        }
         return ListView.builder(
           padding: EdgeInsets.symmetric(horizontal: 20),
           itemBuilder: (_, index) {

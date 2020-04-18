@@ -1,12 +1,16 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/foundation.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:get_it/get_it.dart';
 import 'package:mobx/mobx.dart';
 import 'package:parks/auth/auth-back.dart';
+import 'package:parks/common/back-client.dart';
+import 'package:parks/common/hive-utils.dart';
+import 'package:parks/common/root-store.dart';
 import 'package:parks/routes.gr.dart';
 
 part 'auth-store.freezed.dart';
-part 'auth-store.g.dart'; 
+part 'auth-store.g.dart';
 
 const ERROR_MESSAGES = {
   "ERROR_INVALID_EMAIL": "Correo inválido",
@@ -30,17 +34,35 @@ abstract class AuthState with _$AuthState {
 class AuthStore = _AuthStore with _$AuthStore;
 
 abstract class _AuthStore with Store {
-  final AuthBack back = AuthBack();
+  _AuthStore(this._root) {
+    reaction((r) => _backClient.isAuthorized, _updateStateBackClient);
+    _updateStateBackClient(_backClient.isAuthorized);
+  }
+  final RootStore _root;
+  final AuthBack _back = AuthBack();
+  final BackClient _backClient = GetIt.I.get<BackClient>();
+
+  @action
+  _updateStateBackClient(bool authenticated) async {
+    final nav = ExtendedNavigator.rootNavigator;
+    if (authenticated) {
+      state = AuthState("");
+      _root.userStore.fetchUser();
+      if (nav != null) nav.pushNamedAndRemoveUntil(Routes.home, (_) => false);
+    } else {
+      state = AuthState.none();
+      await getUserBox().clear();
+      await getTransactionsBox().clear();
+      if (nav != null) nav.pushNamedAndRemoveUntil(Routes.auth, (_) => false);
+    }
+  }
 
   @observable
   AuthState state = AuthState.none();
 
   @computed
   bool get isAuthenticated {
-    return state.maybeWhen(
-      (token) => true,
-      orElse: () => false,
-    );
+    return _backClient.isAuthorized;
   }
 
   @computed
@@ -77,15 +99,14 @@ abstract class _AuthStore with Store {
     if (state.maybeWhen((token) => true, orElse: () => false)) return;
     state = AuthState.loading();
     try {
-      final res = await back.signIn(email, password);
+      final res = await _back.signIn(email, password);
       res.when(
-        (value) => updateToken(value),
+        (value) async => await _backClient.setToken(value),
         err: (err) => state = AuthState.err(err),
       );
     } catch (e) {
       print(e);
-      state =
-          AuthState.err( ERROR_MESSAGES["default"]);
+      state = AuthState.err(ERROR_MESSAGES["default"]);
     }
   }
 
@@ -94,27 +115,27 @@ abstract class _AuthStore with Store {
     if (isLoading) return;
     state = AuthState.loading();
     try {
-      final res = await back.signUp(name, email, password);
+      final res = await _back.signUp(name, email, password);
       res.when(
-        (value) => updateToken(value),
+        (value) async => await _backClient.setToken(value),
         err: (err) => state = AuthState.err(err),
       );
     } catch (e) {
       print(e);
-      state =
-          AuthState.err( ERROR_MESSAGES["default"]);
+      state = AuthState.err(ERROR_MESSAGES["default"]);
     }
   }
 
   @action
-  void signOut() {
-    state = AuthState.none();
+  signOut() async {
+    // state = AuthState.none();
+    await _backClient.setToken(null);
 
-    if (ExtendedNavigator.rootNavigator != null) {
-      // Pop all the stack
-      ExtendedNavigator.rootNavigator
-          .pushNamedAndRemoveUntil(Routes.auth, (_) => false);
-    }
+    // if (ExtendedNavigator.rootNavigator != null) {
+    //   // Pop all the stack
+    //   ExtendedNavigator.rootNavigator
+    //       .pushNamedAndRemoveUntil(Routes.auth, (_) => false);
+    // }
   }
 
   @action

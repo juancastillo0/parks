@@ -13,6 +13,7 @@ class UserBack {
       (resp) {
         switch (resp.statusCode) {
           case 200:
+            print(resp.body);
             return Result(JsonMapper.deserialize<UserModel>(resp.body));
           case 401:
             _client.setToken(null);

@@ -106,14 +106,15 @@ abstract class _TransactionStore with Store {
     transactions = ObservableMap.of(
       Map.fromEntries(_box.values.map((e) => MapEntry(e.id, e))),
     );
-    selectedTransaction = transactions.values.first;
-
+    selectedTransaction =
+        transactions.length > 0 ? transactions.values.first : null;
     filter = TransactionFilterStore();
   }
 
   final _back = TransactionBack();
   Box<TransactionModel> _box;
-
+  @observable
+  bool loading = false;
   @observable
   ObservableMap<String, TransactionModel> transactions;
   @observable
@@ -123,6 +124,8 @@ abstract class _TransactionStore with Store {
 
   @action
   fetchTransactions() async {
+    if (loading) return;
+    loading = true;
     final resp = await _back.transactions();
     final value = resp.okOrNull();
     if (value != null) {
@@ -130,6 +133,7 @@ abstract class _TransactionStore with Store {
       transactions.addAll(map);
       await _box.putAll(map);
     }
+    loading = false;
   }
 
   @action
@@ -172,7 +176,8 @@ abstract class _TransactionStore with Store {
   @computed
   Interval<double> get costInterval {
     final interval = Interval(double.infinity, double.negativeInfinity);
-    return interval.fromIter(transactions.values.map((t) => t.cost));
+    return interval.fromIter(transactions.values
+        .map((t) => t.cost != null ? t.cost.toDouble() : 0.0));
   }
 
   @computed

@@ -2,6 +2,7 @@ import 'package:dart_json_mapper/dart_json_mapper.dart';
 import 'package:hive/hive.dart';
 import 'package:mobx/mobx.dart';
 import 'package:parks/common/hive-utils.dart';
+import 'package:parks/place/place-back.dart';
 
 part 'place-store.g.dart';
 
@@ -21,6 +22,7 @@ class PlaceModel {
   @HiveField(5)
   String address;
   @HiveField(6)
+  @JsonProperty(defaultValue: 3.5)
   double rating;
 
   PlaceModel({
@@ -38,13 +40,26 @@ class PlaceStore extends _PlaceStore with _$PlaceStore {}
 
 abstract class _PlaceStore with Store {
   _PlaceStore() {
-    box = getPlacesBox();
+    _box = getPlacesBox();
     places = ObservableMap.of(
-      Map.fromEntries(box.values.map((e) => MapEntry(e.id, e))),
+      Map.fromEntries(_box.values.map((e) => MapEntry(e.id, e))),
     );
+    fetchPlaces();
   }
 
-  Box<PlaceModel> box;
+  PlaceBack _back = PlaceBack();
+  Box<PlaceModel> _box;
+
+  @action
+  fetchPlaces() async {
+    final resp = await _back.places();
+    final p = resp.okOrNull();
+    if (p != null) {
+      final map = Map.fromEntries(p.map((e) => MapEntry(e.id, e)));
+      places.addAll(map);
+      await _box.putAll(map);
+    }
+  }
 
   @observable
   ObservableMap<String, PlaceModel> places;

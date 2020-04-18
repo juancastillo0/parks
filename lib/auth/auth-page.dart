@@ -25,14 +25,14 @@ class AuthPage extends HookWidget {
     final _isSigningUp = isSigningUp.value;
     final authStore = useAuthStore(ctx);
     final _authenticate = useMemoized(
-      () => () {
+      () => () async {
         final formState = _formKey.currentState;
         autovalid.value = true;
         if (formState.validate()) {
           if (_isSigningUp) {
-            authStore.signUp(_name.text, _email.text, _password.text);
+            await authStore.signUp(_name.text, _email.text, _password.text);
           } else {
-            authStore.signIn(_email.text, _password.text);
+            await authStore.signIn(_email.text, _password.text);
           }
         }
       },
@@ -44,12 +44,12 @@ class AuthPage extends HookWidget {
       Future.delayed(Duration.zero, () {
         ExtendedNavigator.rootNavigator.pushNamed(Routes.home);
       });
-      return Container();
+      return Container(height: 0, width: 0);
     }
+    final inputPadding = 25.0;
+
     return Scaffold(
-      appBar: AppBar(
-        title: Text(_isSigningUp ? "Sign up" : "Log in"),
-      ),
+      appBar: AppBar(title: Text(_isSigningUp ? "Sign up" : "Log in")),
       body: Center(
         child: Form(
           onChanged: () => authStore.resetError(),
@@ -62,14 +62,14 @@ class AuthPage extends HookWidget {
             child: ListView(
               children: <Widget>[
                 // NAME AND EMAIL
-
+                SizedBox(height: inputPadding),
                 if (_isSigningUp)
                   TextFormField(
                     key: Key("name"),
                     controller: _name,
                     validator: StringValid(minLength: 3).firstError,
                     decoration: InputDecoration(labelText: "Name"),
-                  ),
+                  ).padding(bottom: inputPadding),
                 TextFormField(
                   key: Key("email"),
                   controller: _email,
@@ -78,8 +78,7 @@ class AuthPage extends HookWidget {
                     pattern: RegExp(r'^[\w]+@[\w]+(\.[\w]+)+$'),
                   ).firstError,
                   decoration: InputDecoration(labelText: "Email"),
-                ),
-
+                ).padding(bottom: inputPadding),
                 // PASSWORDS
 
                 TextFormField(
@@ -88,13 +87,14 @@ class AuthPage extends HookWidget {
                   decoration: InputDecoration(labelText: "Password"),
                   validator: StringValid(minLength: 3).firstError,
                   obscureText: true,
-                ),
+                ).padding(bottom: inputPadding),
                 if (_isSigningUp)
                   TextFormField(
                     key: Key("password2"),
                     controller: _password2,
-                    decoration:
-                        InputDecoration(labelText: "Verification Password"),
+                    decoration: InputDecoration(
+                      labelText: "Verification Password",
+                    ),
                     validator: (password2) {
                       print(password2);
                       if (!_isSigningUp) return null;
@@ -104,27 +104,32 @@ class AuthPage extends HookWidget {
                       return null;
                     },
                     obscureText: true,
-                  ),
+                  ).padding(bottom: inputPadding + 5),
 
                 // SUBMIT BUTTON
 
                 Observer(
-                    builder: (_) => RaisedButton(
-                          onPressed: authStore.isLoading ? null : _authenticate,
-                          child: authStore.isLoading
-                              ? LinearProgressIndicator()
-                              : Text((_isSigningUp ? "Sign up" : "Log in")),
-                        )).padding(top: 24, bottom: 14),
+                  builder: (_) {
+                    return RaisedButton(
+                      onPressed: authStore.isLoading ? null : _authenticate,
+                      child: authStore.isLoading
+                          ? LinearProgressIndicator()
+                          : Text((_isSigningUp ? "Sign up" : "Log in")),
+                    );
+                  },
+                ).padding(bottom: 14),
 
                 // Backend error
                 mainError(authStore),
                 // Toggle _isSigningUp
                 redirectSignInSignUp(
-                    _isSigningUp, () => isSigningUp.value = !_isSigningUp),
+                  _isSigningUp,
+                  () => isSigningUp.value = !_isSigningUp,
+                ),
                 // Continue with out auth
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[Text("Or")],
+                  children: [Text("Or")],
                 ).padding(top: 8.0),
                 continueNoAuth(),
               ],
@@ -147,13 +152,14 @@ class AuthPage extends HookWidget {
   Widget mainError(AuthStore authStore) {
     return Observer(
       builder: (_) {
-        return (authStore.error != null
-            ? Text(
-                authStore.error,
-                style: TextStyle(color: Colors.red, fontSize: 16),
-                textAlign: TextAlign.center,
-              ).padding(bottom: 10)
-            : Container());
+        if (authStore.error != null)
+          return Text(
+            authStore.error,
+            style: TextStyle(color: Colors.red, fontSize: 16),
+            textAlign: TextAlign.center,
+          ).padding(bottom: 10);
+        else
+          return Container(height: 0, width: 0);
       },
     );
   }

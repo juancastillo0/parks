@@ -11,8 +11,9 @@ class TransactionBack {
   Future<Result<List<TransactionModel>>> transactions() async {
     final resp = await _client.get(
       "/transactions",
-      headers:
-          lastModified ?? {'If-Modified-Since': lastModified.toIso8601String()},
+      headers: lastModified != null
+          ? {'If-Modified-Since': lastModified.toIso8601String()}
+          : null,
     );
     return resp.mapOk(
       (resp) {
@@ -20,6 +21,8 @@ class TransactionBack {
           case 200:
             if (resp.headers.containsKey("Last-Modified"))
               lastModified = DateTime.parse(resp.headers["Last-Modified"]);
+            print(resp.body);
+            print("lastModified $lastModified");
             return Result(
               JsonMapper.deserialize<List<TransactionModel>>(resp.body),
             );

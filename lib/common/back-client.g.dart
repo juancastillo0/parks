@@ -55,21 +55,28 @@ mixin _$BackClient on _BackClient, Store {
     }, _$baseUrlAtom, name: '${_$baseUrlAtom.name}_set');
   }
 
-  final _$tokenAtom = Atom(name: '_BackClient.token');
+  final _$_tokenAtom = Atom(name: '_BackClient._token');
 
   @override
-  String get token {
-    _$tokenAtom.context.enforceReadPolicy(_$tokenAtom);
-    _$tokenAtom.reportObserved();
-    return super.token;
+  String get _token {
+    _$_tokenAtom.context.enforceReadPolicy(_$_tokenAtom);
+    _$_tokenAtom.reportObserved();
+    return super._token;
   }
 
   @override
-  set token(String value) {
-    _$tokenAtom.context.conditionallyRunInAction(() {
-      super.token = value;
-      _$tokenAtom.reportChanged();
-    }, _$tokenAtom, name: '${_$tokenAtom.name}_set');
+  set _token(String value) {
+    _$_tokenAtom.context.conditionallyRunInAction(() {
+      super._token = value;
+      _$_tokenAtom.reportChanged();
+    }, _$_tokenAtom, name: '${_$_tokenAtom.name}_set');
+  }
+
+  final _$setTokenAsyncAction = AsyncAction('setToken');
+
+  @override
+  Future setToken(String token) {
+    return _$setTokenAsyncAction.run(() => super.setToken(token));
   }
 
   final _$_requestWrapperAsyncAction = AsyncAction('_requestWrapper');
@@ -91,16 +98,6 @@ mixin _$BackClient on _BackClient, Store {
   }
 
   final _$_BackClientActionController = ActionController(name: '_BackClient');
-
-  @override
-  dynamic setToken(String _token) {
-    final _$actionInfo = _$_BackClientActionController.startAction();
-    try {
-      return super.setToken(_token);
-    } finally {
-      _$_BackClientActionController.endAction(_$actionInfo);
-    }
-  }
 
   @override
   dynamic setBaseUrl(String _baseUrl) {
@@ -158,7 +155,7 @@ mixin _$BackClient on _BackClient, Store {
   @override
   String toString() {
     final string =
-        'connState: ${connState.toString()},baseUrl: ${baseUrl.toString()},token: ${token.toString()},isAuthorized: ${isAuthorized.toString()},isConnected: ${isConnected.toString()}';
+        'connState: ${connState.toString()},baseUrl: ${baseUrl.toString()},isAuthorized: ${isAuthorized.toString()},isConnected: ${isConnected.toString()}';
     return '{$string}';
   }
 }

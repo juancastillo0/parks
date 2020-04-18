@@ -7,7 +7,7 @@ class LocationService = _LocationService with _$LocationService;
 
 abstract class _LocationService with Store {
   Location _location = Location();
-  
+
   @observable
   bool serviceEnabled = false;
   @observable

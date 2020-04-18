@@ -8,19 +8,13 @@ part "user-model.g.dart";
 
 @jsonSerializable
 class UserModel extends _UserModel with _$UserModel {
-  UserModel(
-      {name, id, email, phone, transactions, paymentMethods, vehicles})
-      : super(
-          name: name,
-          id: id,
-          email: email,
-          phone: phone,
-          paymentMethods: paymentMethods,
-          vehicles: vehicles,
-        );
+  ObservableMap<String, VehicleModel> vehicles =
+      ObservableMap<String, VehicleModel>();
+
+  ObservableList<PaymentMethod> paymentMethods =
+      ObservableList<PaymentMethod>();
 }
 
-@jsonSerializable
 abstract class _UserModel with Store {
   String id;
   String name;
@@ -33,13 +27,13 @@ abstract class _UserModel with Store {
   @observable
   ObservableList<PaymentMethod> paymentMethods;
 
-  _UserModel(
-      {this.name,
-      this.id,
-      this.email,
-      this.phone,
-      this.paymentMethods,
-      this.vehicles});
+  // _UserModel(
+  //     {this.name,
+  //     this.id,
+  //     this.email,
+  //     this.phone,
+  //     this.paymentMethods,
+  //     this.vehicles});
 }
 
 class UserModelAdapter extends TypeAdapter<UserModel> {
@@ -80,5 +74,3 @@ class UserModelAdapter extends TypeAdapter<UserModel> {
       ..write(obj.paymentMethods);
   }
 }
-
-

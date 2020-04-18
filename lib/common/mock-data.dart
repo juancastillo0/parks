@@ -5,8 +5,9 @@ import 'package:parks/user-parking/paymentMethod.dart';
 import 'package:parks/user-parking/user-model.dart';
 import 'package:parks/user-parking/vehicle.dart';
 
-var _car = VehicleModel(model: "Toyota", plate: "YWM 394", active: true);
-var _car2 = VehicleModel(model: "Toyota", plate: "UIS 267", active: false);
+var _car = VehicleModel(description: "Toyota", plate: "YWM 394", active: true);
+var _car2 =
+    VehicleModel(description: "Toyota", plate: "UIS 267", active: false);
 
 var mockTransactions = ObservableList.of([
   TransactionModel(
@@ -43,21 +44,20 @@ var mockTransactions = ObservableList.of([
       cost: 600)
 ]);
 
-var mockUser = UserModel(
-  id: "1",
-  vehicles: ObservableMap.of({_car.plate: _car, _car2.plate: _car2}),
-  email: "juan@mail.com",
-  name: "Juan Manuel",
-  phone: 3104902048,
-  paymentMethods: ObservableList.of([
+var mockUser = UserModel()
+  ..id = "1"
+  ..vehicles = ObservableMap.of({_car.plate: _car, _car2.plate: _car2})
+  ..email = "juan@mail.com"
+  ..name = "Juan Manuel"
+  ..phone = 3104902048
+  ..paymentMethods = ObservableList.of([
     PaymentMethod(
       lastDigits: "0023",
       name: "Main",
       type: PaymentMethodType.Credit,
       provider: "VISA",
     )
-  ]),
-);
+  ]);
 
 var mockPlaces = [
   PlaceModel(

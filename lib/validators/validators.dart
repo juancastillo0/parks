@@ -27,7 +27,11 @@ class StringValid {
 
   StringValidMessages messages;
 
-  StringValid({int minLength, int maxLength, RegExp pattern, StringValidMessages messagesp}) {
+  StringValid(
+      {int minLength,
+      int maxLength,
+      RegExp pattern,
+      StringValidMessages messagesp}) {
     _minLength = minLength;
     _maxLength = maxLength;
     _pattern = pattern;

@@ -91,7 +91,7 @@ mixin _$UserStore on _UserStore, Store {
   final _$_persistUserAsyncAction = AsyncAction('_persistUser');
 
   @override
-  Future _persistUser(UserModel _user) {
+  Future<dynamic> _persistUser(UserModel _user) {
     return _$_persistUserAsyncAction.run(() => super._persistUser(_user));
   }
 

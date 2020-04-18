@@ -24,7 +24,8 @@ class Interval<T extends Comparable> {
   }
 }
 
-String currencyString(double cost) {
+String currencyString(int cost) {
+  if (cost == null) return "0";
   var s = cost.toInt().toString();
   if (s.length <= 3) return s;
 

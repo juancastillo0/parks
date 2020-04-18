@@ -6,12 +6,16 @@ import 'package:dart_json_mapper_mobx/dart_json_mapper_mobx.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:mobx/mobx.dart';
 import 'package:parks/common/back-client.dart';
 import 'package:parks/common/hive-utils.dart';
 import 'package:parks/common/mock-data.dart';
 import 'package:parks/common/root-store.dart';
 import 'package:parks/common/scaffold.dart';
+import 'package:parks/place/place-store.dart';
 import 'package:parks/routes.gr.dart';
+import 'package:parks/transactions/transaction-model.dart';
+import 'package:parks/user-parking/paymentMethod.dart';
 import 'package:provider/provider.dart';
 
 import 'main.reflectable.dart' show initializeReflectable;
@@ -25,13 +29,20 @@ void _enablePlatformOverrideForDesktop() {
 void main() async {
   _enablePlatformOverrideForDesktop();
   initializeReflectable();
+  JsonMapper().useAdapter(JsonMapperAdapter(valueDecorators: {
+    typeOf<List<PaymentMethod>>(): (value) => value.cast<PaymentMethod>(),
+    typeOf<List<TransactionModel>>(): (value) => value.cast<TransactionModel>(),
+    typeOf<List<PlaceModel>>(): (value) => value.cast<PlaceModel>(),
+    typeOf<ObservableList<TransactionModel>>(): (value) =>
+        value.cast<TransactionModel>(),
+  }));
   JsonMapper().useAdapter(mobXAdapter);
+
+  await initHive(mock: false);
 
   GetIt.instance.registerSingleton<BackClient>(BackClient());
   final rootStore = RootStore(mockUser, mockTransactions);
   GetIt.instance.registerSingleton<RootStore>(rootStore);
-
-  await initHive(mock: true);
 
   runApp(MyApp(rootStore));
 }

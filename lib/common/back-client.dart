@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:connectivity/connectivity.dart';
 import 'package:http/http.dart' as http;
 import 'package:mobx/mobx.dart';
+import 'package:parks/common/hive-utils.dart';
 import 'package:parks/common/utils.dart';
 
 part 'back-client.g.dart';
@@ -16,6 +17,8 @@ abstract class _BackClient with Store {
     _connectivity.checkConnectivity().then(_updateConnectivityState);
     _connectivity.onConnectivityChanged.listen(_updateConnectivityState);
     _client = http.Client();
+    _token = SettingsBox.getToken();
+    print("token: $_token");
   }
 
   http.Client _client;
@@ -26,11 +29,11 @@ abstract class _BackClient with Store {
   @observable
   String baseUrl = "http://192.168.1.102:3000";
   @observable
-  String token;
+  String _token;
 
   @computed
   bool get isAuthorized {
-    return token != null;
+    return _token != null;
   }
 
   @computed
@@ -39,8 +42,9 @@ abstract class _BackClient with Store {
   }
 
   @action
-  setToken(String _token) {
-    token = _token;
+  setToken(String token) async {
+    await SettingsBox.setToken(token);
+    _token = token;
   }
 
   @action
@@ -52,7 +56,7 @@ abstract class _BackClient with Store {
     return {
       'Content-type': 'application/json',
       'Accept': 'application/json',
-      'Authorization': token
+      'Authorization': _token
     };
   }
 
@@ -98,7 +102,8 @@ abstract class _BackClient with Store {
     final _headers = _defaultHeaders;
     if (headers != null) _headers.addAll(headers);
 
-    final request = () => _client.get("$baseUrl$url", headers: _headers);
+    final request =
+        () async => await _client.get("$baseUrl$url", headers: _headers);
 
     return _requestWrapper(request, true);
   }

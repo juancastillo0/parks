@@ -43,6 +43,15 @@ mixin _$AuthStore on _AuthStore, Store {
     }, _$stateAtom, name: '${_$stateAtom.name}_set');
   }
 
+  final _$_updateStateBackClientAsyncAction =
+      AsyncAction('_updateStateBackClient');
+
+  @override
+  Future _updateStateBackClient(bool authenticated) {
+    return _$_updateStateBackClientAsyncAction
+        .run(() => super._updateStateBackClient(authenticated));
+  }
+
   final _$updateTokenAsyncAction = AsyncAction('updateToken');
 
   @override
@@ -64,17 +73,14 @@ mixin _$AuthStore on _AuthStore, Store {
     return _$signUpAsyncAction.run(() => super.signUp(name, email, password));
   }
 
-  final _$_AuthStoreActionController = ActionController(name: '_AuthStore');
+  final _$signOutAsyncAction = AsyncAction('signOut');
 
   @override
-  void signOut() {
-    final _$actionInfo = _$_AuthStoreActionController.startAction();
-    try {
-      return super.signOut();
-    } finally {
-      _$_AuthStoreActionController.endAction(_$actionInfo);
-    }
+  Future signOut() {
+    return _$signOutAsyncAction.run(() => super.signOut());
   }
+
+  final _$_AuthStoreActionController = ActionController(name: '_AuthStore');
 
   @override
   void resetError() {

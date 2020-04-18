@@ -109,9 +109,8 @@ class PlacesPage extends HookWidget {
     final mq = MediaQuery.of(ctx);
     final bigScreen = mq.size.width > 900;
     return Scaffold(
-      appBar: AppBar(
+      appBar: DefaultAppBar(
         title: Text("Places"),
-        actions: getActions(authStore),
       ),
       bottomNavigationBar: DefaultBottomNavigationBar(),
       body: LayoutBuilder(
@@ -126,9 +125,9 @@ class PlacesPage extends HookWidget {
             separatorBuilder: (_, __) => Divider(height: 16, thickness: 1),
             itemCount: places.length,
           )
+              .backgroundColor(Colors.white)
               .borderRadius(topLeft: bigScreen ? 0 : 10, topRight: 10)
               .elevation(1)
-              .backgroundColor(Colors.white)
               .constrained(
                 maxWidth: min(box.maxWidth - 26, 400),
                 maxHeight: bigScreen ? double.infinity : box.maxHeight - 60,

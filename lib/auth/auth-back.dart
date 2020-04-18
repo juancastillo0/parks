@@ -4,7 +4,6 @@ import 'package:get_it/get_it.dart';
 import 'package:parks/common/back-client.dart';
 import 'package:parks/common/utils.dart';
 
-
 class AuthBack {
   final _client = GetIt.instance.get<BackClient>();
 

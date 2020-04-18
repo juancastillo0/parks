@@ -28,7 +28,7 @@ class TransactionFilter extends HookWidget {
               ctx,
               items: transactionStore.vehiclesInTransactions,
               selected: transactionStore.filter.vehicles,
-              subtitle: (e) => Text(e.model),
+              subtitle: (e) => Text(e.description),
               title: (e) => Text(e.plate),
             ),
         [transactionStore, transactionStore.filter]);
@@ -46,7 +46,7 @@ class TransactionFilter extends HookWidget {
             icon: Icon(Icons.tune),
             label: Text("Filter"),
           ),
-          SizedBox(width:3),
+          SizedBox(width: 3),
           Wrap(
             spacing: 4,
             children: transactionStore.filter.places
@@ -102,6 +102,9 @@ class TransactionFilter extends HookWidget {
             final interval = transactionStore.costInterval;
             final minCost = transactionStore.filter.minCost ?? interval.min;
             final maxCost = transactionStore.filter.maxCost ?? interval.max;
+            if (transactionStore.transactions.length == 0 || maxCost <= minCost)
+              return Container(width: 0, height: 0);
+
             return Column(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -115,8 +118,8 @@ class TransactionFilter extends HookWidget {
                   max: interval.max,
                   onChanged: transactionStore.filter.setCostInteval,
                   labels: RangeLabels(
-                    currencyString(minCost),
-                    currencyString(maxCost),
+                    currencyString(minCost.toInt()),
+                    currencyString(maxCost.toInt()),
                   ),
                   divisions: 100,
                 ).padding(horizontal: 10, top: 5),

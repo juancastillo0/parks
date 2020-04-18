@@ -72,6 +72,13 @@ mixin _$PlaceStore on _PlaceStore, Store {
     }, _$placesAtom, name: '${_$placesAtom.name}_set');
   }
 
+  final _$fetchPlacesAsyncAction = AsyncAction('fetchPlaces');
+
+  @override
+  Future fetchPlaces() {
+    return _$fetchPlacesAsyncAction.run(() => super.fetchPlaces());
+  }
+
   @override
   String toString() {
     final string = 'places: ${places.toString()}';

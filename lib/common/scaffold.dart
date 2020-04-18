@@ -1,39 +1,95 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:parks/auth/auth-store.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:get_it/get_it.dart';
 import 'package:parks/common/root-store.dart';
 import 'package:parks/main.dart';
 import 'package:parks/routes.dart';
 import 'package:parks/routes.gr.dart';
 import 'package:styled_widget/styled_widget.dart';
 
-List<Widget> getActions(AuthStore authStore) {
-  if (Routes.profile == getCurrentRoute()) {
-    return <Widget>[
-      IconButton(
-        onPressed: () => authStore.signOut(),
-        icon: Icon(
-          Icons.exit_to_app,
+import 'back-client.dart';
+
+class DefaultAppBar extends HookWidget implements PreferredSizeWidget {
+  const DefaultAppBar({Key key, this.title}) : super(key: key);
+
+  final Widget title;
+  final Size _preferredSize = const Size.fromHeight(kToolbarHeight + 0.0);
+
+  @override
+  Widget build(ctx) {
+    final authStore = useAuthStore(ctx);
+    final navigator = useNavigator(ctx);
+    final backClient = GetIt.I.get<BackClient>();
+    final isProfile = Routes.profile == getCurrentRoute(navigator);
+    final colorScheme = Theme.of(ctx).colorScheme;
+    return AppBar(
+      title: title,
+      flexibleSpace: Observer(
+        builder: (_) => backClient.isConnected
+            ? Container()
+            : Row(mainAxisSize: MainAxisSize.min, children: [
+                Icon(Icons.signal_cellular_connected_no_internet_4_bar,
+                    color: colorScheme.onPrimary),
+                Text("Offline").textColor(colorScheme.onPrimary),
+              ]),
+      ),
+      actions: [
+        IconButton(
+          onPressed: () => showDialog(
+            context: ctx,
+            builder: (_) => EndpointForm(backClient),
+          ),
+          icon: Icon(Icons.http),
+        ),
+        IconButton(
+          onPressed: isProfile
+              ? () => authStore.signOut()
+              : () => navigator.pushNamed(
+                  authStore.isAuthenticated ? Routes.profile : Routes.auth),
+          icon: Icon(isProfile ? Icons.exit_to_app : Icons.person),
+        ),
+        Container(width: 16)
+      ],
+    );
+  }
+
+  @override
+  Size get preferredSize => _preferredSize;
+}
+
+class EndpointForm extends HookWidget {
+  const EndpointForm(this.backClient, {Key key}) : super(key: key);
+  final BackClient backClient;
+
+  @override
+  Widget build(ctx) {
+    final c = useTextEditingController(text: backClient.baseUrl);
+    return AlertDialog(
+      title: Text('Server Endpoint'),
+      content: SingleChildScrollView(
+        child: ListBody(
+          children: <Widget>[
+            TextField(
+              controller: c,
+              decoration: InputDecoration(labelText: "URL"),
+            ).padding(top: 20),
+          ],
         ),
       ),
-      Container(
-        width: 16,
-      )
-    ];
-  } else {
-    return <Widget>[
-      IconButton(
-        // onPressed: () => Router.navigator
-        //     .pushNamed(authStore.user != null ? Router.profile : Router.auth),
-        onPressed: () => useNavigator().pushNamed(Routes.profile),
-        icon: Icon(
-          Icons.person,
+      actions: <Widget>[
+        FlatButton(
+          child: Text('Cancel'),
+          onPressed: () => Navigator.of(ctx).pop(),
         ),
-      ),
-      Container(
-        width: 16,
-      )
-    ];
+        FlatButton(
+          child: Text('Accept'),
+          onPressed: () {
+            backClient.setBaseUrl(c.text);
+          },
+        ),
+      ],
+    );
   }
 }
 
@@ -69,9 +125,7 @@ class DefaultBottomNavigationBar extends HookWidget {
         route != Routes.auth) {
       Future.delayed(
         Duration.zero,
-        () => navigator.pushNamed(
-          Routes.auth,
-        ),
+        () => navigator.pushNamed(Routes.auth),
       );
     }
 

@@ -223,6 +223,23 @@ mixin _$TransactionStore on _TransactionStore, Store {
           Computed<Interval<DateTime>>(() => super.timeInterval))
       .value;
 
+  final _$loadingAtom = Atom(name: '_TransactionStore.loading');
+
+  @override
+  bool get loading {
+    _$loadingAtom.context.enforceReadPolicy(_$loadingAtom);
+    _$loadingAtom.reportObserved();
+    return super.loading;
+  }
+
+  @override
+  set loading(bool value) {
+    _$loadingAtom.context.conditionallyRunInAction(() {
+      super.loading = value;
+      _$loadingAtom.reportChanged();
+    }, _$loadingAtom, name: '${_$loadingAtom.name}_set');
+  }
+
   final _$transactionsAtom = Atom(name: '_TransactionStore.transactions');
 
   @override
@@ -310,7 +327,7 @@ mixin _$TransactionStore on _TransactionStore, Store {
   @override
   String toString() {
     final string =
-        'transactions: ${transactions.toString()},filter: ${filter.toString()},selectedTransaction: ${selectedTransaction.toString()},filteredTransactions: ${filteredTransactions.toString()},vehiclesInTransactions: ${vehiclesInTransactions.toString()},placesInTransactions: ${placesInTransactions.toString()},costInterval: ${costInterval.toString()},timeInterval: ${timeInterval.toString()}';
+        'loading: ${loading.toString()},transactions: ${transactions.toString()},filter: ${filter.toString()},selectedTransaction: ${selectedTransaction.toString()},filteredTransactions: ${filteredTransactions.toString()},vehiclesInTransactions: ${vehiclesInTransactions.toString()},placesInTransactions: ${placesInTransactions.toString()},costInterval: ${costInterval.toString()},timeInterval: ${timeInterval.toString()}';
     return '{$string}';
   }
 }
