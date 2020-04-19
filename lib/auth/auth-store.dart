@@ -11,7 +11,6 @@ import 'package:parks/routes.gr.dart';
 part 'auth-store.freezed.dart';
 part 'auth-store.g.dart';
 
-
 @freezed
 abstract class AuthState with _$AuthState {
   const factory AuthState.err(String message) = Error;

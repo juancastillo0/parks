@@ -24,7 +24,7 @@ abstract class _UserStore with Store {
   BackClient _backClient = GetIt.I.get<BackClient>();
   UserBack _back = UserBack();
   Box<UserModel> _box;
-  
+
   @observable
   PersistenceState persistenceState = PersistenceState.Persisted;
   @observable
