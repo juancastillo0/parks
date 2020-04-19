@@ -11,7 +11,8 @@ class Interval<T extends Comparable> {
   Interval update(T val) {
     if (val.compareTo(max) > 0) {
       max = val;
-    } else if (val.compareTo(min) < 0) {
+    }
+    if (val.compareTo(min) < 0) {
       min = val;
     }
     return this;

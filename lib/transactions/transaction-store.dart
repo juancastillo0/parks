@@ -185,8 +185,7 @@ abstract class _TransactionStore with Store {
   @computed
   Interval<double> get costInterval {
     final interval = Interval(double.infinity, double.negativeInfinity);
-    return interval.fromIter(transactions.values
-        .map((t) => t.cost != null ? t.cost.toDouble() : 0.0));
+    return interval.fromIter(transactions.values.map((t) => t.cost.toDouble()));
   }
 
   @computed
