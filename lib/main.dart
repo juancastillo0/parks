@@ -23,7 +23,6 @@ void main() async {
   await initHive(mock: false);
 
   final backClient = BackClient();
-
   GetIt.instance.registerSingleton<BackClient>(backClient);
   final rootStore = RootStore();
   GetIt.instance.registerSingleton<RootStore>(rootStore);

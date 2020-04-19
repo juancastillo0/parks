@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:mobx/mobx.dart';
 import 'package:parks/common/location-service.dart';
@@ -117,53 +118,65 @@ class PlacesPage extends HookWidget {
     final bigScreen = mq.size.width > 900;
 
     return Scaffold(
-      appBar: DefaultAppBar(
-        title: Text("Places"),
-      ),
+      appBar: DefaultAppBar(title: Text("Places")),
       bottomNavigationBar: DefaultBottomNavigationBar(),
       body: LayoutBuilder(
-        builder: (ctx, box) {
-          final places = store.placeStore.places.values.toList();
-          final _list = ListView.separated(
-            itemBuilder: (_, index) => index == 0
-                ? PlaceListTile(places[index]).padding(top: 20)
-                : index == places.length - 1
-                    ? PlaceListTile(places[index]).padding(bottom: 20)
-                    : PlaceListTile(places[index]),
-            separatorBuilder: (_, __) => Divider(height: 16, thickness: 1),
-            itemCount: places.length,
-          )
-              .backgroundColor(Colors.white)
-              .borderRadius(topLeft: bigScreen ? 0 : 10, topRight: 10)
-              .elevation(1)
-              .constrained(
-                maxWidth: min(box.maxWidth - 26, 400),
-                maxHeight: bigScreen ? double.infinity : box.maxHeight - 60,
-              );
+        builder: (_, box) => Observer(
+          builder: (ctx) {
+            final places = store.placeStore.places.values.toList();
+            final _list = places.length == 0
+                ? Center(
+                    child: store.placeStore.loading
+                        ? CircularProgressIndicator()
+                        : Column(children: [
+                            Text("There was a problem fetching the places"),
+                            IconButton(
+                              icon: Icon(Icons.refresh),
+                              onPressed: () => store.placeStore.fetchPlaces(),
+                            )
+                          ]),
+                  )
+                : ListView.separated(
+                    itemBuilder: (_, index) => index == 0
+                        ? PlaceListTile(places[index]).padding(top: 20)
+                        : index == places.length - 1
+                            ? PlaceListTile(places[index]).padding(bottom: 20)
+                            : PlaceListTile(places[index]),
+                    separatorBuilder: (_, __) =>
+                        Divider(height: 16, thickness: 1),
+                    itemCount: places.length,
+                  )
+                    .backgroundColor(Colors.white)
+                    .borderRadius(topLeft: bigScreen ? 0 : 10, topRight: 10)
+                    .elevation(1)
+                    .constrained(
+                      maxWidth: min(box.maxWidth - 26, 400),
+                      maxHeight:
+                          bigScreen ? double.infinity : box.maxHeight - 60,
+                    );
 
-          return bigScreen
-              ? Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Column(
-                      mainAxisSize: MainAxisSize.max,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        FlatButton.icon(
-                          onPressed: () {},
-                          icon: Icon(Icons.tune),
-                          label: Text("Filter"),
-                        ).constrained(height: 50),
-                        _list.flexible()
-                      ],
-                    ),
-                    _map.expanded()
-                  ],
-                )
-              : Stack(
-                  children: [_map, animateList(_list, box, showList)],
-                );
-        },
+            return bigScreen
+                ? Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Column(
+                        mainAxisSize: MainAxisSize.max,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          FlatButton.icon(
+                            onPressed: () {},
+                            icon: Icon(Icons.tune),
+                            label: Text("Filter"),
+                          ).constrained(height: 50),
+                          _list.flexible()
+                        ],
+                      ),
+                      _map.expanded()
+                    ],
+                  )
+                : Stack(children: [_map, animateList(_list, box, showList)]);
+          },
+        ),
       ),
       floatingActionButton: bigScreen
           ? null
