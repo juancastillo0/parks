@@ -110,3 +110,51 @@ class TransactionModelAdapter extends TypeAdapter<TransactionModel> {
       ..write(obj.vehicle);
   }
 }
+
+// **************************************************************************
+// JsonSerializableGenerator
+// **************************************************************************
+
+TransactionPlaceModel _$TransactionPlaceModelFromJson(
+    Map<String, dynamic> json) {
+  return TransactionPlaceModel(
+    name: json['name'] as String,
+    address: json['address'] as String,
+  )..id = json['id'] as String;
+}
+
+Map<String, dynamic> _$TransactionPlaceModelToJson(
+        TransactionPlaceModel instance) =>
+    <String, dynamic>{
+      'name': instance.name,
+      'address': instance.address,
+      'id': instance.id,
+    };
+
+TransactionModel _$TransactionModelFromJson(Map<String, dynamic> json) {
+  return TransactionModel(
+    id: json['id'] as String,
+    timestamp: json['startTime'] == null
+        ? null
+        : DateTime.parse(json['startTime'] as String),
+    endTimestamp: json['endTime'] == null
+        ? null
+        : DateTime.parse(json['endTime'] as String),
+    place: _TransactionPlaceConverter.fromJSON(json['parking_lot_id']),
+    state: _TransactionStateConverter.fromJson(json['state']),
+    vehicle:
+        _TransactionVehicleConverter.fromJson(json['vehicle_plate'] as String),
+    cost: json['cost'] as int ?? 0,
+  );
+}
+
+Map<String, dynamic> _$TransactionModelToJson(TransactionModel instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'startTime': instance.timestamp?.toIso8601String(),
+      'endTime': instance.endTimestamp?.toIso8601String(),
+      'parking_lot_id': _TransactionPlaceConverter.toJSON(instance.place),
+      'state': _TransactionStateConverter.toJson(instance.state),
+      'cost': instance.cost,
+      'vehicle_plate': _TransactionVehicleConverter.toJson(instance.vehicle),
+    };

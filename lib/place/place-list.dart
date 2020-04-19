@@ -7,7 +7,6 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:mobx/mobx.dart';
-import 'package:parks/auth/auth-store.dart';
 import 'package:parks/common/location-service.dart';
 import 'package:parks/common/root-store.dart';
 import 'package:parks/common/scaffold.dart';
@@ -16,8 +15,10 @@ import 'package:parks/routes.dart';
 import 'package:parks/routes.gr.dart';
 import 'package:styled_widget/styled_widget.dart';
 
-var _markers = (Completer<GoogleMapController> controller,
-        ObservableMap<String, PlaceModel> places) =>
+var _markers = (
+  Completer<GoogleMapController> controller,
+  ObservableMap<String, PlaceModel> places,
+) =>
     <Marker>[
       Marker(
         markerId: MarkerId("-1"),
@@ -53,7 +54,10 @@ var _markers = (Completer<GoogleMapController> controller,
     ].toSet();
 
 Widget animateList(
-    Widget list, BoxConstraints box, ValueNotifier<bool> showList) {
+  Widget list,
+  BoxConstraints box,
+  ValueNotifier<bool> showList,
+) {
   return list
       .opacity(showList.value ? 1 : 0, animate: true)
       .positioned(
@@ -72,8 +76,12 @@ class PlacesPage extends HookWidget {
   Widget build(ctx) {
     final store = useStore(ctx);
     LocationService locationService = store.locationService;
-    AuthStore authStore = store.authStore;
     Completer<GoogleMapController> controller = useMemoized(() => Completer());
+
+    useEffect(() {
+      store.placeStore.fetchPlaces();
+      return null;
+    }, []);
 
     final _goToUserLocation = useMemoized(
       () => () async {
@@ -105,9 +113,9 @@ class PlacesPage extends HookWidget {
     );
 
     final showList = useState(false);
-
     final mq = MediaQuery.of(ctx);
     final bigScreen = mq.size.width > 900;
+
     return Scaffold(
       appBar: DefaultAppBar(
         title: Text("Places"),
@@ -159,30 +167,40 @@ class PlacesPage extends HookWidget {
       ),
       floatingActionButton: bigScreen
           ? null
-          : Stack(children: [
-              FloatingActionButton.extended(
-                heroTag: null,
-                key: Key("Filter"),
-                onPressed: _goToUserLocation,
-                label: Text("Filter",
-                    style: Theme.of(ctx)
-                        .textTheme
-                        .subtitle2
-                        .copyWith(fontSize: 16)),
-                icon: Icon(Icons.tune),
-              ).positioned(bottom: 5, right: 5),
-              FloatingActionButton.extended(
-                heroTag: null,
-                key: Key("List"),
-                onPressed: () => showList.value = !showList.value,
-                label: Text("List",
-                    style: Theme.of(ctx)
-                        .textTheme
-                        .subtitle2
-                        .copyWith(fontSize: 16)),
-                icon: Icon(Icons.list),
-              ).positioned(bottom: 5, left: 36)
-            ]),
+          : _ActionButtons(
+              _goToUserLocation,
+              showList,
+            ),
+    );
+  }
+}
+
+class _ActionButtons extends HookWidget {
+  const _ActionButtons(this.goToUserLocation, this.showList, {Key key})
+      : super(key: key);
+  final Function goToUserLocation;
+  final ValueNotifier<bool> showList;
+
+  @override
+  Widget build(ctx) {
+    final textStyle = Theme.of(ctx).textTheme.subtitle2.copyWith(fontSize: 16);
+    return Stack(
+      children: [
+        FloatingActionButton.extended(
+          heroTag: null,
+          key: Key("Filter"),
+          onPressed: goToUserLocation,
+          label: Text("Filter", style: textStyle),
+          icon: Icon(Icons.tune),
+        ).positioned(bottom: 5, right: 5),
+        FloatingActionButton.extended(
+          heroTag: null,
+          key: Key("List"),
+          onPressed: () => showList.value = !showList.value,
+          label: Text("List", style: textStyle),
+          icon: Icon(Icons.list),
+        ).positioned(bottom: 5, left: 36)
+      ],
     );
   }
 }
@@ -195,11 +213,13 @@ class PlaceListTile extends HookWidget {
   Widget build(ctx) {
     final navigator = useNavigator(ctx);
     return ListTile(
-      title: Text(place.name, style: useTextTheme().headline6).gestures(
-          onTap: () => navigator.pushNamed(
-                Routes.placeDetail,
-                arguments: PlacePageArguments(place: place),
-              )),
+      title:
+          Text(place.name, style: Theme.of(ctx).textTheme.headline6).gestures(
+        onTap: () => navigator.pushNamed(
+          Routes.placeDetail,
+          arguments: PlacePageArguments(place: place),
+        ),
+      ),
       leading: Text(place.rating.toString()),
       subtitle: Column(
         mainAxisSize: MainAxisSize.min,

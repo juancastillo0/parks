@@ -15,23 +15,18 @@ mixin _$BackClient on _BackClient, Store {
   bool get isAuthorized =>
       (_$isAuthorizedComputed ??= Computed<bool>(() => super.isAuthorized))
           .value;
-  Computed<bool> _$isConnectedComputed;
-
-  @override
-  bool get isConnected =>
-      (_$isConnectedComputed ??= Computed<bool>(() => super.isConnected)).value;
 
   final _$connStateAtom = Atom(name: '_BackClient.connState');
 
   @override
-  ConnectivityResult get connState {
+  ConnectivityStatus get connState {
     _$connStateAtom.context.enforceReadPolicy(_$connStateAtom);
     _$connStateAtom.reportObserved();
     return super.connState;
   }
 
   @override
-  set connState(ConnectivityResult value) {
+  set connState(ConnectivityStatus value) {
     _$connStateAtom.context.conditionallyRunInAction(() {
       super.connState = value;
       _$connStateAtom.reportChanged();
@@ -55,28 +50,45 @@ mixin _$BackClient on _BackClient, Store {
     }, _$baseUrlAtom, name: '${_$baseUrlAtom.name}_set');
   }
 
-  final _$_tokenAtom = Atom(name: '_BackClient._token');
+  final _$tokenAtom = Atom(name: '_BackClient.token');
 
   @override
-  String get _token {
-    _$_tokenAtom.context.enforceReadPolicy(_$_tokenAtom);
-    _$_tokenAtom.reportObserved();
-    return super._token;
+  String get token {
+    _$tokenAtom.context.enforceReadPolicy(_$tokenAtom);
+    _$tokenAtom.reportObserved();
+    return super.token;
   }
 
   @override
-  set _token(String value) {
-    _$_tokenAtom.context.conditionallyRunInAction(() {
-      super._token = value;
-      _$_tokenAtom.reportChanged();
-    }, _$_tokenAtom, name: '${_$_tokenAtom.name}_set');
+  set token(String value) {
+    _$tokenAtom.context.conditionallyRunInAction(() {
+      super.token = value;
+      _$tokenAtom.reportChanged();
+    }, _$tokenAtom, name: '${_$tokenAtom.name}_set');
+  }
+
+  final _$isConnectedAtom = Atom(name: '_BackClient.isConnected');
+
+  @override
+  bool get isConnected {
+    _$isConnectedAtom.context.enforceReadPolicy(_$isConnectedAtom);
+    _$isConnectedAtom.reportObserved();
+    return super.isConnected;
+  }
+
+  @override
+  set isConnected(bool value) {
+    _$isConnectedAtom.context.conditionallyRunInAction(() {
+      super.isConnected = value;
+      _$isConnectedAtom.reportChanged();
+    }, _$isConnectedAtom, name: '${_$isConnectedAtom.name}_set');
   }
 
   final _$setTokenAsyncAction = AsyncAction('setToken');
 
   @override
-  Future setToken(String token) {
-    return _$setTokenAsyncAction.run(() => super.setToken(token));
+  Future<dynamic> setToken(String _token) {
+    return _$setTokenAsyncAction.run(() => super.setToken(_token));
   }
 
   final _$_requestWrapperAsyncAction = AsyncAction('_requestWrapper');
@@ -92,12 +104,22 @@ mixin _$BackClient on _BackClient, Store {
       AsyncAction('_updateConnectivityState');
 
   @override
-  Future _updateConnectivityState(ConnectivityResult event) {
+  Future _updateConnectivityState(ConnectivityStatus event) {
     return _$_updateConnectivityStateAsyncAction
         .run(() => super._updateConnectivityState(event));
   }
 
   final _$_BackClientActionController = ActionController(name: '_BackClient');
+
+  @override
+  dynamic _updateIsConnected(bool connected) {
+    final _$actionInfo = _$_BackClientActionController.startAction();
+    try {
+      return super._updateIsConnected(connected);
+    } finally {
+      _$_BackClientActionController.endAction(_$actionInfo);
+    }
+  }
 
   @override
   dynamic setBaseUrl(String _baseUrl) {
@@ -155,7 +177,7 @@ mixin _$BackClient on _BackClient, Store {
   @override
   String toString() {
     final string =
-        'connState: ${connState.toString()},baseUrl: ${baseUrl.toString()},isAuthorized: ${isAuthorized.toString()},isConnected: ${isConnected.toString()}';
+        'connState: ${connState.toString()},baseUrl: ${baseUrl.toString()},token: ${token.toString()},isConnected: ${isConnected.toString()},isAuthorized: ${isAuthorized.toString()}';
     return '{$string}';
   }
 }

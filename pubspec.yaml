@@ -45,6 +45,7 @@ dependencies:
   # Utilities 
   timeago: ^2.0.26
   month_picker_dialog:
+  json_annotation: 
  
   # Services
   http:
@@ -52,7 +53,8 @@ dependencies:
   location: ^2.5.0
   google_maps_flutter:
   get_it: ^4.0.1
-  connectivity: ^0.4.8+2
+  cross_connectivity: ^1.0.0
+  
 
   # Hive
   hive: ^1.4.1+1
@@ -66,6 +68,7 @@ dev_dependencies:
   mobx_codegen: 
   auto_route_generator:
   freezed: 
+  json_serializable: 
 
 dependency_overrides:
   dartx: ^0.3.0

@@ -21,35 +21,32 @@ class TransactionsPage extends HookWidget {
   @override
   Widget build(ctx) {
     final mq = MediaQuery.of(ctx);
-    final authStore = useAuthStore(ctx);
     final transactionStore = useTransactionStore(ctx);
     final bigScreen = mq.size.width > WIDTH_BREAKPOINT;
 
-    Widget inner;
-
-    if (bigScreen) {
-      inner = Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          TransactionList(bigScreen),
-          Observer(
-            builder: (_) =>
-                TransactionDetail(transactionStore.selectedTransaction),
-          )
-        ],
-      );
-    } else {
-      inner = TransactionList(bigScreen);
-    }
-
     return Scaffold(
-      backgroundColor: Theme.of(ctx).backgroundColor,
-      appBar: DefaultAppBar(
-        title: Text("Transactions"),
-      ),
-      bottomNavigationBar: DefaultBottomNavigationBar(),
-      body: inner,
-    );
+        backgroundColor: Theme.of(ctx).backgroundColor,
+        appBar: DefaultAppBar(
+          title: Text("Transactions"),
+        ),
+        bottomNavigationBar: DefaultBottomNavigationBar(),
+        body: (bigScreen)
+            ? Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  TransactionList(bigScreen),
+                  Observer(
+                    builder: (_) => transactionStore.transactions.length == 0
+                        ? Container()
+                        : transactionStore.selectedTransaction == null
+                            ? Center(child: Text("Select a transaction"))
+                            : TransactionDetail(
+                                transactionStore.selectedTransaction,
+                              ),
+                  )
+                ],
+              )
+            : TransactionList(bigScreen));
   }
 }
 
@@ -69,9 +66,10 @@ class TransactionList extends HookWidget {
         final transactions = transactionStore.filteredTransactions.toList();
         if (transactions.length == 0) {
           return Center(
-              child: transactionStore.loading
-                  ? CircularProgressIndicator()
-                  : Text("You don't have Transactions"));
+            child: transactionStore.loading
+                ? CircularProgressIndicator()
+                : Text("You don't have Transactions"),
+          );
         }
         return ListView.builder(
           padding: EdgeInsets.symmetric(horizontal: 20),
@@ -100,14 +98,13 @@ class TransactionList extends HookWidget {
 
 Color getTransactionBackgroundColor(TransactionState state) {
   switch (state) {
-    case TransactionState.Completed:
-      return Colors.white;
     case TransactionState.Active:
       return Colors.green[50];
     case TransactionState.Waiting:
       return Colors.orange[50];
+    default:
+      return Colors.white;
   }
-  return null;
 }
 
 class TransactionListTile extends HookWidget {
@@ -125,8 +122,10 @@ class TransactionListTile extends HookWidget {
       onTap: () {
         isLargeScreen
             ? transactionStore.setSelectedTransaction(transaction)
-            : navigator.pushNamed(Routes.transactionDetail,
-                arguments: TransactionPageArguments(transaction: transaction));
+            : navigator.pushNamed(
+                Routes.transactionDetail,
+                arguments: TransactionPageArguments(transaction: transaction),
+              );
       },
       contentPadding: EdgeInsets.all(8),
       title: textWithIcon(Icons.location_on, Text(transaction.place.name)),
@@ -145,12 +144,10 @@ class TransactionListTile extends HookWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         mainAxisSize: MainAxisSize.min,
         children: [
-          [
-            textWithIcon(Icons.directions_car, Text(transaction.vehicle.plate)),
-          ].toRow(mainAxisAlignment: MainAxisAlignment.start),
-          [
-            Text(timeago.format(transaction.timestamp)),
-          ].toRow(mainAxisAlignment: MainAxisAlignment.end),
+          [textWithIcon(Icons.directions_car, Text(transaction.vehicle.plate))]
+              .toRow(mainAxisAlignment: MainAxisAlignment.start),
+          [Text(timeago.format(transaction.timestamp))]
+              .toRow(mainAxisAlignment: MainAxisAlignment.end),
         ],
       ).padding(top: 8),
     ).backgroundColor(

@@ -1,5 +1,7 @@
+import 'package:get_it/get_it.dart';
 import 'package:hive/hive.dart';
 import 'package:mobx/mobx.dart';
+import 'package:parks/common/back-client.dart';
 import 'package:parks/common/hive-utils.dart';
 import 'package:parks/user-parking/paymentMethod.dart';
 import 'package:parks/user-parking/user-back.dart';
@@ -8,9 +10,7 @@ import 'package:parks/user-parking/vehicle.dart';
 
 part 'user-store.g.dart';
 
-class UserStore extends _UserStore with _$UserStore {
-  UserStore(UserModel user) : super();
-}
+class UserStore extends _UserStore with _$UserStore {}
 
 enum PersistenceState { Persisted, Waiting }
 
@@ -21,16 +21,20 @@ abstract class _UserStore with Store {
 
     reaction((_reaction) => user, _persistUser);
   }
-
+  BackClient _backClient = GetIt.I.get<BackClient>();
   UserBack _back = UserBack();
   Box<UserModel> _box;
+  
   @observable
   PersistenceState persistenceState = PersistenceState.Persisted;
   @observable
   UserModel user;
+  @observable
+  bool loading = false;
 
   @action
   Future fetchUser() async {
+    if (loading) return asyncWhen((r) => !loading);
     final res = await _back.userInfo();
     final _user = res.okOrNull();
     if (_user != null) user = _user;

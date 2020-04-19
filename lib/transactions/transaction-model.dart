@@ -1,6 +1,6 @@
-import 'package:dart_json_mapper/dart_json_mapper.dart';
 import 'package:get_it/get_it.dart';
 import 'package:hive/hive.dart';
+import 'package:json_annotation/json_annotation.dart';
 import 'package:parks/common/root-store.dart';
 import 'package:parks/common/utils.dart';
 import 'package:parks/place/place-store.dart';
@@ -9,8 +9,6 @@ import 'package:parks/user-parking/vehicle.dart';
 part 'transaction-model.g.dart';
 
 @HiveType(typeId: 1)
-@jsonSerializable
-@Json(enumValues: TransactionState.values)
 enum TransactionState {
   @HiveField(0)
   Completed,
@@ -21,7 +19,7 @@ enum TransactionState {
 }
 
 @HiveType(typeId: 6)
-@jsonSerializable
+@JsonSerializable()
 class TransactionPlaceModel {
   TransactionPlaceModel({this.name, this.address});
 
@@ -47,33 +45,41 @@ class TransactionPlaceModel {
 }
 
 @HiveType(typeId: 0)
-@jsonSerializable
+@JsonSerializable()
 class TransactionModel {
   @HiveField(0)
   String id;
 
   @HiveField(1)
-  @JsonProperty(name: "startTime")
+  @JsonKey(name: "startTime")
   DateTime timestamp;
 
   @HiveField(2)
-  @JsonProperty(name: "endTime")
+  @JsonKey(name: "endTime")
   DateTime endTimestamp;
 
   @HiveField(3)
-  @JsonProperty(name: "parking_lot_id", converter: TransactionPlaceConverter())
+  @JsonKey(
+      name: "parking_lot_id",
+      fromJson: _TransactionPlaceConverter.fromJSON,
+      toJson: _TransactionPlaceConverter.toJSON)
   TransactionPlaceModel place;
 
   @HiveField(4)
-  @JsonProperty(converter: TransactionStateConverter())
+  @JsonKey(
+      fromJson: _TransactionStateConverter.fromJson,
+      toJson: _TransactionStateConverter.toJson)
   TransactionState state;
 
   @HiveField(5)
-  @JsonProperty(defaultValue: 0)
+  @JsonKey(defaultValue: 0)
   int cost = 0;
 
   @HiveField(6)
-  @JsonProperty(name: "vehicle_plate", converter: TransactionVehicleConverter())
+  @JsonKey(
+      name: "vehicle_plate",
+      fromJson: _TransactionVehicleConverter.fromJson,
+      toJson: _TransactionVehicleConverter.toJson)
   VehicleModel vehicle;
 
   TransactionModel(
@@ -84,6 +90,10 @@ class TransactionModel {
       this.state,
       this.vehicle,
       this.cost = 0});
+
+  factory TransactionModel.fromJson(Map<String, dynamic> json) =>
+      _$TransactionModelFromJson(json);
+  Map<String, dynamic> toJson() => _$TransactionModelToJson(this);
 
   String costString() {
     return currencyString(cost);
@@ -100,19 +110,17 @@ class TransactionModel {
         return -1;
       case TransactionState.Completed:
         return 1;
+      default:
+        return 0;
     }
-    // Never happens
-    return 0;
   }
 }
 
-class TransactionPlaceConverter
-    implements ICustomConverter<TransactionPlaceModel> {
-  const TransactionPlaceConverter();
+//////////////////              CONVERTERS
+//////////////////////////////////////////
 
-  @override
-  TransactionPlaceModel fromJSON(jsonValue, [JsonProperty jsonProperty]) {
-    if (jsonValue is TransactionPlaceModel) return jsonValue;
+class _TransactionPlaceConverter {
+  static TransactionPlaceModel fromJSON(jsonValue) {
     final rootStore = GetIt.instance.get<RootStore>();
     final place = rootStore.placeStore.places[jsonValue];
     if (place != null) {
@@ -122,44 +130,28 @@ class TransactionPlaceConverter
     }
   }
 
-  @override
-  toJSON(TransactionPlaceModel object, [JsonProperty jsonProperty]) {
+  static String toJSON(TransactionPlaceModel object) {
     return object.id;
   }
 }
 
-class TransactionVehicleConverter implements ICustomConverter<VehicleModel> {
-  const TransactionVehicleConverter();
-
-  @override
-  VehicleModel fromJSON(jsonValue, [JsonProperty jsonProperty]) {
-    if (jsonValue is String) {
-      final rootStore = GetIt.instance.get<RootStore>();
-      final vehicle = rootStore.userStore.user.vehicles[jsonValue];
-      if (vehicle != null) {
-        return vehicle;
-      } else {
-        return VehicleModel()..plate = jsonValue;
-      }
-    } else if (jsonValue is VehicleModel) {
-      return jsonValue;
-    } else {
-      return null;
-    }
+class _TransactionVehicleConverter {
+  static VehicleModel fromJson(String jsonValue) {
+    final rootStore = GetIt.instance.get<RootStore>();
+    final vehicle = rootStore.userStore.user.vehicles[jsonValue];
+    if (vehicle != null)
+      return vehicle;
+    else
+      return VehicleModel()..plate = jsonValue;
   }
 
-  @override
-  toJSON(VehicleModel object, [JsonProperty jsonProperty]) {
+  static String toJson(VehicleModel object) {
     return object.plate;
   }
 }
 
-class TransactionStateConverter implements ICustomConverter<TransactionState> {
-  const TransactionStateConverter();
-
-  @override
-  TransactionState fromJSON(jsonValue, [JsonProperty jsonProperty]) {
-    if (jsonValue is TransactionState) return jsonValue;
+class _TransactionStateConverter {
+  static TransactionState fromJson(jsonValue) {
     switch (jsonValue) {
       case "WAITING":
         return TransactionState.Waiting;
@@ -172,8 +164,7 @@ class TransactionStateConverter implements ICustomConverter<TransactionState> {
     }
   }
 
-  @override
-  toJSON(TransactionState object, [JsonProperty jsonProperty]) {
+  static String toJson(TransactionState object) {
     return object.toString().split(".")[0];
   }
 }

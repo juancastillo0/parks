@@ -2,6 +2,7 @@ import 'package:flutter/material.dart' as material;
 import 'package:hive/hive.dart';
 import 'package:mobx/mobx.dart';
 import 'package:parks/common/hive-utils.dart';
+import 'package:parks/common/root-store.dart';
 import 'package:parks/common/utils.dart';
 import 'package:parks/transactions/transaction-back.dart';
 import 'package:parks/transactions/transaction-model.dart';
@@ -97,11 +98,11 @@ abstract class _TransactionFilterStore with Store {
 }
 
 class TransactionStore extends _TransactionStore with _$TransactionStore {
-  TransactionStore({List<TransactionModel> transactions}) : super();
+  TransactionStore(root) : super(root);
 }
 
 abstract class _TransactionStore with Store {
-  _TransactionStore() {
+  _TransactionStore(this._root) {
     _box = getTransactionsBox();
     transactions = ObservableMap.of(
       Map.fromEntries(_box.values.map((e) => MapEntry(e.id, e))),
@@ -111,8 +112,11 @@ abstract class _TransactionStore with Store {
     filter = TransactionFilterStore();
   }
 
+  RootStore _root;
+
   final _back = TransactionBack();
   Box<TransactionModel> _box;
+
   @observable
   bool loading = false;
   @observable
@@ -123,14 +127,20 @@ abstract class _TransactionStore with Store {
   TransactionModel selectedTransaction;
 
   @action
-  fetchTransactions() async {
-    if (loading) return;
+  Future fetchTransactions() async {
+    if (loading) return asyncWhen((r) => !loading);
     loading = true;
+    if (_root.userStore.user == null) await _root.userStore.fetchUser();
+    if (_root.placeStore.places == null) await _root.placeStore.fetchPlaces();
+    
     final resp = await _back.transactions();
     final value = resp.okOrNull();
     if (value != null) {
       final map = Map.fromEntries(value.map((e) => MapEntry(e.id, e)));
       transactions.addAll(map);
+      if (transactions.length > 0 && selectedTransaction == null)
+        selectedTransaction = transactions.values.first;
+
       await _box.putAll(map);
     }
     loading = false;

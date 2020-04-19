@@ -62,3 +62,61 @@ class PaymentMethodAdapter extends TypeAdapter<PaymentMethod> {
       ..write(obj.provider);
   }
 }
+
+// **************************************************************************
+// JsonSerializableGenerator
+// **************************************************************************
+
+PaymentMethod _$PaymentMethodFromJson(Map<String, dynamic> json) {
+  return PaymentMethod(
+    name: json['description'] as String,
+    type: _$enumDecodeNullable(_$PaymentMethodTypeEnumMap, json['type']) ??
+        PaymentMethodType.Credit,
+    lastDigits: json['lastDigits'] as String,
+    provider: json['provider'] as String,
+  );
+}
+
+Map<String, dynamic> _$PaymentMethodToJson(PaymentMethod instance) =>
+    <String, dynamic>{
+      'description': instance.name,
+      'type': _$PaymentMethodTypeEnumMap[instance.type],
+      'lastDigits': instance.lastDigits,
+      'provider': instance.provider,
+    };
+
+T _$enumDecode<T>(
+  Map<T, dynamic> enumValues,
+  dynamic source, {
+  T unknownValue,
+}) {
+  if (source == null) {
+    throw ArgumentError('A value must be provided. Supported values: '
+        '${enumValues.values.join(', ')}');
+  }
+
+  final value = enumValues.entries
+      .singleWhere((e) => e.value == source, orElse: () => null)
+      ?.key;
+
+  if (value == null && unknownValue == null) {
+    throw ArgumentError('`$source` is not one of the supported values: '
+        '${enumValues.values.join(', ')}');
+  }
+  return value ?? unknownValue;
+}
+
+T _$enumDecodeNullable<T>(
+  Map<T, dynamic> enumValues,
+  dynamic source, {
+  T unknownValue,
+}) {
+  if (source == null) {
+    return null;
+  }
+  return _$enumDecode<T>(enumValues, source, unknownValue: unknownValue);
+}
+
+const _$PaymentMethodTypeEnumMap = {
+  PaymentMethodType.Credit: 'Credit',
+};

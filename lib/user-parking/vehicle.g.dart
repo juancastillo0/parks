@@ -18,19 +18,41 @@ class VehicleModelAdapter extends TypeAdapter<VehicleModel> {
     };
     return VehicleModel()
       ..plate = fields[0] as String
-      ..description = fields[1] as String;
+      ..description = fields[1] as String
+      ..active = fields[2] as bool;
   }
 
   @override
   void write(BinaryWriter writer, VehicleModel obj) {
     writer
-      ..writeByte(2)
+      ..writeByte(3)
       ..writeByte(0)
       ..write(obj.plate)
       ..writeByte(1)
-      ..write(obj.description);
+      ..write(obj.description)
+      ..writeByte(2)
+      ..write(obj.active);
   }
 }
+
+// **************************************************************************
+// JsonSerializableGenerator
+// **************************************************************************
+
+VehicleModel _$VehicleModelFromJson(Map<String, dynamic> json) {
+  return VehicleModel(
+    plate: json['plate'],
+    description: json['description'],
+    active: _ActiveVehicleModel.fromJson(json['state'] as String),
+  );
+}
+
+Map<String, dynamic> _$VehicleModelToJson(VehicleModel instance) =>
+    <String, dynamic>{
+      'plate': instance.plate,
+      'description': instance.description,
+      'state': _ActiveVehicleModel.toJson(instance.active),
+    };
 
 // **************************************************************************
 // StoreGenerator

@@ -297,7 +297,7 @@ mixin _$TransactionStore on _TransactionStore, Store {
   final _$fetchTransactionsAsyncAction = AsyncAction('fetchTransactions');
 
   @override
-  Future fetchTransactions() {
+  Future<dynamic> fetchTransactions() {
     return _$fetchTransactionsAsyncAction.run(() => super.fetchTransactions());
   }
 

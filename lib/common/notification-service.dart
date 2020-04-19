@@ -5,6 +5,7 @@ import 'package:cloud_functions/cloud_functions.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:http/http.dart';
 import 'package:parks/common/mock-data.dart';
+import 'package:parks/common/root-store.dart';
 import 'package:parks/routes.gr.dart';
 import 'package:parks/transactions/transaction-model.dart';
 
@@ -15,8 +16,9 @@ class NotificationService {
   );
 
   StreamSubscription<IosNotificationSettings> iosSubscription;
+  RootStore _root;
 
-  NotificationService(String plate) {
+  NotificationService(this._root) {
     // if (Platform.isIOS) {
     //   iosSubscription = fcm.onIosSettingsRegistered.listen((data) {
     //     // save the token  OR subscribe to a topic here
@@ -41,7 +43,7 @@ class NotificationService {
             ));
       },
     );
-    subscribeToTopic(plate);
+    // subscribeToTopic(plate);
     // testNotification(plate, 5);
   }
 

@@ -1,4 +1,5 @@
-import 'package:dart_json_mapper/dart_json_mapper.dart';
+import 'dart:convert';
+
 import 'package:parks/common/back-client.dart';
 import 'package:parks/common/utils.dart';
 import 'package:parks/place/place-store.dart';
@@ -8,10 +9,14 @@ class PlaceBack {
 
   Future<Result<List<PlaceModel>>> places() async {
     final resp = await _client.get("/parking-lots");
-    return resp.mapOk((resp) {
+
+    return resp.mapOk<List<PlaceModel>>((resp) {
       switch (resp.statusCode) {
         case 200:
-          return Result(JsonMapper.deserialize<List<PlaceModel>>(resp.body));
+          final _body = json.decode(resp.body) as List<dynamic>;
+          return Result(
+            _body.map((e) => PlaceModel.fromJson(e)).toList(),
+          );
         default:
           return Result.err("Server error");
       }

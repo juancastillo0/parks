@@ -3,6 +3,33 @@
 part of 'user-model.dart';
 
 // **************************************************************************
+// JsonSerializableGenerator
+// **************************************************************************
+
+UserModel _$UserModelFromJson(Map<String, dynamic> json) {
+  return UserModel(
+    name: json['name'],
+    id: json['id'],
+    email: json['email'],
+    phone: json['phone'],
+    paymentMethods:
+        _ObservableListConverter.fromJson(json['paymentMethods'] as List),
+    vehicles: _ObservableMapConverter.fromJson(
+        json['vehicles'] as Map<String, dynamic>),
+  );
+}
+
+Map<String, dynamic> _$UserModelToJson(UserModel instance) => <String, dynamic>{
+      'id': instance.id,
+      'name': instance.name,
+      'email': instance.email,
+      'phone': instance.phone,
+      'vehicles': _ObservableMapConverter.toJson(instance.vehicles),
+      'paymentMethods':
+          _ObservableListConverter.toJson(instance.paymentMethods),
+    };
+
+// **************************************************************************
 // StoreGenerator
 // **************************************************************************
 

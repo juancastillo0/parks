@@ -152,7 +152,7 @@ class UserParkingDetail extends HookWidget {
         children: [
           Text(
             userStore.user.name,
-            style: useTextTheme().headline5,
+            style: Theme.of(ctx).textTheme.headline5,
           ).padding(top: 18, bottom: 20, horizontal: 20),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,

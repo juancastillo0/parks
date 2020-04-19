@@ -49,6 +49,33 @@ class PlaceModelAdapter extends TypeAdapter<PlaceModel> {
 }
 
 // **************************************************************************
+// JsonSerializableGenerator
+// **************************************************************************
+
+PlaceModel _$PlaceModelFromJson(Map<String, dynamic> json) {
+  return PlaceModel(
+    id: json['id'] as String,
+    name: json['name'] as String,
+    latitud: (json['latitud'] as num)?.toDouble(),
+    longitud: (json['longitud'] as num)?.toDouble(),
+    description: json['description'] as String,
+    rating: (json['rating'] as num)?.toDouble() ?? 3.5,
+    address: json['address'] as String,
+  );
+}
+
+Map<String, dynamic> _$PlaceModelToJson(PlaceModel instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'name': instance.name,
+      'latitud': instance.latitud,
+      'longitud': instance.longitud,
+      'description': instance.description,
+      'address': instance.address,
+      'rating': instance.rating,
+    };
+
+// **************************************************************************
 // StoreGenerator
 // **************************************************************************
 
@@ -72,16 +99,34 @@ mixin _$PlaceStore on _PlaceStore, Store {
     }, _$placesAtom, name: '${_$placesAtom.name}_set');
   }
 
+  final _$loadingAtom = Atom(name: '_PlaceStore.loading');
+
+  @override
+  bool get loading {
+    _$loadingAtom.context.enforceReadPolicy(_$loadingAtom);
+    _$loadingAtom.reportObserved();
+    return super.loading;
+  }
+
+  @override
+  set loading(bool value) {
+    _$loadingAtom.context.conditionallyRunInAction(() {
+      super.loading = value;
+      _$loadingAtom.reportChanged();
+    }, _$loadingAtom, name: '${_$loadingAtom.name}_set');
+  }
+
   final _$fetchPlacesAsyncAction = AsyncAction('fetchPlaces');
 
   @override
-  Future fetchPlaces() {
+  Future<dynamic> fetchPlaces() {
     return _$fetchPlacesAsyncAction.run(() => super.fetchPlaces());
   }
 
   @override
   String toString() {
-    final string = 'places: ${places.toString()}';
+    final string =
+        'places: ${places.toString()},loading: ${loading.toString()}';
     return '{$string}';
   }
 }

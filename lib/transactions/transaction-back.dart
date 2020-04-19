@@ -1,4 +1,5 @@
-import 'package:dart_json_mapper/dart_json_mapper.dart';
+import 'dart:convert';
+
 import 'package:get_it/get_it.dart';
 import 'package:parks/common/back-client.dart';
 import 'package:parks/common/utils.dart';
@@ -12,19 +13,19 @@ class TransactionBack {
     final resp = await _client.get(
       "/transactions",
       headers: lastModified != null
-          ? {'If-Modified-Since': lastModified.toIso8601String()}
+          ? {'if-modified-since': lastModified.toIso8601String()}
           : null,
     );
-    return resp.mapOk(
+
+    return resp.mapOk<List<TransactionModel>>(
       (resp) {
         switch (resp.statusCode) {
           case 200:
-            if (resp.headers.containsKey("Last-Modified"))
-              lastModified = DateTime.parse(resp.headers["Last-Modified"]);
-            print(resp.body);
-            print("lastModified $lastModified");
+            if (resp.headers.containsKey("modified-at"))
+              lastModified = DateTime.parse(resp.headers["modified-at"]);
+            final _body = json.decode(resp.body) as List<dynamic>;
             return Result(
-              JsonMapper.deserialize<List<TransactionModel>>(resp.body),
+              _body.map((e) => TransactionModel.fromJson(e)).toList(),
             );
           case 401:
             _client.setToken(null);

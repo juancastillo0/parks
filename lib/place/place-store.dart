@@ -1,12 +1,12 @@
-import 'package:dart_json_mapper/dart_json_mapper.dart';
 import 'package:hive/hive.dart';
+import 'package:json_annotation/json_annotation.dart';
 import 'package:mobx/mobx.dart';
 import 'package:parks/common/hive-utils.dart';
 import 'package:parks/place/place-back.dart';
 
 part 'place-store.g.dart';
 
-@jsonSerializable
+@JsonSerializable()
 @HiveType(typeId: 8)
 class PlaceModel {
   @HiveField(0)
@@ -22,8 +22,12 @@ class PlaceModel {
   @HiveField(5)
   String address;
   @HiveField(6)
-  @JsonProperty(defaultValue: 3.5)
+  @JsonKey(defaultValue: 3.5)
   double rating;
+
+  factory PlaceModel.fromJson(Map<String, dynamic> json) =>
+      _$PlaceModelFromJson(json);
+  Map<String, dynamic> toJson() => _$PlaceModelToJson(this);
 
   PlaceModel({
     this.id,
@@ -50,8 +54,15 @@ abstract class _PlaceStore with Store {
   PlaceBack _back = PlaceBack();
   Box<PlaceModel> _box;
 
+  @observable
+  ObservableMap<String, PlaceModel> places;
+  @observable
+  bool loading = false;
+
   @action
-  fetchPlaces() async {
+  Future fetchPlaces() async {
+    if (loading) return asyncWhen((r) => !loading);
+    loading = true;
     final resp = await _back.places();
     final p = resp.okOrNull();
     if (p != null) {
@@ -59,8 +70,6 @@ abstract class _PlaceStore with Store {
       places.addAll(map);
       await _box.putAll(map);
     }
+    loading = false;
   }
-
-  @observable
-  ObservableMap<String, PlaceModel> places;
 }

@@ -6,13 +6,10 @@ import 'package:dart_json_mapper_mobx/dart_json_mapper_mobx.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
-import 'package:mobx/mobx.dart';
 import 'package:parks/common/back-client.dart';
 import 'package:parks/common/hive-utils.dart';
-import 'package:parks/common/mock-data.dart';
 import 'package:parks/common/root-store.dart';
 import 'package:parks/common/scaffold.dart';
-import 'package:parks/place/place-store.dart';
 import 'package:parks/routes.gr.dart';
 import 'package:parks/transactions/transaction-model.dart';
 import 'package:parks/user-parking/paymentMethod.dart';
@@ -27,21 +24,21 @@ void _enablePlatformOverrideForDesktop() {
 }
 
 void main() async {
+  print("init");
   _enablePlatformOverrideForDesktop();
   initializeReflectable();
   JsonMapper().useAdapter(JsonMapperAdapter(valueDecorators: {
     typeOf<List<PaymentMethod>>(): (value) => value.cast<PaymentMethod>(),
     typeOf<List<TransactionModel>>(): (value) => value.cast<TransactionModel>(),
-    typeOf<List<PlaceModel>>(): (value) => value.cast<PlaceModel>(),
-    typeOf<ObservableList<TransactionModel>>(): (value) =>
-        value.cast<TransactionModel>(),
   }));
   JsonMapper().useAdapter(mobXAdapter);
 
   await initHive(mock: false);
 
-  GetIt.instance.registerSingleton<BackClient>(BackClient());
-  final rootStore = RootStore(mockUser, mockTransactions);
+  final backClient = BackClient();
+
+  GetIt.instance.registerSingleton<BackClient>(backClient);
+  final rootStore = RootStore();
   GetIt.instance.registerSingleton<RootStore>(rootStore);
 
   runApp(MyApp(rootStore));
@@ -62,8 +59,10 @@ class MyApp extends StatelessWidget {
             if (Routes.home == getCurrentRoute()) {
               return true;
             } else {
-              ExtendedNavigator.rootNavigator
-                  .pushNamedAndRemoveUntil(Routes.home, (route) => false);
+              ExtendedNavigator.rootNavigator.pushNamedAndRemoveUntil(
+                Routes.home,
+                (route) => false,
+              );
               return false;
             }
           },
@@ -76,6 +75,7 @@ class MyApp extends StatelessWidget {
                 isDense: true,
                 border: OutlineInputBorder(),
                 labelStyle: TextStyle(fontSize: 18),
+                
               ),
             ),
             builder: ExtendedNavigator<Router>(router: Router()),

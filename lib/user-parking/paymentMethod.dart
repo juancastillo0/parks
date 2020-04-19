@@ -1,7 +1,7 @@
-import 'package:dart_json_mapper/dart_json_mapper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hive/hive.dart';
+import 'package:json_annotation/json_annotation.dart';
 import 'package:month_picker_dialog/month_picker_dialog.dart';
 import 'package:parks/common/root-store.dart';
 import 'package:parks/common/scaffold.dart';
@@ -18,17 +18,14 @@ enum PaymentMethodType {
 }
 
 @HiveType(typeId: 4)
-@jsonSerializable
+@JsonSerializable()
 class PaymentMethod {
-  @JsonProperty(name: "description")
+  @JsonKey(name: "description")
   @HiveField(0)
   String name;
 
   @HiveField(1)
-  @JsonProperty(
-    enumValues: PaymentMethodType.values,
-    defaultValue: PaymentMethodType.Credit,
-  )
+  @JsonKey(defaultValue: PaymentMethodType.Credit)
   PaymentMethodType type;
 
   @HiveField(2)
@@ -36,6 +33,10 @@ class PaymentMethod {
 
   @HiveField(3)
   String provider;
+
+  factory PaymentMethod.fromJson(Map<String, dynamic> json) =>
+      _$PaymentMethodFromJson(json);
+  Map<String, dynamic> toJson() => _$PaymentMethodToJson(this);
 
   PaymentMethod({this.name, this.type, this.lastDigits, this.provider});
 }

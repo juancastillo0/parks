@@ -52,13 +52,6 @@ mixin _$AuthStore on _AuthStore, Store {
         .run(() => super._updateStateBackClient(authenticated));
   }
 
-  final _$updateTokenAsyncAction = AsyncAction('updateToken');
-
-  @override
-  Future updateToken(String token) {
-    return _$updateTokenAsyncAction.run(() => super.updateToken(token));
-  }
-
   final _$signInAsyncAction = AsyncAction('signIn');
 
   @override

@@ -1,4 +1,4 @@
-import 'package:dart_json_mapper/dart_json_mapper.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:hive/hive.dart';
 import 'package:mobx/mobx.dart';
 import 'package:parks/user-parking/paymentMethod.dart';
@@ -6,13 +6,27 @@ import 'package:parks/user-parking/vehicle.dart';
 
 part "user-model.g.dart";
 
-@jsonSerializable
+@JsonSerializable()
 class UserModel extends _UserModel with _$UserModel {
-  ObservableMap<String, VehicleModel> vehicles =
-      ObservableMap<String, VehicleModel>();
+  UserModel({name, id, email, phone, paymentMethods, vehicles})
+      : super(
+          name: name,
+          id: id,
+          email: email,
+          phone: phone,
+          paymentMethods: paymentMethods,
+          vehicles: vehicles,
+        );
 
-  ObservableList<PaymentMethod> paymentMethods =
-      ObservableList<PaymentMethod>();
+  // ObservableMap<String, VehicleModel> vehicles =
+  //     ObservableMap<String, VehicleModel>();
+
+  // ObservableList<PaymentMethod> paymentMethods =
+  //     ObservableList<PaymentMethod>();
+
+  factory UserModel.fromJson(Map<String, dynamic> json) =>
+      _$UserModelFromJson(json);
+  Map<String, dynamic> toJson() => _$UserModelToJson(this);
 }
 
 abstract class _UserModel with Store {
@@ -22,18 +36,24 @@ abstract class _UserModel with Store {
   int phone;
 
   @observable
+  @JsonKey(
+      fromJson: _ObservableMapConverter.fromJson,
+      toJson: _ObservableMapConverter.toJson)
   ObservableMap<String, VehicleModel> vehicles;
 
   @observable
+  @JsonKey(
+      fromJson: _ObservableListConverter.fromJson,
+      toJson: _ObservableListConverter.toJson)
   ObservableList<PaymentMethod> paymentMethods;
 
-  // _UserModel(
-  //     {this.name,
-  //     this.id,
-  //     this.email,
-  //     this.phone,
-  //     this.paymentMethods,
-  //     this.vehicles});
+  _UserModel(
+      {this.name,
+      this.id,
+      this.email,
+      this.phone,
+      this.paymentMethods,
+      this.vehicles});
 }
 
 class UserModelAdapter extends TypeAdapter<UserModel> {
@@ -73,4 +93,24 @@ class UserModelAdapter extends TypeAdapter<UserModel> {
       ..writeByte(5)
       ..write(obj.paymentMethods);
   }
+}
+
+class _ObservableListConverter {
+  static ObservableList<PaymentMethod> fromJson(List<dynamic> json) =>
+      ObservableList.of(json.map((e) => PaymentMethod.fromJson(e)));
+
+  static List<Map<String, dynamic>> toJson(
+          ObservableList<PaymentMethod> list) =>
+      list.map((e) => e.toJson()).toList();
+}
+
+class _ObservableMapConverter {
+  static ObservableMap<String, VehicleModel> fromJson(
+          Map<String, dynamic> json) =>
+      ObservableMap.of(
+          json.map((k, e) => MapEntry(k, VehicleModel.fromJson(e))));
+
+  static Map<String, Map<String, dynamic>> toJson(
+          ObservableMap<String, VehicleModel> map) =>
+      map.map((k, e) => MapEntry(k, e.toJson()));
 }

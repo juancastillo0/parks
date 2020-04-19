@@ -96,7 +96,6 @@ class AuthPage extends HookWidget {
                       labelText: "Verification Password",
                     ),
                     validator: (password2) {
-                      print(password2);
                       if (!_isSigningUp) return null;
                       if (password2.length == 0) return "Required";
                       if (password2 != _password.text)

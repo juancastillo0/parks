@@ -23,24 +23,27 @@ class DefaultAppBar extends HookWidget implements PreferredSizeWidget {
     final backClient = GetIt.I.get<BackClient>();
     final isProfile = Routes.profile == getCurrentRoute(navigator);
     final colorScheme = Theme.of(ctx).colorScheme;
+
     return AppBar(
       title: title,
-      flexibleSpace: Observer(
-        builder: (_) => backClient.isConnected
-            ? Container()
-            : Row(mainAxisSize: MainAxisSize.min, children: [
-                Icon(Icons.signal_cellular_connected_no_internet_4_bar,
-                    color: colorScheme.onPrimary),
-                Text("Offline").textColor(colorScheme.onPrimary),
-              ]),
-      ),
       actions: [
-        IconButton(
-          onPressed: () => showDialog(
-            context: ctx,
-            builder: (_) => EndpointForm(backClient),
-          ),
-          icon: Icon(Icons.http),
+        Observer(
+          builder: (_) => backClient.isConnected
+              ? IconButton(
+                  onPressed: () => showDialog(
+                    context: ctx,
+                    builder: (_) => EndpointForm(backClient),
+                  ),
+                  icon: Icon(Icons.http),
+                )
+              : Row(mainAxisSize: MainAxisSize.min, children: [
+                  Icon(Icons.signal_cellular_connected_no_internet_4_bar,
+                          color: colorScheme.onPrimary)
+                      .padding(right: 6),
+                  Text("Offline")
+                      .textColor(colorScheme.onPrimary)
+                      .padding(right: 6),
+                ]),
         ),
         IconButton(
           onPressed: isProfile
@@ -144,32 +147,24 @@ class DefaultBottomNavigationBar extends HookWidget {
             disabledTextColor: Colors.black,
           )
               .decorated(
-                border: Border(
-                  top: BorderSide(color: colorScheme.secondary, width: 3),
-                ),
-              )
+                  border: Border(
+                top: BorderSide(color: colorScheme.secondary, width: 3),
+              ))
               .expanded();
         } else {
           return FlatButton(
             onPressed: !authStore.isAuthenticated && name != Routes.home
                 ? null
-                : () => navigator.pushNamedAndRemoveUntil(
-                      name,
-                      (route) => false,
-                    ),
+                : () =>
+                    navigator.pushNamedAndRemoveUntil(name, (route) => false),
             child: Text(text),
             padding: EdgeInsets.all(0),
           ).expanded();
         }
       }).toList(),
-    ).constrained(maxHeight: 50).backgroundColor(colorScheme.surface).elevation(
-          10,
-          shadowColor: Colors.grey[800],
-        );
+    )
+        .constrained(maxHeight: 50)
+        .backgroundColor(colorScheme.surface)
+        .elevation(10, shadowColor: Colors.grey[800]);
   }
-}
-
-TextTheme useTextTheme() {
-  final context = useContext();
-  return Theme.of(context).textTheme;
 }

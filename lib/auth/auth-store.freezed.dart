@@ -12,12 +12,6 @@ T _$identity<T>(T value) => value;
 class _$AuthStateTearOff {
   const _$AuthStateTearOff();
 
-  Authenticated call(String token) {
-    return Authenticated(
-      token,
-    );
-  }
-
   Error err(String message) {
     return Error(
       message,
@@ -38,30 +32,26 @@ const $AuthState = _$AuthStateTearOff();
 
 mixin _$AuthState {
   @optionalTypeArgs
-  Result when<Result extends Object>(
-    Result $default(String token), {
+  Result when<Result extends Object>({
     @required Result err(String message),
     @required Result loading(),
     @required Result none(),
   });
   @optionalTypeArgs
-  Result maybeWhen<Result extends Object>(
-    Result $default(String token), {
+  Result maybeWhen<Result extends Object>({
     Result err(String message),
     Result loading(),
     Result none(),
     @required Result orElse(),
   });
   @optionalTypeArgs
-  Result map<Result extends Object>(
-    Result $default(Authenticated value), {
+  Result map<Result extends Object>({
     @required Result err(Error value),
     @required Result loading(Loading value),
     @required Result none(None value),
   });
   @optionalTypeArgs
-  Result maybeMap<Result extends Object>(
-    Result $default(Authenticated value), {
+  Result maybeMap<Result extends Object>({
     Result err(Error value),
     Result loading(Loading value),
     Result none(None value),
@@ -80,137 +70,6 @@ class _$AuthStateCopyWithImpl<$Res> implements $AuthStateCopyWith<$Res> {
   final AuthState _value;
   // ignore: unused_field
   final $Res Function(AuthState) _then;
-}
-
-abstract class $AuthenticatedCopyWith<$Res> {
-  factory $AuthenticatedCopyWith(
-          Authenticated value, $Res Function(Authenticated) then) =
-      _$AuthenticatedCopyWithImpl<$Res>;
-  $Res call({String token});
-}
-
-class _$AuthenticatedCopyWithImpl<$Res> extends _$AuthStateCopyWithImpl<$Res>
-    implements $AuthenticatedCopyWith<$Res> {
-  _$AuthenticatedCopyWithImpl(
-      Authenticated _value, $Res Function(Authenticated) _then)
-      : super(_value, (v) => _then(v as Authenticated));
-
-  @override
-  Authenticated get _value => super._value as Authenticated;
-
-  @override
-  $Res call({
-    Object token = freezed,
-  }) {
-    return _then(Authenticated(
-      token == freezed ? _value.token : token as String,
-    ));
-  }
-}
-
-class _$Authenticated with DiagnosticableTreeMixin implements Authenticated {
-  const _$Authenticated(this.token) : assert(token != null);
-
-  @override
-  final String token;
-
-  @override
-  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'AuthState(token: $token)';
-  }
-
-  @override
-  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-    super.debugFillProperties(properties);
-    properties
-      ..add(DiagnosticsProperty('type', 'AuthState'))
-      ..add(DiagnosticsProperty('token', token));
-  }
-
-  @override
-  bool operator ==(dynamic other) {
-    return identical(this, other) ||
-        (other is Authenticated &&
-            (identical(other.token, token) ||
-                const DeepCollectionEquality().equals(other.token, token)));
-  }
-
-  @override
-  int get hashCode =>
-      runtimeType.hashCode ^ const DeepCollectionEquality().hash(token);
-
-  @override
-  $AuthenticatedCopyWith<Authenticated> get copyWith =>
-      _$AuthenticatedCopyWithImpl<Authenticated>(this, _$identity);
-
-  @override
-  @optionalTypeArgs
-  Result when<Result extends Object>(
-    Result $default(String token), {
-    @required Result err(String message),
-    @required Result loading(),
-    @required Result none(),
-  }) {
-    assert($default != null);
-    assert(err != null);
-    assert(loading != null);
-    assert(none != null);
-    return $default(token);
-  }
-
-  @override
-  @optionalTypeArgs
-  Result maybeWhen<Result extends Object>(
-    Result $default(String token), {
-    Result err(String message),
-    Result loading(),
-    Result none(),
-    @required Result orElse(),
-  }) {
-    assert(orElse != null);
-    if ($default != null) {
-      return $default(token);
-    }
-    return orElse();
-  }
-
-  @override
-  @optionalTypeArgs
-  Result map<Result extends Object>(
-    Result $default(Authenticated value), {
-    @required Result err(Error value),
-    @required Result loading(Loading value),
-    @required Result none(None value),
-  }) {
-    assert($default != null);
-    assert(err != null);
-    assert(loading != null);
-    assert(none != null);
-    return $default(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  Result maybeMap<Result extends Object>(
-    Result $default(Authenticated value), {
-    Result err(Error value),
-    Result loading(Loading value),
-    Result none(None value),
-    @required Result orElse(),
-  }) {
-    assert(orElse != null);
-    if ($default != null) {
-      return $default(this);
-    }
-    return orElse();
-  }
-}
-
-abstract class Authenticated implements AuthState {
-  const factory Authenticated(String token) = _$Authenticated;
-
-  String get token;
-  $AuthenticatedCopyWith<Authenticated> get copyWith;
 }
 
 abstract class $ErrorCopyWith<$Res> {
@@ -274,13 +133,11 @@ class _$Error with DiagnosticableTreeMixin implements Error {
 
   @override
   @optionalTypeArgs
-  Result when<Result extends Object>(
-    Result $default(String token), {
+  Result when<Result extends Object>({
     @required Result err(String message),
     @required Result loading(),
     @required Result none(),
   }) {
-    assert($default != null);
     assert(err != null);
     assert(loading != null);
     assert(none != null);
@@ -289,8 +146,7 @@ class _$Error with DiagnosticableTreeMixin implements Error {
 
   @override
   @optionalTypeArgs
-  Result maybeWhen<Result extends Object>(
-    Result $default(String token), {
+  Result maybeWhen<Result extends Object>({
     Result err(String message),
     Result loading(),
     Result none(),
@@ -305,13 +161,11 @@ class _$Error with DiagnosticableTreeMixin implements Error {
 
   @override
   @optionalTypeArgs
-  Result map<Result extends Object>(
-    Result $default(Authenticated value), {
+  Result map<Result extends Object>({
     @required Result err(Error value),
     @required Result loading(Loading value),
     @required Result none(None value),
   }) {
-    assert($default != null);
     assert(err != null);
     assert(loading != null);
     assert(none != null);
@@ -320,8 +174,7 @@ class _$Error with DiagnosticableTreeMixin implements Error {
 
   @override
   @optionalTypeArgs
-  Result maybeMap<Result extends Object>(
-    Result $default(Authenticated value), {
+  Result maybeMap<Result extends Object>({
     Result err(Error value),
     Result loading(Loading value),
     Result none(None value),
@@ -380,13 +233,11 @@ class _$Loading with DiagnosticableTreeMixin implements Loading {
 
   @override
   @optionalTypeArgs
-  Result when<Result extends Object>(
-    Result $default(String token), {
+  Result when<Result extends Object>({
     @required Result err(String message),
     @required Result loading(),
     @required Result none(),
   }) {
-    assert($default != null);
     assert(err != null);
     assert(loading != null);
     assert(none != null);
@@ -395,8 +246,7 @@ class _$Loading with DiagnosticableTreeMixin implements Loading {
 
   @override
   @optionalTypeArgs
-  Result maybeWhen<Result extends Object>(
-    Result $default(String token), {
+  Result maybeWhen<Result extends Object>({
     Result err(String message),
     Result loading(),
     Result none(),
@@ -411,13 +261,11 @@ class _$Loading with DiagnosticableTreeMixin implements Loading {
 
   @override
   @optionalTypeArgs
-  Result map<Result extends Object>(
-    Result $default(Authenticated value), {
+  Result map<Result extends Object>({
     @required Result err(Error value),
     @required Result loading(Loading value),
     @required Result none(None value),
   }) {
-    assert($default != null);
     assert(err != null);
     assert(loading != null);
     assert(none != null);
@@ -426,8 +274,7 @@ class _$Loading with DiagnosticableTreeMixin implements Loading {
 
   @override
   @optionalTypeArgs
-  Result maybeMap<Result extends Object>(
-    Result $default(Authenticated value), {
+  Result maybeMap<Result extends Object>({
     Result err(Error value),
     Result loading(Loading value),
     Result none(None value),
@@ -483,13 +330,11 @@ class _$None with DiagnosticableTreeMixin implements None {
 
   @override
   @optionalTypeArgs
-  Result when<Result extends Object>(
-    Result $default(String token), {
+  Result when<Result extends Object>({
     @required Result err(String message),
     @required Result loading(),
     @required Result none(),
   }) {
-    assert($default != null);
     assert(err != null);
     assert(loading != null);
     assert(none != null);
@@ -498,8 +343,7 @@ class _$None with DiagnosticableTreeMixin implements None {
 
   @override
   @optionalTypeArgs
-  Result maybeWhen<Result extends Object>(
-    Result $default(String token), {
+  Result maybeWhen<Result extends Object>({
     Result err(String message),
     Result loading(),
     Result none(),
@@ -514,13 +358,11 @@ class _$None with DiagnosticableTreeMixin implements None {
 
   @override
   @optionalTypeArgs
-  Result map<Result extends Object>(
-    Result $default(Authenticated value), {
+  Result map<Result extends Object>({
     @required Result err(Error value),
     @required Result loading(Loading value),
     @required Result none(None value),
   }) {
-    assert($default != null);
     assert(err != null);
     assert(loading != null);
     assert(none != null);
@@ -529,8 +371,7 @@ class _$None with DiagnosticableTreeMixin implements None {
 
   @override
   @optionalTypeArgs
-  Result maybeMap<Result extends Object>(
-    Result $default(Authenticated value), {
+  Result maybeMap<Result extends Object>({
     Result err(Error value),
     Result loading(Loading value),
     Result none(None value),

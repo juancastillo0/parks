@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:dart_json_mapper/dart_json_mapper.dart';
 import 'package:get_it/get_it.dart';
 import 'package:parks/common/back-client.dart';
@@ -13,8 +15,8 @@ class UserBack {
       (resp) {
         switch (resp.statusCode) {
           case 200:
-            print(resp.body);
-            return Result(JsonMapper.deserialize<UserModel>(resp.body));
+            final _body = json.decode(resp.body);
+            return Result(UserModel.fromJson(_body));
           case 401:
             _client.setToken(null);
             return Result.err("Unauthorized");
