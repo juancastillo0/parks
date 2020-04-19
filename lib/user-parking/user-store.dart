@@ -34,10 +34,11 @@ abstract class _UserStore with Store {
 
   @action
   Future fetchUser() async {
-    if (loading) return asyncWhen((r) => !loading);
+    loading = true;
     final res = await _back.userInfo();
     final _user = res.okOrNull();
     if (_user != null) user = _user;
+    loading = false;
   }
 
   @action

@@ -1,8 +1,6 @@
 import 'dart:io';
 
 import 'package:auto_route/auto_route.dart';
-import 'package:dart_json_mapper/dart_json_mapper.dart';
-import 'package:dart_json_mapper_mobx/dart_json_mapper_mobx.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
@@ -11,11 +9,7 @@ import 'package:parks/common/hive-utils.dart';
 import 'package:parks/common/root-store.dart';
 import 'package:parks/common/scaffold.dart';
 import 'package:parks/routes.gr.dart';
-import 'package:parks/transactions/transaction-model.dart';
-import 'package:parks/user-parking/paymentMethod.dart';
 import 'package:provider/provider.dart';
-
-import 'main.reflectable.dart' show initializeReflectable;
 
 void _enablePlatformOverrideForDesktop() {
   if (!kIsWeb && (Platform.isWindows || Platform.isLinux)) {
@@ -26,13 +20,6 @@ void _enablePlatformOverrideForDesktop() {
 void main() async {
   print("init");
   _enablePlatformOverrideForDesktop();
-  initializeReflectable();
-  JsonMapper().useAdapter(JsonMapperAdapter(valueDecorators: {
-    typeOf<List<PaymentMethod>>(): (value) => value.cast<PaymentMethod>(),
-    typeOf<List<TransactionModel>>(): (value) => value.cast<TransactionModel>(),
-  }));
-  JsonMapper().useAdapter(mobXAdapter);
-
   await initHive(mock: false);
 
   final backClient = BackClient();
@@ -75,7 +62,6 @@ class MyApp extends StatelessWidget {
                 isDense: true,
                 border: OutlineInputBorder(),
                 labelStyle: TextStyle(fontSize: 18),
-                
               ),
             ),
             builder: ExtendedNavigator<Router>(router: Router()),

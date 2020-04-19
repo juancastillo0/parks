@@ -1,6 +1,6 @@
-targets:
-  $default:
-    builders:
-      reflectable:
-        generate_for:
-          - lib/main.dart
+# targets:
+#   $default:
+#     builders:
+#       reflectable:
+#         generate_for:
+#           - lib/main.dart

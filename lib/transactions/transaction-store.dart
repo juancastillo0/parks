@@ -128,11 +128,10 @@ abstract class _TransactionStore with Store {
 
   @action
   Future fetchTransactions() async {
-    if (loading) return asyncWhen((r) => !loading);
     loading = true;
     if (_root.userStore.user == null) await _root.userStore.fetchUser();
     if (_root.placeStore.places == null) await _root.placeStore.fetchPlaces();
-    
+
     final resp = await _back.transactions();
     final value = resp.okOrNull();
     if (value != null) {

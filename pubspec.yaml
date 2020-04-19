@@ -37,8 +37,6 @@ dependencies:
   provider:
   flutter_hooks:
   styled_widget:
-  dart_json_mapper:
-  dart_json_mapper_mobx:
   auto_route:
   freezed_annotation:
 

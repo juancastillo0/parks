@@ -61,7 +61,6 @@ abstract class _PlaceStore with Store {
 
   @action
   Future fetchPlaces() async {
-    if (loading) return asyncWhen((r) => !loading);
     loading = true;
     final resp = await _back.places();
     final p = resp.okOrNull();
