@@ -124,36 +124,36 @@ class PlacesPage extends HookWidget {
         builder: (_, box) => Observer(
           builder: (ctx) {
             final places = store.placeStore.places.values.toList();
-            final _list = places.length == 0
-                ? Center(
-                    child: store.placeStore.loading
-                        ? CircularProgressIndicator()
-                        : Column(children: [
-                            Text("There was a problem fetching the places"),
-                            IconButton(
-                              icon: Icon(Icons.refresh),
-                              onPressed: () => store.placeStore.fetchPlaces(),
-                            )
-                          ]),
-                  )
-                : ListView.separated(
-                    itemBuilder: (_, index) => index == 0
-                        ? PlaceListTile(places[index]).padding(top: 20)
-                        : index == places.length - 1
-                            ? PlaceListTile(places[index]).padding(bottom: 20)
-                            : PlaceListTile(places[index]),
-                    separatorBuilder: (_, __) =>
-                        Divider(height: 16, thickness: 1),
-                    itemCount: places.length,
-                  )
-                    .backgroundColor(Colors.white)
-                    .borderRadius(topLeft: bigScreen ? 0 : 10, topRight: 10)
-                    .elevation(1)
-                    .constrained(
-                      maxWidth: min(box.maxWidth - 26, 400),
-                      maxHeight:
-                          bigScreen ? double.infinity : box.maxHeight - 60,
-                    );
+            if (places.length == 0)
+              return Center(
+                child: store.placeStore.loading
+                    ? CircularProgressIndicator()
+                    : Column(children: [
+                        Text("There was a problem fetching the places")
+                            .padding(bottom: 10),
+                        IconButton(
+                          icon: Icon(Icons.refresh),
+                          onPressed: () => store.placeStore.fetchPlaces(),
+                        )
+                      ]),
+              );
+
+            final _list = ListView.separated(
+              itemBuilder: (_, index) => index == 0
+                  ? PlaceListTile(places[index]).padding(top: 20)
+                  : index == places.length - 1
+                      ? PlaceListTile(places[index]).padding(bottom: 20)
+                      : PlaceListTile(places[index]),
+              separatorBuilder: (_, __) => Divider(height: 16, thickness: 1),
+              itemCount: places.length,
+            )
+                .backgroundColor(Colors.white)
+                .borderRadius(topLeft: bigScreen ? 0 : 10, topRight: 10)
+                .elevation(1)
+                .constrained(
+                  maxWidth: min(box.maxWidth - 26, 400),
+                  maxHeight: bigScreen ? double.infinity : box.maxHeight - 60,
+                );
 
             return bigScreen
                 ? Row(
