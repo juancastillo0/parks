@@ -61,6 +61,7 @@ class MyApp extends StatelessWidget {
                 isDense: true,
                 border: OutlineInputBorder(),
                 labelStyle: TextStyle(fontSize: 18),
+                counterStyle: TextStyle(color: Colors.transparent),
               ),
             ),
             builder: ExtendedNavigator<Router>(router: Router()),

@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'paymentMethod.dart';
+part of 'model.dart';
 
 // **************************************************************************
 // TypeAdapterGenerator
@@ -41,7 +41,8 @@ class PaymentMethodAdapter extends TypeAdapter<PaymentMethod> {
       for (var i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return PaymentMethod(
-      name: fields[0] as String,
+      id: fields[4] as String,
+      description: fields[0] as String,
       type: fields[1] as PaymentMethodType,
       lastDigits: fields[2] as String,
       provider: fields[3] as String,
@@ -51,15 +52,17 @@ class PaymentMethodAdapter extends TypeAdapter<PaymentMethod> {
   @override
   void write(BinaryWriter writer, PaymentMethod obj) {
     writer
-      ..writeByte(4)
+      ..writeByte(5)
       ..writeByte(0)
-      ..write(obj.name)
+      ..write(obj.description)
       ..writeByte(1)
       ..write(obj.type)
       ..writeByte(2)
       ..write(obj.lastDigits)
       ..writeByte(3)
-      ..write(obj.provider);
+      ..write(obj.provider)
+      ..writeByte(4)
+      ..write(obj.id);
   }
 }
 
@@ -69,7 +72,8 @@ class PaymentMethodAdapter extends TypeAdapter<PaymentMethod> {
 
 PaymentMethod _$PaymentMethodFromJson(Map<String, dynamic> json) {
   return PaymentMethod(
-    name: json['description'] as String,
+    id: json['id'] as String,
+    description: json['description'] as String,
     type: _$enumDecodeNullable(_$PaymentMethodTypeEnumMap, json['type']) ??
         PaymentMethodType.Credit,
     lastDigits: json['lastDigits'] as String,
@@ -79,10 +83,11 @@ PaymentMethod _$PaymentMethodFromJson(Map<String, dynamic> json) {
 
 Map<String, dynamic> _$PaymentMethodToJson(PaymentMethod instance) =>
     <String, dynamic>{
-      'description': instance.name,
+      'description': instance.description,
       'type': _$PaymentMethodTypeEnumMap[instance.type],
       'lastDigits': instance.lastDigits,
       'provider': instance.provider,
+      'id': instance.id,
     };
 
 T _$enumDecode<T>(

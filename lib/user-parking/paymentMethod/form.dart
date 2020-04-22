@@ -1,58 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:hive/hive.dart';
-import 'package:json_annotation/json_annotation.dart';
 import 'package:month_picker_dialog/month_picker_dialog.dart';
 import 'package:parks/common/root-store.dart';
 import 'package:parks/common/scaffold.dart';
 import 'package:parks/common/widgets.dart';
 import 'package:parks/routes.dart';
+import 'package:parks/user-parking/paymentMethod/model.dart';
+import 'package:parks/validators/validators.dart';
 import 'package:styled_widget/styled_widget.dart';
-
-part 'paymentMethod.g.dart';
-
-@HiveType(typeId: 5)
-enum PaymentMethodType {
-  @HiveField(0)
-  Credit
-}
-
-@HiveType(typeId: 4)
-@JsonSerializable()
-class PaymentMethod {
-  @JsonKey(name: "description")
-  @HiveField(0)
-  String name;
-
-  @HiveField(1)
-  @JsonKey(defaultValue: PaymentMethodType.Credit)
-  PaymentMethodType type;
-
-  @HiveField(2)
-  String lastDigits;
-
-  @HiveField(3)
-  String provider;
-
-  factory PaymentMethod.fromJson(Map<String, dynamic> json) =>
-      _$PaymentMethodFromJson(json);
-  Map<String, dynamic> toJson() => _$PaymentMethodToJson(this);
-
-  PaymentMethod({this.name, this.type, this.lastDigits, this.provider});
-}
 
 class CreatePaymentMethodForm extends HookWidget {
   CreatePaymentMethodForm({Key key}) : super(key: key);
 
   @override
   Widget build(ctx) {
-    final name = useTextEditingController();
+    final description = useTextEditingController();
     final number = useTextEditingController();
     final provider = useTextEditingController();
     final obscureText = useState(true);
     final expDate = useState(DateTime.now().add(Duration(days: 365 * 2)));
     final navigator = useNavigator(ctx);
     final userStore = useUserStore(ctx);
+    final inputPadding = 10.0;
 
     return Scaffold(
       appBar: AppBar(
@@ -64,36 +33,30 @@ class CreatePaymentMethodForm extends HookWidget {
         child: Column(
           children: <Widget>[
             TextFormField(
-              controller: name,
-              decoration: InputDecoration(
-                labelText: "Name",
-                border: OutlineInputBorder(),
-                isDense: true,
-              ),
-            ).padding(bottom: 22, top: 40),
+              controller: description,
+              decoration: InputDecoration(labelText: "Name", counterText: "-"),
+            ).padding(bottom: inputPadding, top: 40),
             TextFormField(
               controller: provider,
-              decoration: InputDecoration(
-                labelText: "Provider",
-                border: OutlineInputBorder(),
-                isDense: true,
-              ),
-            ).padding(bottom: 22),
+              decoration:
+                  InputDecoration(labelText: "Provider", counterText: "-"),
+            ).padding(bottom: inputPadding),
             TextFormField(
               controller: number,
               obscureText: obscureText.value,
+              validator: StringValid(minLength: 4).firstError,
               decoration: InputDecoration(
                 labelText: "Number",
-                border: OutlineInputBorder(),
-                isDense: true,
+                counterText: "-",
                 suffixIcon: IconButton(
                   icon: Icon(Icons.remove_red_eye),
                   onPressed: () => obscureText.value = !obscureText.value,
                 ),
               ),
-            ).padding(bottom: 25),
+              keyboardType: TextInputType.phone,
+            ).padding(bottom: inputPadding + 3),
             Container(
-              padding: EdgeInsets.only(bottom: 25),
+              padding: EdgeInsets.only(bottom: inputPadding + 3),
               constraints: BoxConstraints.loose(Size(400, 100)),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -116,7 +79,7 @@ class CreatePaymentMethodForm extends HookWidget {
                   onPressed: () {
                     userStore.createPaymentMethod(
                       PaymentMethod(
-                        name: name.text,
+                        description: description.text,
                         type: PaymentMethodType.Credit,
                         lastDigits:
                             number.text.substring(number.text.length - 4),

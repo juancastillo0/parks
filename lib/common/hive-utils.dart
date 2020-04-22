@@ -3,7 +3,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:parks/common/mock-data.dart';
 import 'package:parks/place/place-store.dart';
 import 'package:parks/transactions/transaction-model.dart';
-import 'package:parks/user-parking/paymentMethod.dart';
+import 'package:parks/user-parking/paymentMethod/model.dart';
 import 'package:parks/user-parking/user-model.dart';
 import 'package:parks/user-parking/vehicle.dart';
 

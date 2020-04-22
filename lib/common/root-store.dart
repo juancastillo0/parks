@@ -44,6 +44,8 @@ abstract class _RootStore with Store {
   LocationService locationService = LocationService();
   @observable
   NotificationService notificationService;
+  @observable
+  ObservableList<String> errors = ObservableList<String>();
 }
 
 RootStore useStore([BuildContext context]) {

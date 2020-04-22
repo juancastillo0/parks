@@ -112,6 +112,58 @@ mixin _$UserStore on _UserStore, Store {
     return _$_persistUserAsyncAction.run(() => super._persistUser(_user));
   }
 
+  final _$_UserStoreActionController = ActionController(name: '_UserStore');
+
+  @override
+  void _createVehicle(VehicleModel vehicle) {
+    final _$actionInfo = _$_UserStoreActionController.startAction();
+    try {
+      return super._createVehicle(vehicle);
+    } finally {
+      _$_UserStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void _toggleVehicleState(VehicleModel vehicle) {
+    final _$actionInfo = _$_UserStoreActionController.startAction();
+    try {
+      return super._toggleVehicleState(vehicle);
+    } finally {
+      _$_UserStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void _deleteVehicle(String plate) {
+    final _$actionInfo = _$_UserStoreActionController.startAction();
+    try {
+      return super._deleteVehicle(plate);
+    } finally {
+      _$_UserStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void _createPaymentMethod(PaymentMethod method) {
+    final _$actionInfo = _$_UserStoreActionController.startAction();
+    try {
+      return super._createPaymentMethod(method);
+    } finally {
+      _$_UserStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void _deletePaymentMethod(PaymentMethod method) {
+    final _$actionInfo = _$_UserStoreActionController.startAction();
+    try {
+      return super._deletePaymentMethod(method);
+    } finally {
+      _$_UserStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
   @override
   String toString() {
     final string =

@@ -4,6 +4,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:parks/auth/auth-store.dart';
 import 'package:parks/common/root-store.dart';
+import 'package:parks/common/widgets.dart';
 import 'package:parks/routes.gr.dart';
 import 'package:parks/validators/validators.dart';
 import 'package:styled_widget/styled_widget.dart';
@@ -19,7 +20,9 @@ class AuthPage extends HookWidget {
     final _password = useTextEditingController();
     final _name = useTextEditingController();
     final _password2 = useTextEditingController();
+    final _phone = useTextEditingController();
     final _formKey = useMemoized(() => GlobalKey<FormState>(), []);
+
     final isSigningUp = useState(false);
     final autovalid = useState(false);
     final _isSigningUp = isSigningUp.value;
@@ -30,7 +33,8 @@ class AuthPage extends HookWidget {
         autovalid.value = true;
         if (formState.validate()) {
           if (_isSigningUp) {
-            await authStore.signUp(_name.text, _email.text, _password.text);
+            await authStore.signUp(
+                _name.text, _email.text, _password.text, _phone.text);
           } else {
             await authStore.signIn(_email.text, _password.text);
           }
@@ -40,70 +44,102 @@ class AuthPage extends HookWidget {
     );
 
     if (authStore.isAuthenticated) {
-      // Go to home if the user is logged in
       Future.delayed(Duration.zero, () {
         ExtendedNavigator.rootNavigator.pushNamed(Routes.home);
       });
       return Container(height: 0, width: 0);
     }
-    final inputPadding = 25.0;
+    final inputPadding = 10.0;
+    final isBigScreen = MediaQuery.of(ctx).size.width > 550;
+    final constrainedWidth =
+        _isSigningUp && isBigScreen ? 210 : double.infinity;
 
     return Scaffold(
       appBar: AppBar(title: Text(_isSigningUp ? "Sign up" : "Log in")),
-      body: Center(
+      body: MaterialResponsiveWrapper(
+        breakpoint: _isSigningUp ? 600 : 500,
         child: Form(
           onChanged: () => authStore.resetError(),
           autovalidate: autovalid.value,
           key: _formKey,
           child: Container(
-            width: 400,
-            constraints: BoxConstraints.loose(Size(350, 800)),
-            margin: EdgeInsets.only(left: 18, right: 18),
+            width: _isSigningUp && isBigScreen ? 450 : 350,
+            margin: EdgeInsets.only(left: 25, right: 25, top: 25, bottom: 25),
             child: ListView(
+              shrinkWrap: true,
               children: <Widget>[
                 // NAME AND EMAIL
                 SizedBox(height: inputPadding),
                 if (_isSigningUp)
-                  TextFormField(
-                    key: Key("name"),
-                    controller: _name,
-                    validator: StringValid(minLength: 3).firstError,
-                    decoration: InputDecoration(labelText: "Name"),
-                  ).padding(bottom: inputPadding),
+                  Wrap(
+                    direction: Axis.horizontal,
+                    alignment: WrapAlignment.spaceBetween,
+                    children: [
+                      TextFormField(
+                        controller: _name,
+                        validator: StringValid(minLength: 3).firstError,
+                        decoration: InputDecoration(
+                            labelText: "Name", counterText: "-"),
+                      )
+                          .padding(bottom: inputPadding)
+                          .constrained(maxWidth: constrainedWidth),
+                      TextFormField(
+                        controller: _phone,
+                        validator: StringValid(
+                          minLength: 5,
+                          pattern: RegExp(r'^[0-9]+$'),
+                        ).firstError,
+                        decoration: InputDecoration(
+                            labelText: "Phone", counterText: "-"),
+                        keyboardType: TextInputType.phone,
+                      )
+                          .padding(bottom: inputPadding)
+                          .constrained(maxWidth: constrainedWidth)
+                    ],
+                  ),
                 TextFormField(
-                  key: Key("email"),
                   controller: _email,
                   validator: StringValid(
                     minLength: 5,
                     pattern: RegExp(r'^[\w]+@[\w]+(\.[\w]+)+$'),
                   ).firstError,
-                  decoration: InputDecoration(labelText: "Email"),
+                  decoration:
+                      InputDecoration(labelText: "Email", counterText: "-"),
+                  keyboardType: TextInputType.emailAddress,
                 ).padding(bottom: inputPadding),
                 // PASSWORDS
-
-                TextFormField(
-                  key: Key("password"),
-                  controller: _password,
-                  decoration: InputDecoration(labelText: "Password"),
-                  validator: StringValid(minLength: 3).firstError,
-                  obscureText: true,
-                ).padding(bottom: inputPadding),
-                if (_isSigningUp)
-                  TextFormField(
-                    key: Key("password2"),
-                    controller: _password2,
-                    decoration: InputDecoration(
-                      labelText: "Verification Password",
-                    ),
-                    validator: (password2) {
-                      if (!_isSigningUp) return null;
-                      if (password2.length == 0) return "Required";
-                      if (password2 != _password.text)
-                        return "The passwords don't match";
-                      return null;
-                    },
-                    obscureText: true,
-                  ).padding(bottom: inputPadding + 5),
+                Wrap(
+                  direction: Axis.horizontal,
+                  alignment: WrapAlignment.spaceBetween,
+                  children: [
+                    TextFormField(
+                      controller: _password,
+                      decoration: InputDecoration(
+                          labelText: "Password", counterText: "-"),
+                      validator: StringValid(minLength: 3).firstError,
+                      obscureText: true,
+                    )
+                        .padding(bottom: inputPadding)
+                        .constrained(maxWidth: constrainedWidth),
+                    if (_isSigningUp)
+                      TextFormField(
+                        controller: _password2,
+                        decoration: InputDecoration(
+                            labelText: "Verification Password",
+                            counterText: "-"),
+                        validator: (password2) {
+                          if (!_isSigningUp) return null;
+                          if (password2.length == 0) return "Required";
+                          if (password2 != _password.text)
+                            return "The passwords don't match";
+                          return null;
+                        },
+                        obscureText: true,
+                      )
+                          .padding(bottom: inputPadding + 5)
+                          .constrained(maxWidth: constrainedWidth),
+                  ],
+                ),
 
                 // SUBMIT BUTTON
 

@@ -15,7 +15,7 @@ import 'package:parks/user-parking/user-detail.dart';
 import 'package:parks/transactions/transaction-list.dart';
 import 'package:parks/transactions/transaction-detail.dart';
 import 'package:parks/transactions/transaction-model.dart';
-import 'package:parks/user-parking/paymentMethod.dart';
+import 'package:parks/user-parking/paymentMethod/form.dart';
 
 abstract class Routes {
   static const auth = '/auth';

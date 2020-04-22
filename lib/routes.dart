@@ -7,7 +7,7 @@ import 'package:parks/place/place-detail.dart';
 import 'package:parks/place/place-list.dart';
 import 'package:parks/transactions/transaction-detail.dart';
 import 'package:parks/transactions/transaction-list.dart';
-import 'package:parks/user-parking/paymentMethod.dart';
+import 'package:parks/user-parking/paymentMethod/form.dart';
 import 'package:parks/user-parking/user-detail.dart';
 
 @MaterialAutoRouter()

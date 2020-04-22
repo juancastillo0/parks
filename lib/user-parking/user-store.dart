@@ -3,7 +3,7 @@ import 'package:hive/hive.dart';
 import 'package:mobx/mobx.dart';
 import 'package:parks/common/back-client.dart';
 import 'package:parks/common/hive-utils.dart';
-import 'package:parks/user-parking/paymentMethod.dart';
+import 'package:parks/user-parking/paymentMethod/model.dart';
 import 'package:parks/user-parking/user-back.dart';
 import 'package:parks/user-parking/user-model.dart';
 import 'package:parks/user-parking/vehicle.dart';
@@ -43,31 +43,56 @@ abstract class _UserStore with Store {
 
   @action
   Future createVehicle(VehicleModel vehicle) async {
-    user.vehicles.putIfAbsent(vehicle.plate, () => vehicle);
+    final res = await _back.createVehicle(vehicle);
+    return res.when(_createVehicle, err: (e) => e);
   }
+
+  @action
+  void _createVehicle(VehicleModel vehicle) =>
+      user.vehicles.putIfAbsent(vehicle.plate, () => vehicle);
 
   @action
   Future toggleVehicleState(VehicleModel vehicle) async {
-    user.vehicles.update(vehicle.plate, (value) {
-      value.active = !value.active;
-      return value;
-    });
+    vehicle.active = !vehicle.active;
+    final res = await _back.updateVehicle(vehicle);
+    return res.when((_) => _toggleVehicleState(vehicle), err: (e) => e);
   }
+
+  @action
+  void _toggleVehicleState(VehicleModel vehicle) =>
+      user.vehicles.update(vehicle.plate, (value) {
+        value.active = !value.active;
+        return value;
+      });
 
   @action
   Future deleteVehicle(String plate) async {
-    user.vehicles.remove(plate);
+    final res = await _back.deleteVehicle(plate);
+    return res.when((_) => _deleteVehicle(plate), err: (e) => e);
   }
+
+  @action
+  void _deleteVehicle(String plate) => user.vehicles.remove(plate);
 
   @action
   Future createPaymentMethod(PaymentMethod method) async {
-    user.paymentMethods.add(method);
+    final res = await _back.createPaymentMethod(method);
+    return res.when(_createPaymentMethod, err: (e) => e);
   }
 
   @action
+  void _createPaymentMethod(PaymentMethod method) =>
+      user.paymentMethods.add(method);
+
+  @action
   Future deletePaymentMethod(PaymentMethod method) async {
-    user.paymentMethods.removeWhere((m) => m.name == method.name);
+    final res = await _back.deletePaymentMethod(method.id);
+    return res.when((_) => _deletePaymentMethod(method), err: (e) => e);
   }
+
+  @action
+  void _deletePaymentMethod(PaymentMethod method) =>
+      user.paymentMethods.removeWhere((m) => m.id == method.id);
 
   @action
   Future _persistUser(UserModel _user) async {

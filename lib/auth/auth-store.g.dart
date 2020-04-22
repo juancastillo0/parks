@@ -62,8 +62,10 @@ mixin _$AuthStore on _AuthStore, Store {
   final _$signUpAsyncAction = AsyncAction('signUp');
 
   @override
-  Future<void> signUp(String name, String email, String password) {
-    return _$signUpAsyncAction.run(() => super.signUp(name, email, password));
+  Future<void> signUp(
+      String name, String email, String password, String phone) {
+    return _$signUpAsyncAction
+        .run(() => super.signUp(name, email, password, phone));
   }
 
   final _$signOutAsyncAction = AsyncAction('signOut');

@@ -114,10 +114,27 @@ mixin _$RootStore on _RootStore, Store {
         name: '${_$notificationServiceAtom.name}_set');
   }
 
+  final _$errorsAtom = Atom(name: '_RootStore.errors');
+
+  @override
+  ObservableList<String> get errors {
+    _$errorsAtom.context.enforceReadPolicy(_$errorsAtom);
+    _$errorsAtom.reportObserved();
+    return super.errors;
+  }
+
+  @override
+  set errors(ObservableList<String> value) {
+    _$errorsAtom.context.conditionallyRunInAction(() {
+      super.errors = value;
+      _$errorsAtom.reportChanged();
+    }, _$errorsAtom, name: '${_$errorsAtom.name}_set');
+  }
+
   @override
   String toString() {
     final string =
-        'authStore: ${authStore.toString()},placeStore: ${placeStore.toString()},userStore: ${userStore.toString()},transactionStore: ${transactionStore.toString()},locationService: ${locationService.toString()},notificationService: ${notificationService.toString()}';
+        'authStore: ${authStore.toString()},placeStore: ${placeStore.toString()},userStore: ${userStore.toString()},transactionStore: ${transactionStore.toString()},locationService: ${locationService.toString()},notificationService: ${notificationService.toString()},errors: ${errors.toString()}';
     return '{$string}';
   }
 }

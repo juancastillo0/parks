@@ -79,11 +79,11 @@ abstract class _AuthStore with Store {
   }
 
   @action
-  Future<void> signUp(String name, String email, String password) async {
+  Future<void> signUp(String name, String email, String password, String phone) async {
     if (isAuthenticated || isLoading) return;
 
     state = AuthState.loading();
-    final res = await _back.signUp(name, email, password);
+    final res = await _back.signUp(name, email, password, phone);
     res.when(
       (value) async => await _backClient.setToken(value),
       err: (err) => state = AuthState.err(err),

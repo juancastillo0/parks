@@ -102,8 +102,7 @@ abstract class _BackClient with Store {
   Future<Result<http.Response>> get(String url, {Map<String, String> headers}) {
     final _headers = _defaultHeaders(headers);
 
-    final request =
-        () async => await _client.get("$baseUrl$url", headers: _headers);
+    final request = () => _client.get("$baseUrl$url", headers: _headers);
     return _requestWrapper(request, true);
   }
 
@@ -111,14 +110,22 @@ abstract class _BackClient with Store {
   Future<Result<http.Response>> _requestWrapper(
       Future<http.Response> Function() request, bool retry) async {
     try {
-      final resp = await request();
-      return Result(resp);
+      final respFuture = request().then((value) => Result(value));
+      final resp = await Future.any<Result<http.Response>>(
+          [Future.delayed(Duration(seconds: 5)), respFuture]);
+      if (resp != null)
+        return resp;
+      else if (retry)
+        return Future.any<Result<http.Response>>(
+            [_requestWrapper(request, false), respFuture]);
+      else
+        return Result.err("The request took too much time");
     } on SocketException catch (_) {
       if (isConnected && retry) {
         final _state = await _connectivity.checkConnectivity();
         await _updateConnectivityState(_state);
 
-        if (isConnected) _requestWrapper(request, false);
+        if (isConnected) return _requestWrapper(request, false);
       }
       return Result.err("No internet connection");
     }

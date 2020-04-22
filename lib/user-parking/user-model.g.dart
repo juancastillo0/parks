@@ -36,6 +36,13 @@ Map<String, dynamic> _$UserModelToJson(UserModel instance) => <String, dynamic>{
 // ignore_for_file: non_constant_identifier_names, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic
 
 mixin _$UserModel on _UserModel, Store {
+  Computed<ObservableList<VehicleModel>> _$vehiclesListComputed;
+
+  @override
+  ObservableList<VehicleModel> get vehiclesList => (_$vehiclesListComputed ??=
+          Computed<ObservableList<VehicleModel>>(() => super.vehiclesList))
+      .value;
+
   final _$vehiclesAtom = Atom(name: '_UserModel.vehicles');
 
   @override
@@ -73,7 +80,7 @@ mixin _$UserModel on _UserModel, Store {
   @override
   String toString() {
     final string =
-        'vehicles: ${vehicles.toString()},paymentMethods: ${paymentMethods.toString()}';
+        'vehicles: ${vehicles.toString()},paymentMethods: ${paymentMethods.toString()},vehiclesList: ${vehiclesList.toString()}';
     return '{$string}';
   }
 }

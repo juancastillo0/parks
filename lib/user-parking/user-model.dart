@@ -1,7 +1,7 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:hive/hive.dart';
 import 'package:mobx/mobx.dart';
-import 'package:parks/user-parking/paymentMethod.dart';
+import 'package:parks/user-parking/paymentMethod/model.dart';
 import 'package:parks/user-parking/vehicle.dart';
 
 part "user-model.g.dart";
@@ -46,6 +46,12 @@ abstract class _UserModel with Store {
       fromJson: _ObservableListConverter.fromJson,
       toJson: _ObservableListConverter.toJson)
   ObservableList<PaymentMethod> paymentMethods;
+
+  @computed
+  @JsonKey(ignore: true)
+  ObservableList<VehicleModel> get vehiclesList {
+    return ObservableList.of(vehicles.values);
+  }
 
   _UserModel(
       {this.name,

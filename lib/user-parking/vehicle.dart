@@ -5,8 +5,8 @@ import 'package:hive/hive.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:mobx/mobx.dart';
 import 'package:parks/common/root-store.dart';
+import 'package:parks/common/widgets.dart';
 import 'package:parks/routes.dart';
-import 'package:parks/user-parking/user-store.dart';
 import 'package:styled_widget/styled_widget.dart';
 
 part 'vehicle.g.dart';
@@ -51,11 +51,9 @@ abstract class _VehicleModel extends HiveObject with Store {
 }
 
 class VehicleListTile extends hooks.HookWidget {
-  const VehicleListTile(this.vehicle, {this.trailing, Key key})
-      : super(key: key);
+  const VehicleListTile(this.vehicle, {Key key}) : super(key: key);
 
   final VehicleModel vehicle;
-  final IconButton trailing;
 
   @override
   Widget build(ctx) {
@@ -65,11 +63,22 @@ class VehicleListTile extends hooks.HookWidget {
         contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
         title: Text(vehicle.plate),
         leading: Switch(
-          value: vehicle.active ?? true,
+          value: vehicle.active,
           onChanged: (_) => userStore.toggleVehicleState(vehicle),
         ),
         subtitle: Text(vehicle.description),
-        trailing: trailing,
+        trailing: IconButton(
+          icon: Icon(Icons.delete),
+          onPressed: deleteDialog(
+            ctx,
+            () {
+              userStore.deleteVehicle(vehicle.plate);
+              Navigator.of(ctx).pop();
+            },
+            Text("Delete Vehicle"),
+            Text("Are you sure you want to delete the car?"),
+          ),
+        ),
       ),
     );
   }
@@ -99,14 +108,30 @@ class _ActiveVehicleModel {
   }
 }
 
+createVehicleDialog(BuildContext ctx) async {
+  await showDialog(
+    context: ctx,
+    builder: (ctx) => SimpleDialog(
+      title: Text("Create Vehicle", style: Theme.of(ctx).textTheme.headline6)
+          .textAlignment(TextAlign.center)
+          .padding(bottom: 12)
+          .border(bottom: 1, color: Colors.black12),
+      contentPadding: EdgeInsets.only(top: 20, left: 30, right: 30, bottom: 10),
+      children: [
+        CreateVehicleForm(),
+      ],
+    ),
+  );
+}
+
 class CreateVehicleForm extends hooks.HookWidget {
-  final UserStore userStore;
-  const CreateVehicleForm(this.userStore);
+  const CreateVehicleForm({Key key}) : super(key: key);
 
   Widget build(ctx) {
     final plateC = hooks.useTextEditingController();
     final descriptionC = hooks.useTextEditingController();
     final navigator = useNavigator(ctx);
+    final userStore = useUserStore();
 
     return Form(
       child: Column(

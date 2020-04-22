@@ -28,8 +28,13 @@ class AuthBack {
   }
 
   Future<Result<String>> signUp(
-      String name, String email, String password) async {
-    final body = {"name": name, "email": email, "password": password};
+      String name, String email, String password, String phone) async {
+    final body = {
+      "name": name,
+      "email": email,
+      "password": password,
+      "phone": phone
+    };
     final resp = await _client.post("/users", body: body);
 
     return resp.mapOk<String>(

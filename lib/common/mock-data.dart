@@ -1,7 +1,7 @@
 import 'package:mobx/mobx.dart';
 import 'package:parks/place/place-store.dart';
 import 'package:parks/transactions/transaction-model.dart';
-import 'package:parks/user-parking/paymentMethod.dart';
+import 'package:parks/user-parking/paymentMethod/model.dart';
 import 'package:parks/user-parking/user-model.dart';
 import 'package:parks/user-parking/vehicle.dart';
 
@@ -52,8 +52,9 @@ var mockUser = UserModel()
   ..phone = 3104902048
   ..paymentMethods = ObservableList.of([
     PaymentMethod(
+      id: "1",
       lastDigits: "0023",
-      name: "Main",
+      description: "Main",
       type: PaymentMethodType.Credit,
       provider: "VISA",
     )
