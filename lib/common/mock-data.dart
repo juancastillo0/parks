@@ -49,7 +49,7 @@ var mockUser = UserModel()
   ..vehicles = ObservableMap.of({_car.plate: _car, _car2.plate: _car2})
   ..email = "juan@mail.com"
   ..name = "Juan Manuel"
-  ..phone = 3104902048
+  ..phone = "3104902048"
   ..paymentMethods = ObservableList.of([
     PaymentMethod(
       id: "1",

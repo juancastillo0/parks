@@ -53,8 +53,7 @@ abstract class _UserStore with Store {
 
   @action
   Future toggleVehicleState(VehicleModel vehicle) async {
-    vehicle.active = !vehicle.active;
-    final res = await _back.updateVehicle(vehicle);
+    final res = await _back.updateVehicle(vehicle.toggled());
     return res.when((_) => _toggleVehicleState(vehicle), err: (e) => e);
   }
 

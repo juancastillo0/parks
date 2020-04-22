@@ -33,7 +33,7 @@ abstract class _UserModel with Store {
   String id;
   String name;
   String email;
-  int phone;
+  String phone;
 
   @observable
   @JsonKey(
@@ -76,7 +76,7 @@ class UserModelAdapter extends TypeAdapter<UserModel> {
       ..id = fields[0] as String
       ..name = fields[1] as String
       ..email = fields[2] as String
-      ..phone = fields[3] as int
+      ..phone = fields[3] as String
       ..vehicles = ObservableMap.of(Map.from(fields[4]))
       ..paymentMethods =
           ObservableList.of((fields[5] as List)?.cast<PaymentMethod>());

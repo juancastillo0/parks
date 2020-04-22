@@ -47,12 +47,20 @@ VehicleModel _$VehicleModelFromJson(Map<String, dynamic> json) {
   );
 }
 
-Map<String, dynamic> _$VehicleModelToJson(VehicleModel instance) =>
-    <String, dynamic>{
-      'plate': instance.plate,
-      'description': instance.description,
-      'state': _ActiveVehicleModel.toJson(instance.active),
-    };
+Map<String, dynamic> _$VehicleModelToJson(VehicleModel instance) {
+  final val = <String, dynamic>{};
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('plate', instance.plate);
+  writeNotNull('description', instance.description);
+  writeNotNull('state', _ActiveVehicleModel.toJson(instance.active));
+  return val;
+}
 
 // **************************************************************************
 // StoreGenerator

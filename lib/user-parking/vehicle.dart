@@ -12,7 +12,7 @@ import 'package:styled_widget/styled_widget.dart';
 part 'vehicle.g.dart';
 
 @HiveType(typeId: 2)
-@JsonSerializable()
+@JsonSerializable(includeIfNull: false)
 class VehicleModel extends _VehicleModel with _$VehicleModel {
   VehicleModel({plate, description, active})
       : super(plate: plate, description: description, active: active);
@@ -46,6 +46,10 @@ abstract class _VehicleModel extends HiveObject with Store {
   @observable
   @JsonKey(ignore: true)
   bool saved = false;
+
+  VehicleModel toggled() => VehicleModel()
+    ..plate = plate
+    ..active = !active;
 
   _VehicleModel({this.plate, this.description, this.active});
 }
