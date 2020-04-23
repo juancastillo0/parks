@@ -112,7 +112,7 @@ abstract class _BackClient with Store {
     try {
       final respFuture = request().then((value) => Result(value));
       final resp = await Future.any<Result<http.Response>>(
-          [Future.delayed(Duration(seconds: 5)), respFuture]);
+          [Future.delayed(Duration(seconds: 8)), respFuture]);
       if (resp != null)
         return resp;
       else if (retry)
@@ -128,6 +128,9 @@ abstract class _BackClient with Store {
         if (isConnected) return _requestWrapper(request, false);
       }
       return Result.err("No internet connection");
+    } catch (e) {
+      print(e);
+      return Result.err("Connection error");
     }
   }
 

@@ -168,7 +168,7 @@ class SingleSelect extends HookWidget {
     final transactionStore = useTransactionStore(ctx);
     final userStore = useUserStore(ctx);
     final groupValue = useState(userStore.user.paymentMethods.first.id);
-    final state = useState(RequestState.loading());
+    final state = useState(RequestState.none());
     final mq = MediaQuery.of(ctx);
 
     return Column(
