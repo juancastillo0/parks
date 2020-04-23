@@ -63,7 +63,7 @@ class TransactionList extends HookWidget {
 
     return Observer(
       builder: (_) {
-        final transactions = transactionStore.filteredTransactions.toList();
+        final transactions = transactionStore.filteredTransactions;
         if (transactions.length == 0) {
           return Center(
             child: transactionStore.loading
@@ -75,18 +75,19 @@ class TransactionList extends HookWidget {
           padding: EdgeInsets.symmetric(horizontal: 20),
           itemBuilder: (_, index) {
             if (index == 0) return TransactionFilter();
-            final transaction = transactions[index - 1];
 
             return Observer(
-              builder: (_) => Card(
-                margin: EdgeInsets.symmetric(vertical: 6),
-                child: TransactionListTile(transaction),
-                elevation:
-                    transactionStore.selectedTransaction == transaction &&
-                            bigScreen
-                        ? 4
-                        : 1,
-              ),
+              builder: (_) {
+                final transaction = transactions[index - 1];
+                final isSelected =
+                    transactionStore.selectedTransaction == transaction;
+                return Card(
+                  key: Key(transaction.id),
+                  margin: EdgeInsets.symmetric(vertical: 6),
+                  child: TransactionListTile(transaction),
+                  elevation: isSelected && bigScreen ? 4 : 1,
+                );
+              },
             ).padding(bottom: index == transactions.length ? 20 : 0);
           },
           itemCount: transactions.length + 1,
@@ -120,12 +121,12 @@ class TransactionListTile extends HookWidget {
     final isLargeScreen = mq.size.width > WIDTH_BREAKPOINT;
     return ListTile(
       onTap: () {
-        isLargeScreen
-            ? transactionStore.setSelectedTransaction(transaction)
-            : navigator.pushNamed(
-                Routes.transactionDetail,
-                arguments: TransactionPageArguments(transaction: transaction),
-              );
+        transactionStore.setSelectedTransaction(transaction);
+        if (!isLargeScreen)
+          navigator.pushNamed(
+            Routes.transactionDetail,
+            arguments: TransactionPageArguments(transaction: transaction),
+          );
       },
       contentPadding: EdgeInsets.all(8),
       title: textWithIcon(Icons.location_on, Text(transaction.place.name)),

@@ -189,12 +189,13 @@ mixin _$TransactionFilterStore on _TransactionFilterStore, Store {
 }
 
 mixin _$TransactionStore on _TransactionStore, Store {
-  Computed<Iterable<TransactionModel>> _$filteredTransactionsComputed;
+  Computed<ObservableList<TransactionModel>> _$filteredTransactionsComputed;
 
   @override
-  Iterable<TransactionModel> get filteredTransactions =>
-      (_$filteredTransactionsComputed ??= Computed<Iterable<TransactionModel>>(
-              () => super.filteredTransactions))
+  ObservableList<TransactionModel> get filteredTransactions =>
+      (_$filteredTransactionsComputed ??=
+              Computed<ObservableList<TransactionModel>>(
+                  () => super.filteredTransactions))
           .value;
   Computed<Set<VehicleModel>> _$vehiclesInTransactionsComputed;
 

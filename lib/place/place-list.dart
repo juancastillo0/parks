@@ -226,6 +226,7 @@ class PlaceListTile extends HookWidget {
   Widget build(ctx) {
     final navigator = useNavigator(ctx);
     return ListTile(
+      key: Key(place.id),
       title:
           Text(place.name, style: Theme.of(ctx).textTheme.headline6).gestures(
         onTap: () => navigator.pushNamed(

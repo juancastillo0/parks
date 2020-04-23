@@ -15,9 +15,7 @@ class PlacePage extends HookWidget {
     final textTheme = Theme.of(ctx).textTheme;
     final mq = MediaQuery.of(ctx);
     return Scaffold(
-      appBar: DefaultAppBar(
-        title: Text("${place.address}"),
-      ),
+      appBar: DefaultAppBar(title: Text("Place")),
       bottomNavigationBar: DefaultBottomNavigationBar(),
       body: Column(
         children: [
@@ -39,11 +37,14 @@ class PlacePage extends HookWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(place.name, style: textTheme.headline5)
-                    .alignment(Alignment.center)
+                    .alignment(Alignment.bottomLeft)
                     .padding(top: 16),
-                Text("0.9 km near you", style: textTheme.subtitle1)
-                    .alignment(Alignment.center)
+                Text(place.address, style: textTheme.subtitle1)
+                    .alignment(Alignment.topLeft)
                     .padding(top: 8),
+                Text("0.9 km near you", style: textTheme.subtitle1)
+                    .padding(top: 8)
+                    .alignment(Alignment.bottomRight),
                 Text(place.description, style: textTheme.bodyText1)
                     .padding(top: 16),
                 Row(

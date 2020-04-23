@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'utils.freezed.dart';
@@ -52,4 +53,17 @@ abstract class Result<T> implements _$Result<T> {
   T okOrNull() {
     return this.when((v) => v, err: (err) => null);
   }
+}
+
+@freezed
+abstract class RequestState implements _$RequestState {
+  const RequestState._();
+  const factory RequestState.err(String message) = _Err;
+  const factory RequestState.loading() = _Loading;
+  const factory RequestState.none() = _None;
+
+  Widget asWidget() => this.when(
+      err: (err) => Text(err),
+      loading: () => CircularProgressIndicator(),
+      none: () => Container(width: 0, height: 0));
 }

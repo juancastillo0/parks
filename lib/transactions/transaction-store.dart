@@ -145,42 +145,42 @@ abstract class _TransactionStore with Store {
     loading = false;
   }
 
-  @action
-  setSelectedTransaction(TransactionModel transaction) {
-    selectedTransaction = transaction;
+  Future<String> updateTransactionState(String id, bool accept) async {
+    final resp = await _back.updateTransactionState(id, accept);
+    return resp.when((accepted) {
+      if (accepted) {
+        final value = transactions.update(
+            id, (value) => value..state = TransactionState.Active);
+        if (selectedTransaction.id == id) selectedTransaction = value;
+      } else {
+        transactions.remove(id);
+        if (selectedTransaction.id == id) {
+          selectedTransaction =
+              transactions.length > 0 ? transactions.values.first : null;
+        }
+      }
+      return null;
+    }, err: (e) => e);
   }
 
   @action
-  resetFilter() {
-    filter = TransactionFilterStore();
-  }
+  setSelectedTransaction(TransactionModel transaction) =>
+      selectedTransaction = transaction;
+
+  @action
+  resetFilter() => filter = TransactionFilterStore();
 
   @computed
-  Iterable<TransactionModel> get filteredTransactions {
-    return transactions.values.where(filter.valid);
-  }
+  ObservableList<TransactionModel> get filteredTransactions =>
+      ObservableList.of(transactions.values.where(filter.valid));
 
   @computed
-  Set<VehicleModel> get vehiclesInTransactions {
-    return transactions.values.fold(
-      Set(),
-      (Set<VehicleModel> p, e) {
-        p.add(e.vehicle);
-        return p;
-      },
-    );
-  }
+  Set<VehicleModel> get vehiclesInTransactions =>
+      transactions.values.map((e) => e.vehicle).toSet();
 
   @computed
-  Set<TransactionPlaceModel> get placesInTransactions {
-    return transactions.values.fold(
-      Set(),
-      (Set p, e) {
-        p.add(e.place);
-        return p;
-      },
-    );
-  }
+  Set<TransactionPlaceModel> get placesInTransactions =>
+      transactions.values.map((e) => e.place).toSet();
 
   @computed
   Interval<double> get costInterval {
@@ -190,8 +190,10 @@ abstract class _TransactionStore with Store {
 
   @computed
   Interval<DateTime> get timeInterval {
-    final interval =
-        Interval(DateTime.now(), DateTime.fromMillisecondsSinceEpoch(0));
+    final interval = Interval(
+      DateTime.now(),
+      DateTime.fromMillisecondsSinceEpoch(0),
+    );
     return interval.fromIter(transactions.values.map((t) => t.timestamp));
   }
 }

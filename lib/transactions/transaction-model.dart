@@ -99,6 +99,12 @@ class TransactionModel {
     return currencyString(cost);
   }
 
+  bool operator ==(other) {
+    return id == other.id;
+  }
+
+  int get hashCode => id.hashCode;
+
   static int compareTo(TransactionModel a, TransactionModel b) {
     if (a.state == b.state) return a.id.compareTo(b.id);
 

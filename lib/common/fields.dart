@@ -68,10 +68,7 @@ class MultiSelect<T> extends HookWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
-            InkWell(
-              onTap: openDialog,
-              child: title,
-            ),
+            InkWell(onTap: openDialog, child: title),
             IconButton(
               icon: Icon(Icons.settings_backup_restore),
               onPressed: selected.isNotEmpty ? selected.clear : null,

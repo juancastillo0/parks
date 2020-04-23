@@ -1,22 +1,13 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:flutter/foundation.dart';
-import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mobx/mobx.dart';
 import 'package:parks/auth/auth-back.dart';
 import 'package:parks/common/back-client.dart';
 import 'package:parks/common/root-store.dart';
+import 'package:parks/common/utils.dart';
 import 'package:parks/routes.gr.dart';
 
-part 'auth-store.freezed.dart';
 part 'auth-store.g.dart';
-
-@freezed
-abstract class AuthState with _$AuthState {
-  const factory AuthState.err(String message) = Error;
-  const factory AuthState.loading() = Loading;
-  const factory AuthState.none() = None;
-}
 
 class AuthStore = _AuthStore with _$AuthStore;
 
@@ -39,11 +30,11 @@ abstract class _AuthStore with Store {
       await _root.clearData();
       if (nav != null) nav.pushNamedAndRemoveUntil(Routes.auth, (_) => false);
     }
-    state = AuthState.none();
+    state = RequestState.none();
   }
 
   @observable
-  AuthState state = AuthState.none();
+  RequestState state = RequestState.none();
 
   @computed
   bool get isAuthenticated {
@@ -70,23 +61,24 @@ abstract class _AuthStore with Store {
   Future<void> signIn(String email, String password) async {
     if (isAuthenticated || isLoading) return;
 
-    state = AuthState.loading();
+    state = RequestState.loading();
     final res = await _back.signIn(email, password);
     res.when(
       (value) async => await _backClient.setToken(value),
-      err: (err) => state = AuthState.err(err),
+      err: (err) => state = RequestState.err(err),
     );
   }
 
   @action
-  Future<void> signUp(String name, String email, String password, String phone) async {
+  Future<void> signUp(
+      String name, String email, String password, String phone) async {
     if (isAuthenticated || isLoading) return;
 
-    state = AuthState.loading();
+    state = RequestState.loading();
     final res = await _back.signUp(name, email, password, phone);
     res.when(
       (value) async => await _backClient.setToken(value),
-      err: (err) => state = AuthState.err(err),
+      err: (err) => state = RequestState.err(err),
     );
   }
 
@@ -98,7 +90,7 @@ abstract class _AuthStore with Store {
   @action
   void resetError() {
     if (error != null) {
-      state = AuthState.none();
+      state = RequestState.none();
     }
   }
 }

@@ -88,20 +88,6 @@ class VehicleListTile extends hooks.HookWidget {
   }
 }
 
-// class ActiveVehicleModel implements ICustomConverter<bool> {
-//   const ActiveVehicleModel();
-
-//   @override
-//   bool fromJSON(jsonValue, [JsonProperty jsonProperty]) {
-//     return jsonValue == "ACTIVE" || jsonValue == true ? true : false;
-//   }
-
-//   @override
-//   toJSON(bool object, [JsonProperty jsonProperty]) {
-//     return object ? "ACTIVE" : "INACTIVE";
-//   }
-// }
-
 class _ActiveVehicleModel {
   static bool fromJson(String jsonValue) {
     return jsonValue == "ACTIVE" ? true : false;

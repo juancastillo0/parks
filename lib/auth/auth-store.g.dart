@@ -29,14 +29,14 @@ mixin _$AuthStore on _AuthStore, Store {
   final _$stateAtom = Atom(name: '_AuthStore.state');
 
   @override
-  AuthState get state {
+  RequestState get state {
     _$stateAtom.context.enforceReadPolicy(_$stateAtom);
     _$stateAtom.reportObserved();
     return super.state;
   }
 
   @override
-  set state(AuthState value) {
+  set state(RequestState value) {
     _$stateAtom.context.conditionallyRunInAction(() {
       super.state = value;
       _$stateAtom.reportChanged();

@@ -36,4 +36,23 @@ class TransactionBack {
       },
     );
   }
+
+  Future<Result<bool>> updateTransactionState(String id, bool accept) async {
+    final resp = await _client.put("/transactions/$id",
+        body: {"state": accept ? "ACTIVE" : "REJECTED"});
+
+    return resp.mapOk<bool>(
+      (resp) {
+        switch (resp.statusCode) {
+          case 200:
+            return Result(accept);
+          case 401:
+            _client.setToken(null);
+            return Result.err("Unauthorized");
+          default:
+            return Result.err("Server Error");
+        }
+      },
+    );
+  }
 }

@@ -3,8 +3,12 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:parks/routes.dart';
 import 'package:styled_widget/styled_widget.dart';
 
-Future Function() deleteDialog(BuildContext context, void Function() onPressed,
-    Widget title, Widget content) {
+Future Function() deleteDialog(
+  BuildContext context,
+  void Function() onPressed,
+  Widget title,
+  Widget content,
+) {
   return () async {
     await showDialog(
       context: context,
@@ -31,7 +35,8 @@ Future Function() deleteDialog(BuildContext context, void Function() onPressed,
 }
 
 class MaterialResponsiveWrapper extends HookWidget {
-  const MaterialResponsiveWrapper({this.breakpoint, this.child, Key key})
+  const MaterialResponsiveWrapper(
+      {this.breakpoint, @required this.child, Key key})
       : super(key: key);
 
   final double breakpoint;

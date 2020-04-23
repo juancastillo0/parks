@@ -305,3 +305,389 @@ abstract class _Error<T> extends Result<T> {
   String get message;
   _$ErrorCopyWith<T, _Error<T>> get copyWith;
 }
+
+class _$RequestStateTearOff {
+  const _$RequestStateTearOff();
+
+  _Err err(String message) {
+    return _Err(
+      message,
+    );
+  }
+
+  _Loading loading() {
+    return const _Loading();
+  }
+
+  _None none() {
+    return const _None();
+  }
+}
+
+// ignore: unused_element
+const $RequestState = _$RequestStateTearOff();
+
+mixin _$RequestState {
+  @optionalTypeArgs
+  Result when<Result extends Object>({
+    @required Result err(String message),
+    @required Result loading(),
+    @required Result none(),
+  });
+  @optionalTypeArgs
+  Result maybeWhen<Result extends Object>({
+    Result err(String message),
+    Result loading(),
+    Result none(),
+    @required Result orElse(),
+  });
+  @optionalTypeArgs
+  Result map<Result extends Object>({
+    @required Result err(_Err value),
+    @required Result loading(_Loading value),
+    @required Result none(_None value),
+  });
+  @optionalTypeArgs
+  Result maybeMap<Result extends Object>({
+    Result err(_Err value),
+    Result loading(_Loading value),
+    Result none(_None value),
+    @required Result orElse(),
+  });
+}
+
+abstract class $RequestStateCopyWith<$Res> {
+  factory $RequestStateCopyWith(
+          RequestState value, $Res Function(RequestState) then) =
+      _$RequestStateCopyWithImpl<$Res>;
+}
+
+class _$RequestStateCopyWithImpl<$Res> implements $RequestStateCopyWith<$Res> {
+  _$RequestStateCopyWithImpl(this._value, this._then);
+
+  final RequestState _value;
+  // ignore: unused_field
+  final $Res Function(RequestState) _then;
+}
+
+abstract class _$ErrCopyWith<$Res> {
+  factory _$ErrCopyWith(_Err value, $Res Function(_Err) then) =
+      __$ErrCopyWithImpl<$Res>;
+  $Res call({String message});
+}
+
+class __$ErrCopyWithImpl<$Res> extends _$RequestStateCopyWithImpl<$Res>
+    implements _$ErrCopyWith<$Res> {
+  __$ErrCopyWithImpl(_Err _value, $Res Function(_Err) _then)
+      : super(_value, (v) => _then(v as _Err));
+
+  @override
+  _Err get _value => super._value as _Err;
+
+  @override
+  $Res call({
+    Object message = freezed,
+  }) {
+    return _then(_Err(
+      message == freezed ? _value.message : message as String,
+    ));
+  }
+}
+
+class _$_Err extends _Err with DiagnosticableTreeMixin {
+  const _$_Err(this.message)
+      : assert(message != null),
+        super._();
+
+  @override
+  final String message;
+
+  @override
+  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
+    return 'RequestState.err(message: $message)';
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties
+      ..add(DiagnosticsProperty('type', 'RequestState.err'))
+      ..add(DiagnosticsProperty('message', message));
+  }
+
+  @override
+  bool operator ==(dynamic other) {
+    return identical(this, other) ||
+        (other is _Err &&
+            (identical(other.message, message) ||
+                const DeepCollectionEquality().equals(other.message, message)));
+  }
+
+  @override
+  int get hashCode =>
+      runtimeType.hashCode ^ const DeepCollectionEquality().hash(message);
+
+  @override
+  _$ErrCopyWith<_Err> get copyWith =>
+      __$ErrCopyWithImpl<_Err>(this, _$identity);
+
+  @override
+  @optionalTypeArgs
+  Result when<Result extends Object>({
+    @required Result err(String message),
+    @required Result loading(),
+    @required Result none(),
+  }) {
+    assert(err != null);
+    assert(loading != null);
+    assert(none != null);
+    return err(message);
+  }
+
+  @override
+  @optionalTypeArgs
+  Result maybeWhen<Result extends Object>({
+    Result err(String message),
+    Result loading(),
+    Result none(),
+    @required Result orElse(),
+  }) {
+    assert(orElse != null);
+    if (err != null) {
+      return err(message);
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  Result map<Result extends Object>({
+    @required Result err(_Err value),
+    @required Result loading(_Loading value),
+    @required Result none(_None value),
+  }) {
+    assert(err != null);
+    assert(loading != null);
+    assert(none != null);
+    return err(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  Result maybeMap<Result extends Object>({
+    Result err(_Err value),
+    Result loading(_Loading value),
+    Result none(_None value),
+    @required Result orElse(),
+  }) {
+    assert(orElse != null);
+    if (err != null) {
+      return err(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class _Err extends RequestState {
+  const _Err._() : super._();
+  const factory _Err(String message) = _$_Err;
+
+  String get message;
+  _$ErrCopyWith<_Err> get copyWith;
+}
+
+abstract class _$LoadingCopyWith<$Res> {
+  factory _$LoadingCopyWith(_Loading value, $Res Function(_Loading) then) =
+      __$LoadingCopyWithImpl<$Res>;
+}
+
+class __$LoadingCopyWithImpl<$Res> extends _$RequestStateCopyWithImpl<$Res>
+    implements _$LoadingCopyWith<$Res> {
+  __$LoadingCopyWithImpl(_Loading _value, $Res Function(_Loading) _then)
+      : super(_value, (v) => _then(v as _Loading));
+
+  @override
+  _Loading get _value => super._value as _Loading;
+}
+
+class _$_Loading extends _Loading with DiagnosticableTreeMixin {
+  const _$_Loading() : super._();
+
+  @override
+  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
+    return 'RequestState.loading()';
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties..add(DiagnosticsProperty('type', 'RequestState.loading'));
+  }
+
+  @override
+  bool operator ==(dynamic other) {
+    return identical(this, other) || (other is _Loading);
+  }
+
+  @override
+  int get hashCode => runtimeType.hashCode;
+
+  @override
+  @optionalTypeArgs
+  Result when<Result extends Object>({
+    @required Result err(String message),
+    @required Result loading(),
+    @required Result none(),
+  }) {
+    assert(err != null);
+    assert(loading != null);
+    assert(none != null);
+    return loading();
+  }
+
+  @override
+  @optionalTypeArgs
+  Result maybeWhen<Result extends Object>({
+    Result err(String message),
+    Result loading(),
+    Result none(),
+    @required Result orElse(),
+  }) {
+    assert(orElse != null);
+    if (loading != null) {
+      return loading();
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  Result map<Result extends Object>({
+    @required Result err(_Err value),
+    @required Result loading(_Loading value),
+    @required Result none(_None value),
+  }) {
+    assert(err != null);
+    assert(loading != null);
+    assert(none != null);
+    return loading(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  Result maybeMap<Result extends Object>({
+    Result err(_Err value),
+    Result loading(_Loading value),
+    Result none(_None value),
+    @required Result orElse(),
+  }) {
+    assert(orElse != null);
+    if (loading != null) {
+      return loading(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class _Loading extends RequestState {
+  const _Loading._() : super._();
+  const factory _Loading() = _$_Loading;
+}
+
+abstract class _$NoneCopyWith<$Res> {
+  factory _$NoneCopyWith(_None value, $Res Function(_None) then) =
+      __$NoneCopyWithImpl<$Res>;
+}
+
+class __$NoneCopyWithImpl<$Res> extends _$RequestStateCopyWithImpl<$Res>
+    implements _$NoneCopyWith<$Res> {
+  __$NoneCopyWithImpl(_None _value, $Res Function(_None) _then)
+      : super(_value, (v) => _then(v as _None));
+
+  @override
+  _None get _value => super._value as _None;
+}
+
+class _$_None extends _None with DiagnosticableTreeMixin {
+  const _$_None() : super._();
+
+  @override
+  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
+    return 'RequestState.none()';
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties..add(DiagnosticsProperty('type', 'RequestState.none'));
+  }
+
+  @override
+  bool operator ==(dynamic other) {
+    return identical(this, other) || (other is _None);
+  }
+
+  @override
+  int get hashCode => runtimeType.hashCode;
+
+  @override
+  @optionalTypeArgs
+  Result when<Result extends Object>({
+    @required Result err(String message),
+    @required Result loading(),
+    @required Result none(),
+  }) {
+    assert(err != null);
+    assert(loading != null);
+    assert(none != null);
+    return none();
+  }
+
+  @override
+  @optionalTypeArgs
+  Result maybeWhen<Result extends Object>({
+    Result err(String message),
+    Result loading(),
+    Result none(),
+    @required Result orElse(),
+  }) {
+    assert(orElse != null);
+    if (none != null) {
+      return none();
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  Result map<Result extends Object>({
+    @required Result err(_Err value),
+    @required Result loading(_Loading value),
+    @required Result none(_None value),
+  }) {
+    assert(err != null);
+    assert(loading != null);
+    assert(none != null);
+    return none(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  Result maybeMap<Result extends Object>({
+    Result err(_Err value),
+    Result loading(_Loading value),
+    Result none(_None value),
+    @required Result orElse(),
+  }) {
+    assert(orElse != null);
+    if (none != null) {
+      return none(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class _None extends RequestState {
+  const _None._() : super._();
+  const factory _None() = _$_None;
+}
