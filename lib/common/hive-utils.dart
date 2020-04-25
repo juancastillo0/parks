@@ -4,10 +4,12 @@ import 'package:parks/common/mock-data.dart';
 import 'package:parks/place/place-store.dart';
 import 'package:parks/transactions/transaction-model.dart';
 import 'package:parks/user-parking/paymentMethod/model.dart';
+import 'package:parks/user-parking/user-back.dart';
 import 'package:parks/user-parking/user-model.dart';
 import 'package:parks/user-parking/vehicle.dart';
 
 const USER_BOX = "user";
+const USER_REQUESTS_BOX = "user-requests";
 const TRANSACTIONS_BOX = "transactions";
 const PLACES_BOX = "places";
 const SETTINGS_BOX = "settings";
@@ -29,10 +31,14 @@ Future initHive({bool mock = false}) async {
   Hive.registerAdapter(VehicleModelAdapter());
   Hive.registerAdapter(UserModelAdapter());
 
+  Hive.registerAdapter(RequestVariantAdapter());
+  Hive.registerAdapter(UserRequestAdapter());
+
   final userBox = await _openBox<UserModel>(USER_BOX);
   final transactionsBox = await _openBox<TransactionModel>(TRANSACTIONS_BOX);
   final placesBox = await _openBox<PlaceModel>(PLACES_BOX);
   await Hive.openBox(SETTINGS_BOX);
+  await _openBox<UserRequest>(USER_REQUESTS_BOX);
 
   if (mock) {
     if (userBox.length != 1) {
@@ -69,6 +75,10 @@ Box<TransactionModel> getTransactionsBox() {
 
 Box<UserModel> getUserBox() {
   return Hive.box<UserModel>(USER_BOX);
+}
+
+Box<UserRequest> getUserRequestsBox() {
+  return Hive.box<UserRequest>(USER_REQUESTS_BOX);
 }
 
 Box<PlaceModel> getPlacesBox() {

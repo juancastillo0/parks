@@ -102,19 +102,19 @@ class TransactionDetail extends HookWidget {
                 ],
               ),
             ),
-            SizedBox(height: 20),
+            SizedBox(height: 40),
             if (transaction.state == TransactionState.Waiting)
-              acceptCancelPaymentButtons(ctx).padding(vertical: 20)
-            else if (transaction.state == TransactionState.Active)
-              Padding(
-                padding: EdgeInsets.symmetric(vertical: 20),
-                child: RaisedButton(
-                  child: Text("I'll be there in 5 min!",
-                      style: textTheme.subtitle1),
-                  color: Theme.of(ctx).colorScheme.secondary,
-                  onPressed: () {},
-                ),
-              )
+              acceptCancelPaymentButtons(ctx).padding(bottom: 20)
+            // else if (transaction.state == TransactionState.Active)
+            //   Padding(
+            //     padding: EdgeInsets.symmetric(vertical: 20),
+            //     child: RaisedButton(
+            //       child: Text("I'll be there in 5 min!",
+            //           style: textTheme.subtitle1),
+            //       color: Theme.of(ctx).colorScheme.secondary,
+            //       onPressed: () {},
+            //     ),
+            //   )
           ],
         )
             .scrollable(scrollDirection: Axis.vertical)

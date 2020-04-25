@@ -1,8 +1,8 @@
-import 'package:get_it/get_it.dart';
+import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:mobx/mobx.dart';
-import 'package:parks/common/back-client.dart';
 import 'package:parks/common/hive-utils.dart';
+import 'package:parks/common/root-store.dart';
 import 'package:parks/user-parking/paymentMethod/model.dart';
 import 'package:parks/user-parking/user-back.dart';
 import 'package:parks/user-parking/user-model.dart';
@@ -10,19 +10,21 @@ import 'package:parks/user-parking/vehicle.dart';
 
 part 'user-store.g.dart';
 
-class UserStore extends _UserStore with _$UserStore {}
+class UserStore extends _UserStore with _$UserStore {
+  UserStore(RootStore root) : super(root);
+}
 
 enum PersistenceState { Persisted, Waiting }
 
 abstract class _UserStore with Store {
-  _UserStore() {
+  _UserStore(this.root) {
     _box = getUserBox();
     user = _box.get("user");
-
+    _back = UserBack(this);
     reaction((_reaction) => user, _persistUser);
   }
-  BackClient _backClient = GetIt.I.get<BackClient>();
-  UserBack _back = UserBack();
+  RootStore root;
+  UserBack _back;
   Box<UserModel> _box;
 
   @observable
@@ -32,6 +34,9 @@ abstract class _UserStore with Store {
   @observable
   bool loading = false;
 
+  @observable
+  ObservableList requestCache;
+
   @action
   Future fetchUser() async {
     loading = true;
@@ -40,11 +45,50 @@ abstract class _UserStore with Store {
     if (_user != null) user = _user;
     loading = false;
   }
+  
+  @computed
+  ObservableList<UserRequest> get requests => _back.requests;
+
+  @computed
+  bool get safeToPersist => user.vehicles.values.every((e) => e.saved);
 
   @action
-  Future createVehicle(VehicleModel vehicle) async {
+  void processCachedResponse(UserRequest req) {
+    switch (req.variant) {
+      case RequestVariant.createVehicle:
+        _createVehicle(VehicleModel.fromJson(req.jsonBody));
+        break;
+      case RequestVariant.deleteVehicle:
+        _deleteVehicle(req.path.split("/")[2]);
+        break;
+      case RequestVariant.updateVehicle:
+        _toggleVehicleState(VehicleModel.fromJson(req.jsonBody), true);
+        break;
+      case RequestVariant.deletePaymentMethod:
+        return _deletePaymentMethod(req.path.split("/")[2]);
+        break;
+    }
+    root.showInfo(SnackBar(
+      content: Text(req.successInfo),
+    ));
+  }
+
+  @action
+  Future<String> createVehicle(VehicleModel vehicle) async {
     final res = await _back.createVehicle(vehicle);
-    return res.when(_createVehicle, err: (e) => e);
+    return res.okOrOffline(
+      _createVehicle,
+      offline: () {
+        vehicle.saved = false;
+        _createVehicle(vehicle);
+        root.showInfo(SnackBar(
+          content: Text(
+            "The vehicle will be created when you recover your connection.",
+          ),
+        ));
+        return null;
+      },
+    );
   }
 
   @action
@@ -53,31 +97,63 @@ abstract class _UserStore with Store {
 
   @action
   Future toggleVehicleState(VehicleModel vehicle) async {
-    final res = await _back.updateVehicle(vehicle.toggled());
-    return res.when((_) => _toggleVehicleState(vehicle), err: (e) => e);
+    final toggled = vehicle.toggled();
+    final res = await _back.updateVehicle(toggled);
+    return res.okOrOffline(
+      (_) => _toggleVehicleState(toggled, true),
+      offline: () {
+        _toggleVehicleState(toggled, false);
+        root.showInfo(SnackBar(
+          content: Text(
+            "The vehicle will be updated when you recover your connection.",
+          ),
+        ));
+        return null;
+      },
+    );
   }
 
   @action
-  void _toggleVehicleState(VehicleModel vehicle) =>
-      user.vehicles.update(vehicle.plate, (value) {
-        value.active = !value.active;
+  void _toggleVehicleState(VehicleModel toggled, bool saved) =>
+      user.vehicles.update(toggled.plate, (value) {
+        value.saved = saved;
+        value.active = toggled.active;
         return value;
       });
 
   @action
   Future deleteVehicle(String plate) async {
     final res = await _back.deleteVehicle(plate);
-    return res.when((_) => _deleteVehicle(plate), err: (e) => e);
+    return res.okOrOffline(
+      (_) => _deleteVehicle(plate),
+      offline: () {
+        // final vehicle = user.vehicles[plate];
+        root.showInfo(SnackBar(
+          content: Text(
+            "The vehicle with plate $plate will be deleted when you recover your connection.",
+          ),
+          // action: SnackBarAction(
+          //     label: "UNDO",
+          //     onPressed: () {
+          //       _createVehicle(vehicle);
+          //     }),
+        ));
+        _deleteVehicle(plate);
+        return null;
+      },
+    );
   }
 
   @action
   void _deleteVehicle(String plate) => user.vehicles.remove(plate);
 
   @action
-  Future createPaymentMethod(PaymentMethod method) async {
+  Future<String> createPaymentMethod(PaymentMethod method) async {
     final res = await _back.createPaymentMethod(method);
-    return res.when(_createPaymentMethod, err: (e) => e);
+    return res.okOrError(_createPaymentMethod);
   }
+
+  // PAYMENT METHOD
 
   @action
   void _createPaymentMethod(PaymentMethod method) =>
@@ -85,17 +161,35 @@ abstract class _UserStore with Store {
 
   @action
   Future deletePaymentMethod(PaymentMethod method) async {
-    final res = await _back.deletePaymentMethod(method.id);
-    return res.when((_) => _deletePaymentMethod(method), err: (e) => e);
+    final res = await _back.deletePaymentMethod(method);
+    return res.okOrOffline(
+      (_) => _deletePaymentMethod(method.id),
+      offline: () {
+        _deletePaymentMethod(method.id);
+        root.showInfo(SnackBar(
+          content: Text(
+            "The payment method will be removed when you recover your connection.",
+          ),
+          // action: SnackBarAction(
+          //     label: "UNDO",
+          //     onPressed: () {
+          //       _createPaymentMethod(method);
+          //     }),
+        ));
+        return null;
+      },
+    );
   }
 
   @action
-  void _deletePaymentMethod(PaymentMethod method) =>
-      user.paymentMethods.removeWhere((m) => m.id == method.id);
+  void _deletePaymentMethod(String id) =>
+      user.paymentMethods.removeWhere((m) => m.id == id);
 
   @action
   Future _persistUser(UserModel _user) async {
-    await _box.put("user", _user);
-    persistenceState = PersistenceState.Persisted;
+    if (safeToPersist) {
+      await _box.put("user", _user);
+      persistenceState = PersistenceState.Persisted;
+    }
   }
 }

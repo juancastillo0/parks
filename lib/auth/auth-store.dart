@@ -63,10 +63,11 @@ abstract class _AuthStore with Store {
 
     state = RequestState.loading();
     final res = await _back.signIn(email, password);
-    res.when(
+    final _error = res.okOrError(
       (value) async => await _backClient.setToken(value),
-      err: (err) => state = RequestState.err(err),
+      unauthorized: null,
     );
+    if (_error != null) state = RequestState.err(_error);
   }
 
   @action
@@ -76,10 +77,11 @@ abstract class _AuthStore with Store {
 
     state = RequestState.loading();
     final res = await _back.signUp(name, email, password, phone);
-    res.when(
+    final _error = res.okOrError(
       (value) async => await _backClient.setToken(value),
-      err: (err) => state = RequestState.err(err),
+      unauthorized: null,
     );
+    if (_error != null) state = RequestState.err(_error);
   }
 
   @action

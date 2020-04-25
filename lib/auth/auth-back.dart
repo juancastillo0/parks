@@ -2,12 +2,11 @@ import 'dart:convert';
 
 import 'package:get_it/get_it.dart';
 import 'package:parks/common/back-client.dart';
-import 'package:parks/common/utils.dart';
 
 class AuthBack {
   final _client = GetIt.instance.get<BackClient>();
 
-  Future<Result<String>> signIn(String email, String password) async {
+  Future<BackResult<String>> signIn(String email, String password) async {
     final body = {"email": email, "password": password};
     final resp = await _client.post("/users/login", body: body);
 
@@ -15,19 +14,19 @@ class AuthBack {
       (resp) {
         if (resp.statusCode == 200) {
           final token = json.decode(resp.body)["token"] as String;
-          return Result(token);
+          return BackResult(token);
         } else if (resp.statusCode == 404) {
-          return Result.err("Email not found");
+          return BackResult.error("Email not found");
         } else if (resp.statusCode == 400) {
-          return Result.err("Wrong email or password");
+          return BackResult.error("Wrong email or password");
         } else {
-          return Result.err("Server error");
+          return BackResult.error("Server error");
         }
       },
     );
   }
 
-  Future<Result<String>> signUp(
+  Future<BackResult<String>> signUp(
       String name, String email, String password, String phone) async {
     final body = {
       "name": name,
@@ -41,13 +40,13 @@ class AuthBack {
       (resp) {
         if (resp.statusCode == 201) {
           final token = json.decode(resp.body)["token"] as String;
-          return Result(token);
+          return BackResult(token);
         } else if (resp.statusCode == 409) {
-          return Result.err("A user with the email already exists");
+          return BackResult.error("A user with the email already exists");
         } else if (resp.statusCode == 400) {
-          return Result.err("Missing required fields");
+          return BackResult.error("Missing required fields");
         } else {
-          return Result.err("Server error");
+          return BackResult.error("Server error");
         }
       },
     );

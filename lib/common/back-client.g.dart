@@ -94,7 +94,7 @@ mixin _$BackClient on _BackClient, Store {
   final _$_requestWrapperAsyncAction = AsyncAction('_requestWrapper');
 
   @override
-  Future<Result<http.Response>> _requestWrapper(
+  Future<BackResult<http.Response>> _requestWrapper(
       Future<http.Response> Function() request, bool retry) {
     return _$_requestWrapperAsyncAction
         .run(() => super._requestWrapper(request, retry));
@@ -132,7 +132,7 @@ mixin _$BackClient on _BackClient, Store {
   }
 
   @override
-  Future<Result<http.Response>> post(String url,
+  Future<BackResult<http.Response>> post(String url,
       {Map<String, dynamic> body, Map<String, String> headers}) {
     final _$actionInfo = _$_BackClientActionController.startAction();
     try {
@@ -143,7 +143,7 @@ mixin _$BackClient on _BackClient, Store {
   }
 
   @override
-  Future<Result<http.Response>> put(String url,
+  Future<BackResult<http.Response>> put(String url,
       {Map<String, dynamic> body, Map<String, String> headers}) {
     final _$actionInfo = _$_BackClientActionController.startAction();
     try {
@@ -154,7 +154,7 @@ mixin _$BackClient on _BackClient, Store {
   }
 
   @override
-  Future<Result<http.Response>> delete(String url,
+  Future<BackResult<http.Response>> delete(String url,
       {Map<String, String> headers}) {
     final _$actionInfo = _$_BackClientActionController.startAction();
     try {
@@ -165,7 +165,8 @@ mixin _$BackClient on _BackClient, Store {
   }
 
   @override
-  Future<Result<http.Response>> get(String url, {Map<String, String> headers}) {
+  Future<BackResult<http.Response>> get(String url,
+      {Map<String, String> headers}) {
     final _$actionInfo = _$_BackClientActionController.startAction();
     try {
       return super.get(url, headers: headers);

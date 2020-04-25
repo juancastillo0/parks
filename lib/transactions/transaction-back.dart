@@ -2,14 +2,13 @@ import 'dart:convert';
 
 import 'package:get_it/get_it.dart';
 import 'package:parks/common/back-client.dart';
-import 'package:parks/common/utils.dart';
 import 'package:parks/transactions/transaction-model.dart';
 
 class TransactionBack {
   final _client = GetIt.instance.get<BackClient>();
   DateTime lastModified;
 
-  Future<Result<List<TransactionModel>>> transactions() async {
+  Future<BackResult<List<TransactionModel>>> transactions() async {
     final resp = await _client.get(
       "/transactions",
       headers: lastModified != null
@@ -24,20 +23,21 @@ class TransactionBack {
             if (resp.headers.containsKey("modified-at"))
               lastModified = DateTime.parse(resp.headers["modified-at"]);
             final _body = json.decode(resp.body) as List<dynamic>;
-            return Result(
+            return BackResult(
               _body.map((e) => TransactionModel.fromJson(e)).toList(),
             );
           case 401:
             _client.setToken(null);
-            return Result.err("Unauthorized");
+            return BackResult.error("Unauthorized");
           default:
-            return Result.err("Server Error");
+            return BackResult.error("Server Error");
         }
       },
     );
   }
 
-  Future<Result<bool>> updateTransactionState(String id, bool accept) async {
+  Future<BackResult<bool>> updateTransactionState(
+      String id, bool accept) async {
     final resp = await _client.put("/transactions/$id",
         body: {"state": accept ? "ACTIVE" : "REJECTED"});
 
@@ -45,12 +45,12 @@ class TransactionBack {
       (resp) {
         switch (resp.statusCode) {
           case 200:
-            return Result(accept);
+            return BackResult(accept);
           case 401:
             _client.setToken(null);
-            return Result.err("Unauthorized");
+            return BackResult.error("Unauthorized");
           default:
-            return Result.err("Server Error");
+            return BackResult.error("Server Error");
         }
       },
     );

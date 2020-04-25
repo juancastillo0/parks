@@ -24,9 +24,7 @@ class CreatePaymentMethodForm extends HookWidget {
     final inputPadding = 10.0;
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Create Payment Method"),
-      ),
+      appBar: AppBar(title: Text("Create Payment Method")),
       bottomNavigationBar: DefaultBottomNavigationBar(),
       body: MaterialResponsiveWrapper(
         breakpoint: 575,

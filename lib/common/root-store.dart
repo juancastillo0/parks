@@ -10,6 +10,7 @@ import 'package:parks/common/location-service.dart';
 import 'package:parks/common/notification-service.dart';
 import 'package:parks/place/place-store.dart';
 import 'package:parks/transactions/transaction-store.dart';
+import 'package:parks/user-parking/user-back.dart';
 import 'package:parks/user-parking/user-store.dart';
 import 'package:provider/provider.dart';
 
@@ -19,7 +20,7 @@ class RootStore extends _RootStore with _$RootStore {}
 
 abstract class _RootStore with Store {
   _RootStore() {
-    userStore = UserStore();
+    userStore = UserStore(this);
     transactionStore = TransactionStore(this);
     if (!kIsWeb) notificationService = NotificationService(this);
     authStore = AuthStore(this);
@@ -28,7 +29,7 @@ abstract class _RootStore with Store {
   Future clearData() async {
     await getUserBox().clear();
     await getTransactionsBox().clear();
-    userStore = UserStore();
+    userStore = UserStore(this);
     transactionStore = TransactionStore(this);
   }
 
@@ -44,8 +45,52 @@ abstract class _RootStore with Store {
   LocationService locationService = LocationService();
   @observable
   NotificationService notificationService;
+
+  // UI
+
+  @observable
+  SnackBar snackbar;
+  @observable
+  ScaffoldFeatureController<SnackBar, SnackBarClosedReason> snackbarController;
+
+  @computed
+  ObservableList<UserRequest> get pendingRequests {
+    return userStore.requests;
+  }
+
+  @action
+  setSnackbarController(
+      ScaffoldFeatureController<SnackBar, SnackBarClosedReason> c) {
+    snackbarController = c;
+    if (snackbarController != null) {
+      snackbarController.closed.then((value) {
+        if (infoList.isNotEmpty) {
+          snackbar = infoList.removeLast();
+        } else {
+          snackbar = null;
+        }
+        snackbarController = null;
+      });
+    }
+  }
+
   @observable
   ObservableList<String> errors = ObservableList<String>();
+  @observable
+  ObservableList<SnackBar> infoList = ObservableList<SnackBar>();
+
+  @action
+  showInfo(SnackBar info) {
+    if (snackbar == null)
+      snackbar = info;
+    else
+      infoList.add(info);
+  }
+
+  @action
+  showError(String error) {
+    errors.add(error);
+  }
 }
 
 RootStore useStore([BuildContext context]) {

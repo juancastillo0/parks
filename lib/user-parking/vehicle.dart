@@ -45,7 +45,7 @@ abstract class _VehicleModel extends HiveObject with Store {
 
   @observable
   @JsonKey(ignore: true)
-  bool saved = false;
+  bool saved = true;
 
   VehicleModel toggled() => VehicleModel()
     ..plate = plate

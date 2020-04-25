@@ -2,14 +2,97 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:cross_connectivity/cross_connectivity.dart';
+import 'package:flutter/foundation.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:http/http.dart' as http;
 import 'package:mobx/mobx.dart';
 import 'package:parks/common/hive-utils.dart';
-import 'package:parks/common/utils.dart';
 
+part 'back-client.freezed.dart';
 part 'back-client.g.dart';
 
 class BackClient extends _BackClient with _$BackClient {}
+
+BackResult<K> handle<K>(
+  BackResult<http.Response> result,
+  Map<int, K Function(http.Response)> handlers,
+) {
+  return result.maybeWhen<BackResult<K>>((resp) {
+    if (handlers.containsKey(resp.statusCode)) {
+      final ans = handlers[resp.statusCode](resp);
+      return BackResult(ans);
+    } else {
+      return BackResult.unknown();
+    }
+  }, orElse: () => result as BackResult<K>);
+}
+
+@freezed
+abstract class BackResult<T> implements _$BackResult<T> {
+  BackResult._();
+  factory BackResult(T value) = _Ok<T>;
+  factory BackResult.timeout() = _TimeOut<T>;
+  factory BackResult.offline() = _Offline<T>;
+  factory BackResult.unauthorized() = _Unauthorized<T>;
+  factory BackResult.unknown() = _Unknown<T>;
+  factory BackResult.error(String error) = _Error<T>;
+
+  T okOrNull() {
+    return this.maybeWhen(
+      (value) => value,
+      orElse: () => null,
+    );
+  }
+
+  String okOrError(Function(T) f,
+      {String timeout, String offline, String unauthorized, String unknown}) {
+    return this.when(
+      (value) {
+        f(value);
+        return null;
+      },
+      error: (error) => error,
+      offline: () => offline ?? "No internet connection",
+      timeout: () => timeout ?? "Connection timeout, please try again later",
+      unknown: () => unknown ?? "Connection error, please try again later",
+      unauthorized: () => unauthorized ?? "You are not authorized",
+    );
+  }
+
+  String okOrOffline(Function(T) f,
+      {String timeout,
+      String Function() offline,
+      String unauthorized,
+      String unknown}) {
+    return this.when<String>(
+      (value) {
+        f(value);
+        return null;
+      },
+      error: (error) => error,
+      offline: () => offline != null ? offline() : "No internet connection",
+      timeout: () => timeout ?? "Connection timeout, please try again later",
+      unknown: () => unknown ?? "Connection error, please try again later",
+      unauthorized: () => unauthorized ?? "You are not authorized",
+    );
+  }
+
+  bool get isOffline => this
+      .maybeWhen((value) => false, offline: () => true, orElse: () => false);
+
+  bool get isOk => this.maybeWhen((value) => true, orElse: () => false);
+
+  BackResult<K> mapOk<K>(BackResult<K> Function(T) f) {
+    return this.when<BackResult<K>>(
+      f,
+      error: (e) => BackResult<K>.error(e),
+      offline: () => BackResult<K>.offline(),
+      timeout: () => BackResult<K>.timeout(),
+      unauthorized: () => BackResult<K>.unauthorized(),
+      unknown: () => BackResult<K>.unknown(),
+    );
+  }
+}
 
 abstract class _BackClient with Store {
   _BackClient() {
@@ -29,7 +112,7 @@ abstract class _BackClient with Store {
   @observable
   ConnectivityStatus connState;
   @observable
-  String baseUrl = "http://192.168.1.102:3000";
+  String baseUrl = "http://192.168.1.102:8080";
   @observable
   String token;
 
@@ -68,7 +151,7 @@ abstract class _BackClient with Store {
   }
 
   @action
-  Future<Result<http.Response>> post(String url,
+  Future<BackResult<http.Response>> post(String url,
       {Map<String, dynamic> body, Map<String, String> headers}) {
     final _body = json.encode(body);
     final _headers = _defaultHeaders(headers);
@@ -79,7 +162,7 @@ abstract class _BackClient with Store {
   }
 
   @action
-  Future<Result<http.Response>> put(String url,
+  Future<BackResult<http.Response>> put(String url,
       {Map<String, dynamic> body, Map<String, String> headers}) {
     final _body = json.encode(body);
     final _headers = _defaultHeaders(headers);
@@ -90,7 +173,7 @@ abstract class _BackClient with Store {
   }
 
   @action
-  Future<Result<http.Response>> delete(String url,
+  Future<BackResult<http.Response>> delete(String url,
       {Map<String, String> headers}) {
     final _headers = _defaultHeaders(headers);
 
@@ -99,7 +182,8 @@ abstract class _BackClient with Store {
   }
 
   @action
-  Future<Result<http.Response>> get(String url, {Map<String, String> headers}) {
+  Future<BackResult<http.Response>> get(String url,
+      {Map<String, String> headers}) {
     final _headers = _defaultHeaders(headers);
 
     final request = () => _client.get("$baseUrl$url", headers: _headers);
@@ -107,19 +191,24 @@ abstract class _BackClient with Store {
   }
 
   @action
-  Future<Result<http.Response>> _requestWrapper(
+  Future<BackResult<http.Response>> _requestWrapper(
       Future<http.Response> Function() request, bool retry) async {
     try {
-      final respFuture = request().then((value) => Result(value));
-      final resp = await Future.any<Result<http.Response>>(
+      final respFuture = request().then((value) => BackResult(value));
+      final resp = await Future.any<BackResult<http.Response>>(
           [Future.delayed(Duration(seconds: 8)), respFuture]);
-      if (resp != null)
-        return resp;
-      else if (retry)
-        return Future.any<Result<http.Response>>(
+      if (resp != null) {
+        if (resp.okOrNull().statusCode == 401) {
+          token = null;
+          return BackResult.unauthorized();
+        } else {
+          return resp;
+        }
+      } else if (retry)
+        return Future.any<BackResult<http.Response>>(
             [_requestWrapper(request, false), respFuture]);
       else
-        return Result.err("The request took too much time");
+        return BackResult.timeout();
     } on SocketException catch (_) {
       if (isConnected && retry) {
         final _state = await _connectivity.checkConnectivity();
@@ -127,10 +216,10 @@ abstract class _BackClient with Store {
 
         if (isConnected) return _requestWrapper(request, false);
       }
-      return Result.err("No internet connection");
+      return BackResult.offline();
     } catch (e) {
       print(e);
-      return Result.err("Connection error");
+      return BackResult.unknown();
     }
   }
 

@@ -9,6 +9,19 @@ part of 'user-store.dart';
 // ignore_for_file: non_constant_identifier_names, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic
 
 mixin _$UserStore on _UserStore, Store {
+  Computed<ObservableList<UserRequest>> _$requestsComputed;
+
+  @override
+  ObservableList<UserRequest> get requests => (_$requestsComputed ??=
+          Computed<ObservableList<UserRequest>>(() => super.requests))
+      .value;
+  Computed<bool> _$safeToPersistComputed;
+
+  @override
+  bool get safeToPersist =>
+      (_$safeToPersistComputed ??= Computed<bool>(() => super.safeToPersist))
+          .value;
+
   final _$persistenceStateAtom = Atom(name: '_UserStore.persistenceState');
 
   @override
@@ -60,6 +73,23 @@ mixin _$UserStore on _UserStore, Store {
     }, _$loadingAtom, name: '${_$loadingAtom.name}_set');
   }
 
+  final _$requestCacheAtom = Atom(name: '_UserStore.requestCache');
+
+  @override
+  ObservableList<dynamic> get requestCache {
+    _$requestCacheAtom.context.enforceReadPolicy(_$requestCacheAtom);
+    _$requestCacheAtom.reportObserved();
+    return super.requestCache;
+  }
+
+  @override
+  set requestCache(ObservableList<dynamic> value) {
+    _$requestCacheAtom.context.conditionallyRunInAction(() {
+      super.requestCache = value;
+      _$requestCacheAtom.reportChanged();
+    }, _$requestCacheAtom, name: '${_$requestCacheAtom.name}_set');
+  }
+
   final _$fetchUserAsyncAction = AsyncAction('fetchUser');
 
   @override
@@ -70,7 +100,7 @@ mixin _$UserStore on _UserStore, Store {
   final _$createVehicleAsyncAction = AsyncAction('createVehicle');
 
   @override
-  Future<dynamic> createVehicle(VehicleModel vehicle) {
+  Future<String> createVehicle(VehicleModel vehicle) {
     return _$createVehicleAsyncAction.run(() => super.createVehicle(vehicle));
   }
 
@@ -92,7 +122,7 @@ mixin _$UserStore on _UserStore, Store {
   final _$createPaymentMethodAsyncAction = AsyncAction('createPaymentMethod');
 
   @override
-  Future<dynamic> createPaymentMethod(PaymentMethod method) {
+  Future<String> createPaymentMethod(PaymentMethod method) {
     return _$createPaymentMethodAsyncAction
         .run(() => super.createPaymentMethod(method));
   }
@@ -115,6 +145,16 @@ mixin _$UserStore on _UserStore, Store {
   final _$_UserStoreActionController = ActionController(name: '_UserStore');
 
   @override
+  void processCachedResponse(UserRequest req) {
+    final _$actionInfo = _$_UserStoreActionController.startAction();
+    try {
+      return super.processCachedResponse(req);
+    } finally {
+      _$_UserStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
   void _createVehicle(VehicleModel vehicle) {
     final _$actionInfo = _$_UserStoreActionController.startAction();
     try {
@@ -125,10 +165,10 @@ mixin _$UserStore on _UserStore, Store {
   }
 
   @override
-  void _toggleVehicleState(VehicleModel vehicle) {
+  void _toggleVehicleState(VehicleModel toggled, bool saved) {
     final _$actionInfo = _$_UserStoreActionController.startAction();
     try {
-      return super._toggleVehicleState(vehicle);
+      return super._toggleVehicleState(toggled, saved);
     } finally {
       _$_UserStoreActionController.endAction(_$actionInfo);
     }
@@ -155,10 +195,10 @@ mixin _$UserStore on _UserStore, Store {
   }
 
   @override
-  void _deletePaymentMethod(PaymentMethod method) {
+  void _deletePaymentMethod(String id) {
     final _$actionInfo = _$_UserStoreActionController.startAction();
     try {
-      return super._deletePaymentMethod(method);
+      return super._deletePaymentMethod(id);
     } finally {
       _$_UserStoreActionController.endAction(_$actionInfo);
     }
@@ -167,7 +207,7 @@ mixin _$UserStore on _UserStore, Store {
   @override
   String toString() {
     final string =
-        'persistenceState: ${persistenceState.toString()},user: ${user.toString()},loading: ${loading.toString()}';
+        'persistenceState: ${persistenceState.toString()},user: ${user.toString()},loading: ${loading.toString()},requestCache: ${requestCache.toString()},requests: ${requests.toString()},safeToPersist: ${safeToPersist.toString()}';
     return '{$string}';
   }
 }

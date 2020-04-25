@@ -147,7 +147,7 @@ abstract class _TransactionStore with Store {
 
   Future<String> updateTransactionState(String id, bool accept) async {
     final resp = await _back.updateTransactionState(id, accept);
-    return resp.when((accepted) {
+    return resp.okOrError((accepted) {
       if (accepted) {
         final value = transactions.update(
             id, (value) => value..state = TransactionState.Active);
@@ -160,7 +160,7 @@ abstract class _TransactionStore with Store {
         }
       }
       return null;
-    }, err: (e) => e);
+    }, );
   }
 
   @action
