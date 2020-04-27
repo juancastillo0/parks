@@ -1,9 +1,9 @@
 ## ParqMeUp
 
-Juan Manuel Castillo
-Daniel Giraldo
-Ivan García
-Gregorio Ospina
+- Juan Manuel Castillo
+- Daniel Giraldo
+- Ivan García \n
+- Gregorio Ospina \n
 
 
 ### Flutter 
