@@ -1,4 +1,4 @@
-ParqMeUp
+## ParqMeUp
 
 Juan Manuel Castillo
 Daniel Giraldo
@@ -6,9 +6,9 @@ Ivan García
 Gregorio Ospina
 
 
-Flutter 
+### Flutter 
 
-Introduction
+#### Introduction
 ParqMeUp is an app that intends to completely automate the parking experience
 in order to completely remove human interaction from the process of parking.
 We intend to do this by utilizing the sensors (cameras) already used in the
@@ -21,7 +21,7 @@ In this way, the user needs not to stand in a queue to receive a ticket and need
 not to stand in queue to pay his fee, plus he doesnt need to use any physical
 money because all transactions are done purely digital.
 
-How to run
+#### How to run
 Clone project and start the app.
 In case you need to start the server,
 
