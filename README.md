@@ -25,9 +25,9 @@ money because all transactions are done purely digital.
 Clone project and start the app.
 In case you need to start the server,
 
-ssh daniel@157.230.14.37
-samaria95
-cd backend
-yarn start
-If the port is busy
-fuser -n -k tcp 8080
+- ssh daniel@157.230.14.37
+- samaria95
+- cd backend
+- yarn start
+##### If the port is busy
+- fuser -n -k tcp 8080
