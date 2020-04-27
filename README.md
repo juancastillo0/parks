@@ -32,6 +32,8 @@ money because all transactions are done purely digital.
 
 You can see the web version of the application in https://juancastillo0.github.io/parks/#/
 
+The build apk is in https://github.com/juancastillo0/parks/blob/master/app-release.apk
+
 ### Server
 
 - ssh daniel@157.230.14.37
