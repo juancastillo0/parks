@@ -82,7 +82,6 @@ class TransactionList extends HookWidget {
                 final isSelected =
                     transactionStore.selectedTransaction == transaction;
                 return Card(
-                  key: Key(transaction.id),
                   margin: EdgeInsets.symmetric(vertical: 6),
                   child: TransactionListTile(transaction),
                   elevation: isSelected && bigScreen ? 4 : 1,
@@ -145,8 +144,10 @@ class TransactionListTile extends HookWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         mainAxisSize: MainAxisSize.min,
         children: [
-          [textWithIcon(Icons.directions_car, Text(transaction.vehicle.plate))]
-              .toRow(mainAxisAlignment: MainAxisAlignment.start),
+          [
+            textWithIcon(Icons.directions_car, Text(transaction.vehicle.plate)),
+            Text(transaction.state.toString().split(".")[1]),
+          ].toRow(mainAxisAlignment: MainAxisAlignment.spaceBetween),
           [Text(timeago.format(transaction.timestamp))]
               .toRow(mainAxisAlignment: MainAxisAlignment.end),
         ],

@@ -13,6 +13,14 @@ class RequestVariantAdapter extends TypeAdapter<RequestVariant> {
   @override
   RequestVariant read(BinaryReader reader) {
     switch (reader.readByte()) {
+      case 0:
+        return RequestVariant.deleteVehicle;
+      case 1:
+        return RequestVariant.updateVehicle;
+      case 2:
+        return RequestVariant.createVehicle;
+      case 3:
+        return RequestVariant.deletePaymentMethod;
       default:
         return null;
     }
@@ -21,6 +29,18 @@ class RequestVariantAdapter extends TypeAdapter<RequestVariant> {
   @override
   void write(BinaryWriter writer, RequestVariant obj) {
     switch (obj) {
+      case RequestVariant.deleteVehicle:
+        writer.writeByte(0);
+        break;
+      case RequestVariant.updateVehicle:
+        writer.writeByte(1);
+        break;
+      case RequestVariant.createVehicle:
+        writer.writeByte(2);
+        break;
+      case RequestVariant.deletePaymentMethod:
+        writer.writeByte(3);
+        break;
     }
   }
 }
@@ -84,18 +104,87 @@ mixin _$UserBack on _UserBack, Store {
     }, _$requestsAtom, name: '${_$requestsAtom.name}_set');
   }
 
-  final _$_handleConnectionChangeAsyncAction =
-      AsyncAction('_handleConnectionChange');
+  final _$handlingConnectionChangeAtom =
+      Atom(name: '_UserBack.handlingConnectionChange');
 
   @override
-  Future _handleConnectionChange(bool isConnected) {
-    return _$_handleConnectionChangeAsyncAction
-        .run(() => super._handleConnectionChange(isConnected));
+  bool get handlingConnectionChange {
+    _$handlingConnectionChangeAtom.context
+        .enforceReadPolicy(_$handlingConnectionChangeAtom);
+    _$handlingConnectionChangeAtom.reportObserved();
+    return super.handlingConnectionChange;
+  }
+
+  @override
+  set handlingConnectionChange(bool value) {
+    _$handlingConnectionChangeAtom.context.conditionallyRunInAction(() {
+      super.handlingConnectionChange = value;
+      _$handlingConnectionChangeAtom.reportChanged();
+    }, _$handlingConnectionChangeAtom,
+        name: '${_$handlingConnectionChangeAtom.name}_set');
+  }
+
+  final _$handleConnectionChangeAsyncAction =
+      AsyncAction('handleConnectionChange');
+
+  @override
+  Future handleConnectionChange(bool isConnected) {
+    return _$handleConnectionChangeAsyncAction
+        .run(() => super.handleConnectionChange(isConnected));
+  }
+
+  final _$deleteAllRequestsAsyncAction = AsyncAction('deleteAllRequests');
+
+  @override
+  Future deleteAllRequests() {
+    return _$deleteAllRequestsAsyncAction.run(() => super.deleteAllRequests());
+  }
+
+  final _$_addRequestsAsyncAction = AsyncAction('_addRequests');
+
+  @override
+  Future<dynamic> _addRequests(UserRequest request) {
+    return _$_addRequestsAsyncAction.run(() => super._addRequests(request));
+  }
+
+  final _$_deleteVehicleAsyncAction = AsyncAction('_deleteVehicle');
+
+  @override
+  Future<BackResult<String>> _deleteVehicle(UserRequest request, bool cache) {
+    return _$_deleteVehicleAsyncAction
+        .run(() => super._deleteVehicle(request, cache));
+  }
+
+  final _$_updateVehicleAsyncAction = AsyncAction('_updateVehicle');
+
+  @override
+  Future<BackResult<String>> _updateVehicle(UserRequest request, bool cache) {
+    return _$_updateVehicleAsyncAction
+        .run(() => super._updateVehicle(request, cache));
+  }
+
+  final _$_createVehicleAsyncAction = AsyncAction('_createVehicle');
+
+  @override
+  Future<BackResult<VehicleModel>> _createVehicle(
+      UserRequest request, bool cache) {
+    return _$_createVehicleAsyncAction
+        .run(() => super._createVehicle(request, cache));
+  }
+
+  final _$_deletePaymentMethodAsyncAction = AsyncAction('_deletePaymentMethod');
+
+  @override
+  Future<BackResult<String>> _deletePaymentMethod(
+      UserRequest request, bool cache) {
+    return _$_deletePaymentMethodAsyncAction
+        .run(() => super._deletePaymentMethod(request, cache));
   }
 
   @override
   String toString() {
-    final string = 'requests: ${requests.toString()}';
+    final string =
+        'requests: ${requests.toString()},handlingConnectionChange: ${handlingConnectionChange.toString()}';
     return '{$string}';
   }
 }

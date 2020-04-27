@@ -28,7 +28,7 @@ abstract class _AuthStore with Store {
       if (nav != null) nav.pushNamedAndRemoveUntil(Routes.home, (_) => false);
     } else {
       await _root.clearData();
-      if (nav != null) nav.pushNamedAndRemoveUntil(Routes.auth, (_) => false);
+      if (nav != null) nav.pushNamedAndRemoveUntil(Routes.home, (_) => false);
     }
     state = RequestState.none();
   }
@@ -62,7 +62,8 @@ abstract class _AuthStore with Store {
     if (isAuthenticated || isLoading) return;
 
     state = RequestState.loading();
-    final res = await _back.signIn(email, password);
+    final fcmToken = await _root.notificationService.getToken();
+    final res = await _back.signIn(email, password, fcmToken);
     final _error = res.okOrError(
       (value) async => await _backClient.setToken(value),
       unauthorized: null,
@@ -72,11 +73,16 @@ abstract class _AuthStore with Store {
 
   @action
   Future<void> signUp(
-      String name, String email, String password, String phone) async {
+    String name,
+    String email,
+    String password,
+    String phone,
+  ) async {
     if (isAuthenticated || isLoading) return;
 
     state = RequestState.loading();
-    final res = await _back.signUp(name, email, password, phone);
+    final fcmToken = await _root.notificationService.getToken();
+    final res = await _back.signUp(name, email, password, phone, fcmToken);
     final _error = res.okOrError(
       (value) async => await _backClient.setToken(value),
       unauthorized: null,

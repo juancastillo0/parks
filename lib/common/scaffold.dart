@@ -18,6 +18,7 @@ class DefaultAppBar extends HookWidget implements PreferredSizeWidget {
 
   @override
   Widget build(ctx) {
+    final store = useStore();
     final authStore = useAuthStore(ctx);
     final navigator = useNavigator(ctx);
     final backClient = GetIt.I.get<BackClient>();
@@ -47,14 +48,19 @@ class DefaultAppBar extends HookWidget implements PreferredSizeWidget {
                         .textColor(colorScheme.onPrimary)
                         .padding(right: 6),
                   ],
-                ),
+                ).gestures(onTap: () => onTapOffline(ctx, store)),
         ),
-        IconButton(
-          onPressed: isProfile
-              ? () => authStore.signOut()
-              : () => navigator.pushNamed(
-                  authStore.isAuthenticated ? Routes.profile : Routes.auth),
-          icon: Icon(isProfile ? Icons.exit_to_app : Icons.person),
+        Observer(
+          builder: (_) => (backClient.isConnected || backClient.isAuthorized)
+              ? IconButton(
+                  onPressed: isProfile
+                      ? () => authStore.signOut()
+                      : () => navigator.pushNamed(authStore.isAuthenticated
+                          ? Routes.profile
+                          : Routes.auth),
+                  icon: Icon(isProfile ? Icons.exit_to_app : Icons.person),
+                )
+              : Container(height: 0, width: 0),
         ),
         Container(width: 16)
       ],
@@ -63,6 +69,53 @@ class DefaultAppBar extends HookWidget implements PreferredSizeWidget {
 
   @override
   Size get preferredSize => _preferredSize;
+}
+
+Future onTapOffline(BuildContext ctx, RootStore store) async {
+  final textTheme = Theme.of(ctx).textTheme;
+  await showDialog(
+    context: ctx,
+    child: Dialog(
+      child: Observer(
+        builder: (_) => store.pendingRequests.isEmpty
+            ? Container(
+                child: Text(
+                  "No pending requests",
+                  style: textTheme.headline5,
+                ).alignment(Alignment.center).constrained(
+                      maxWidth: 250,
+                      maxHeight: 100,
+                    ),
+              ).backgroundColor(Colors.white)
+            : Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text("Requests", style: textTheme.headline6),
+                      RaisedButton.icon(
+                        onPressed: () async {
+                          await store.userStore.deleteAllRequests();
+                          Navigator.of(ctx).pop();
+                        },
+                        icon: Icon(Icons.delete),
+                        label: Text("Delete All"),
+                      ),
+                    ],
+                  ).padding(vertical: 10),
+                  ...store.pendingRequests.map((r) {
+                    return ListTile(title: r.asWidget());
+                  }),
+                  SizedBox(height: 10)
+                ],
+              )
+                .padding(horizontal: 20)
+                .constrained(maxWidth: 400)
+                .backgroundColor(Colors.white),
+      ),
+    ),
+  );
 }
 
 class EndpointForm extends HookWidget {
@@ -128,15 +181,6 @@ class DefaultBottomNavigationBar extends HookWidget {
     final rootStore = useStore(ctx);
     final authStore = useAuthStore(ctx);
 
-    if (!authStore.isAuthenticated &&
-        route != Routes.home &&
-        route != Routes.auth) {
-      Future.delayed(
-        Duration.zero,
-        () => navigator.pushNamed(Routes.auth),
-      );
-    }
-
     return Observer(builder: (ctx) {
       if (rootStore.snackbar != null) {
         final scaffold = Scaffold.of(ctx);
@@ -146,6 +190,20 @@ class DefaultBottomNavigationBar extends HookWidget {
             scaffold.showSnackBar(rootStore.snackbar),
           ),
         );
+      }
+
+      if (!rootStore.client.isAuthorized &&
+          route != Routes.home &&
+          route != Routes.placeDetail) {
+        if (route != Routes.auth || !rootStore.client.isConnected) {
+          Future.delayed(
+            Duration.zero,
+            () => navigator.pushNamedAndRemoveUntil(
+              Routes.home,
+              (route) => false,
+            ),
+          );
+        }
       }
       return Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -170,8 +228,10 @@ class DefaultBottomNavigationBar extends HookWidget {
             return FlatButton(
               onPressed: !authStore.isAuthenticated && name != Routes.home
                   ? null
-                  : () =>
-                      navigator.pushNamedAndRemoveUntil(name, (route) => false),
+                  : () => navigator.pushNamedAndRemoveUntil(
+                        name,
+                        (route) => false,
+                      ),
               child: Text(text),
               padding: EdgeInsets.all(0),
             ).expanded();

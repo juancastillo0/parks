@@ -302,6 +302,14 @@ mixin _$TransactionStore on _TransactionStore, Store {
     return _$fetchTransactionsAsyncAction.run(() => super.fetchTransactions());
   }
 
+  final _$onTransactionMessageAsyncAction = AsyncAction('onTransactionMessage');
+
+  @override
+  Future onTransactionMessage(TransactionModel t) {
+    return _$onTransactionMessageAsyncAction
+        .run(() => super.onTransactionMessage(t));
+  }
+
   final _$_TransactionStoreActionController =
       ActionController(name: '_TransactionStore');
 

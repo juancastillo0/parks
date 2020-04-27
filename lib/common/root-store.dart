@@ -16,19 +16,24 @@ import 'package:provider/provider.dart';
 
 part 'root-store.g.dart';
 
-class RootStore extends _RootStore with _$RootStore {}
+class RootStore extends _RootStore with _$RootStore {
+  RootStore(BackClient client) : super(client);
+}
 
 abstract class _RootStore with Store {
-  _RootStore() {
+  _RootStore(this.client) {
     userStore = UserStore(this);
     transactionStore = TransactionStore(this);
     if (!kIsWeb) notificationService = NotificationService(this);
     authStore = AuthStore(this);
   }
 
+  BackClient client;
+
   Future clearData() async {
     await getUserBox().clear();
     await getTransactionsBox().clear();
+    await getUserRequestsBox().clear();
     userStore = UserStore(this);
     transactionStore = TransactionStore(this);
   }
@@ -89,7 +94,10 @@ abstract class _RootStore with Store {
 
   @action
   showError(String error) {
-    errors.add(error);
+    showInfo(SnackBar(
+      content: Text(error, style: TextStyle(color: Colors.white)),
+      backgroundColor: Colors.red[900],
+    ));
   }
 }
 

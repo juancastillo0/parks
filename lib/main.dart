@@ -24,7 +24,7 @@ void main() async {
 
   final backClient = BackClient();
   GetIt.instance.registerSingleton<BackClient>(backClient);
-  final rootStore = RootStore();
+  final rootStore = RootStore(backClient);
   GetIt.instance.registerSingleton<RootStore>(rootStore);
 
   runApp(MyApp(rootStore));

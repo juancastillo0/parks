@@ -157,9 +157,22 @@ class _$_Ok<T> extends _Ok<T> with DiagnosticableTreeMixin {
     return _isOk;
   }
 
+  bool _didisTimeout = false;
+  bool _isTimeout;
+
+  @override
+  bool get isTimeout {
+    if (_didisTimeout == false) {
+      _didisTimeout = true;
+      _isTimeout = this.maybeWhen((value) => false,
+          timeout: () => true, orElse: () => false);
+    }
+    return _isTimeout;
+  }
+
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'BackResult<$T>(value: $value, isOffline: $isOffline, isOk: $isOk)';
+    return 'BackResult<$T>(value: $value, isOffline: $isOffline, isOk: $isOk, isTimeout: $isTimeout)';
   }
 
   @override
@@ -169,7 +182,8 @@ class _$_Ok<T> extends _Ok<T> with DiagnosticableTreeMixin {
       ..add(DiagnosticsProperty('type', 'BackResult<$T>'))
       ..add(DiagnosticsProperty('value', value))
       ..add(DiagnosticsProperty('isOffline', isOffline))
-      ..add(DiagnosticsProperty('isOk', isOk));
+      ..add(DiagnosticsProperty('isOk', isOk))
+      ..add(DiagnosticsProperty('isTimeout', isTimeout));
   }
 
   @override
@@ -314,9 +328,22 @@ class _$_TimeOut<T> extends _TimeOut<T> with DiagnosticableTreeMixin {
     return _isOk;
   }
 
+  bool _didisTimeout = false;
+  bool _isTimeout;
+
+  @override
+  bool get isTimeout {
+    if (_didisTimeout == false) {
+      _didisTimeout = true;
+      _isTimeout = this.maybeWhen((value) => false,
+          timeout: () => true, orElse: () => false);
+    }
+    return _isTimeout;
+  }
+
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'BackResult<$T>.timeout(isOffline: $isOffline, isOk: $isOk)';
+    return 'BackResult<$T>.timeout(isOffline: $isOffline, isOk: $isOk, isTimeout: $isTimeout)';
   }
 
   @override
@@ -325,7 +352,8 @@ class _$_TimeOut<T> extends _TimeOut<T> with DiagnosticableTreeMixin {
     properties
       ..add(DiagnosticsProperty('type', 'BackResult<$T>.timeout'))
       ..add(DiagnosticsProperty('isOffline', isOffline))
-      ..add(DiagnosticsProperty('isOk', isOk));
+      ..add(DiagnosticsProperty('isOk', isOk))
+      ..add(DiagnosticsProperty('isTimeout', isTimeout));
   }
 
   @override
@@ -459,9 +487,22 @@ class _$_Offline<T> extends _Offline<T> with DiagnosticableTreeMixin {
     return _isOk;
   }
 
+  bool _didisTimeout = false;
+  bool _isTimeout;
+
+  @override
+  bool get isTimeout {
+    if (_didisTimeout == false) {
+      _didisTimeout = true;
+      _isTimeout = this.maybeWhen((value) => false,
+          timeout: () => true, orElse: () => false);
+    }
+    return _isTimeout;
+  }
+
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'BackResult<$T>.offline(isOffline: $isOffline, isOk: $isOk)';
+    return 'BackResult<$T>.offline(isOffline: $isOffline, isOk: $isOk, isTimeout: $isTimeout)';
   }
 
   @override
@@ -470,7 +511,8 @@ class _$_Offline<T> extends _Offline<T> with DiagnosticableTreeMixin {
     properties
       ..add(DiagnosticsProperty('type', 'BackResult<$T>.offline'))
       ..add(DiagnosticsProperty('isOffline', isOffline))
-      ..add(DiagnosticsProperty('isOk', isOk));
+      ..add(DiagnosticsProperty('isOk', isOk))
+      ..add(DiagnosticsProperty('isTimeout', isTimeout));
   }
 
   @override
@@ -606,9 +648,22 @@ class _$_Unauthorized<T> extends _Unauthorized<T> with DiagnosticableTreeMixin {
     return _isOk;
   }
 
+  bool _didisTimeout = false;
+  bool _isTimeout;
+
+  @override
+  bool get isTimeout {
+    if (_didisTimeout == false) {
+      _didisTimeout = true;
+      _isTimeout = this.maybeWhen((value) => false,
+          timeout: () => true, orElse: () => false);
+    }
+    return _isTimeout;
+  }
+
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'BackResult<$T>.unauthorized(isOffline: $isOffline, isOk: $isOk)';
+    return 'BackResult<$T>.unauthorized(isOffline: $isOffline, isOk: $isOk, isTimeout: $isTimeout)';
   }
 
   @override
@@ -617,7 +672,8 @@ class _$_Unauthorized<T> extends _Unauthorized<T> with DiagnosticableTreeMixin {
     properties
       ..add(DiagnosticsProperty('type', 'BackResult<$T>.unauthorized'))
       ..add(DiagnosticsProperty('isOffline', isOffline))
-      ..add(DiagnosticsProperty('isOk', isOk));
+      ..add(DiagnosticsProperty('isOk', isOk))
+      ..add(DiagnosticsProperty('isTimeout', isTimeout));
   }
 
   @override
@@ -751,9 +807,22 @@ class _$_Unknown<T> extends _Unknown<T> with DiagnosticableTreeMixin {
     return _isOk;
   }
 
+  bool _didisTimeout = false;
+  bool _isTimeout;
+
+  @override
+  bool get isTimeout {
+    if (_didisTimeout == false) {
+      _didisTimeout = true;
+      _isTimeout = this.maybeWhen((value) => false,
+          timeout: () => true, orElse: () => false);
+    }
+    return _isTimeout;
+  }
+
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'BackResult<$T>.unknown(isOffline: $isOffline, isOk: $isOk)';
+    return 'BackResult<$T>.unknown(isOffline: $isOffline, isOk: $isOk, isTimeout: $isTimeout)';
   }
 
   @override
@@ -762,7 +831,8 @@ class _$_Unknown<T> extends _Unknown<T> with DiagnosticableTreeMixin {
     properties
       ..add(DiagnosticsProperty('type', 'BackResult<$T>.unknown'))
       ..add(DiagnosticsProperty('isOffline', isOffline))
-      ..add(DiagnosticsProperty('isOk', isOk));
+      ..add(DiagnosticsProperty('isOk', isOk))
+      ..add(DiagnosticsProperty('isTimeout', isTimeout));
   }
 
   @override
@@ -910,9 +980,22 @@ class _$_Error<T> extends _Error<T> with DiagnosticableTreeMixin {
     return _isOk;
   }
 
+  bool _didisTimeout = false;
+  bool _isTimeout;
+
+  @override
+  bool get isTimeout {
+    if (_didisTimeout == false) {
+      _didisTimeout = true;
+      _isTimeout = this.maybeWhen((value) => false,
+          timeout: () => true, orElse: () => false);
+    }
+    return _isTimeout;
+  }
+
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'BackResult<$T>.error(error: $error, isOffline: $isOffline, isOk: $isOk)';
+    return 'BackResult<$T>.error(error: $error, isOffline: $isOffline, isOk: $isOk, isTimeout: $isTimeout)';
   }
 
   @override
@@ -922,7 +1005,8 @@ class _$_Error<T> extends _Error<T> with DiagnosticableTreeMixin {
       ..add(DiagnosticsProperty('type', 'BackResult<$T>.error'))
       ..add(DiagnosticsProperty('error', error))
       ..add(DiagnosticsProperty('isOffline', isOffline))
-      ..add(DiagnosticsProperty('isOk', isOk));
+      ..add(DiagnosticsProperty('isOk', isOk))
+      ..add(DiagnosticsProperty('isTimeout', isTimeout));
   }
 
   @override

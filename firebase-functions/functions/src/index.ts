@@ -4,7 +4,7 @@ import { Request, Response } from "firebase-functions";
 
 admin.initializeApp({
   credential: admin.credential.applicationDefault(),
-  databaseURL: 'https://webrtc-test-deb99.firebaseio.com',
+  databaseURL: "https://webrtc-test-deb99.firebaseio.com",
 });
 const db = admin.firestore();
 const fcm = admin.messaging();
@@ -19,13 +19,15 @@ export const helloWorld = functions.https.onRequest(
 );
 
 function sleep(millis: number) {
-  return new Promise(resolve => setTimeout(resolve, millis));
+  return new Promise((resolve) => setTimeout(resolve, millis));
 }
 
 export const sendPlateNotification = functions.https.onRequest(
   async (request: Request, response: Response) => {
     console.log(request.body);
-    const body: { plate: string; seconds: number; token:string } = JSON.parse(request.body);
+    const body: { plate: string; seconds: number; token: string } = JSON.parse(
+      request.body
+    );
     if ("seconds" in body) {
       await sleep(body.seconds * 1000);
     }
@@ -34,14 +36,41 @@ export const sendPlateNotification = functions.https.onRequest(
       notification: {
         title: `New transaction for ${body.plate}.`,
         body: `We have detected a car with plates ${body.plate}, open to accept the transaction.`,
-        click_action: "FLUTTER_NOTIFICATION_CLICK" // required only for onResume or onLaunch callbacks
-      }
+        click_action: "FLUTTER_NOTIFICATION_CLICK", // required only for onResume or onLaunch callbacks
+      },
     };
     // return fcm.sendToTopic(
     //   `/topics/${body.plate.trim().replace(" ", "_")}`,
     //   payload
     // );
     return fcm.sendToDevice(body.token, payload);
+  }
+);
+
+export const sendNotification = functions.https.onRequest(
+  async (request: Request, response: Response) => {
+    let body: { [key: string]: any };
+    if (typeof request.body === "string") {
+      body = JSON.parse(request.body);
+    } else {
+      body = request.body;
+    }
+
+    if ("seconds" in body) {
+      await sleep(body.seconds * 1000);
+    }
+
+    if (
+      "data" in body.payload &&
+      "transaction" in body.payload.data &&
+      typeof body.payload.data.transaction !== "string"
+    ) {
+      body.payload.data.transaction = JSON.stringify(
+        body.payload.data.transaction
+      );
+    }
+
+    return fcm.sendToDevice(body.token, body.payload, body.options);
   }
 );
 
@@ -55,8 +84,8 @@ export const sendToTopic = functions.firestore
         title: "New Puppy!",
         body: `${puppy.name} is ready for adoption`,
         icon: "your-icon-url",
-        click_action: "FLUTTER_NOTIFICATION_CLICK" // required only for onResume or onLaunch callbacks
-      }
+        click_action: "FLUTTER_NOTIFICATION_CLICK", // required only for onResume or onLaunch callbacks
+      },
     };
 
     return fcm.sendToTopic("puppies", payload);
@@ -82,8 +111,8 @@ export const sendToDevice = functions.firestore
         title: "New Order!",
         body: `you sold a ${order.product} for ${order.total}`,
         icon: "your-icon-url",
-        click_action: "FLUTTER_NOTIFICATION_CLICK"
-      }
+        click_action: "FLUTTER_NOTIFICATION_CLICK",
+      },
     };
 
     return fcm.sendToDevice(tokens, payload);

@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:hive/hive.dart';
 import 'package:http/http.dart' show Response;
@@ -15,9 +16,13 @@ part 'user-back.g.dart';
 
 @HiveType(typeId: 9)
 enum RequestVariant {
+  @HiveField(0)
   deleteVehicle,
+  @HiveField(1)
   updateVehicle,
+  @HiveField(2)
   createVehicle,
+  @HiveField(3)
   deletePaymentMethod
 }
 
@@ -34,6 +39,25 @@ class UserRequest {
   @HiveField(4)
   int id;
 
+  Widget asWidget() {
+    final splitPath = path.split("/");
+    final objectId = splitPath.length >= 3 ? splitPath[2] : null;
+    switch (variant) {
+      case RequestVariant.createVehicle:
+        final vehicle = VehicleModel.fromJson(jsonBody);
+        return Text("Create vehicle with plate ${vehicle.plate}");
+      case RequestVariant.deleteVehicle:
+        return Text("Delete vehicle with plate $objectId");
+      case RequestVariant.updateVehicle:
+        return Text("Update vehicle with plate $objectId");
+      case RequestVariant.deletePaymentMethod:
+        final p = PaymentMethod.fromJson(jsonBody);
+        return Text("Delete payment method ${p.description}");
+      default:
+        return null;
+    }
+  }
+
   UserRequest(this.variant, this.path, this.jsonBody, this.successInfo);
 }
 
@@ -47,7 +71,7 @@ abstract class _UserBack with Store {
     requests = ObservableList<UserRequest>.of(
       _box.toMap().entries.map((e) => e.value..id = e.key),
     );
-    reaction((r) => _client.isConnected, _handleConnectionChange);
+    reaction((r) => _client.isConnected, handleConnectionChange);
   }
 
   final BackClient _client = GetIt.instance.get<BackClient>();
@@ -59,30 +83,60 @@ abstract class _UserBack with Store {
   @observable
   ObservableList<UserRequest> requests;
 
-  bool _handlingConnectionChange = false;
+  @observable
+  bool handlingConnectionChange = false;
+
   @action
-  _handleConnectionChange(bool isConnected) async {
-    if (isConnected && !_handlingConnectionChange) {
-      _handlingConnectionChange = true;
+  handleConnectionChange(bool isConnected) async {
+    print(isConnected);
+    print(handlingConnectionChange);
+    if (isConnected && !handlingConnectionChange) {
+      handlingConnectionChange = true;
+
       while (requests.isNotEmpty) {
-        final request = requests.first;
+        final request = requests.removeAt(0);
+        print(requests);
         final resp = await _makeRequest(request);
-        if (resp.isOffline) break;
+        print(resp);
+        if (resp.isOffline || resp.isTimeout) {
+          requests.insert(0, request);
+          break;
+        }
 
         final error = resp.okOrError((value) async {
           await _box.delete(request.id);
-          requests.removeAt(0);
           _store.processCachedResponse(request);
+          _store.root.showInfo(SnackBar(
+            content: Text(request.successInfo),
+          ));
         });
         if (error != null) {
-          _store.root.showError(error);
+          requests.insert(0, request);
+          _store.root.showError("Couldn't execute pending requests: $error");
+
+          await deleteAllRequests();
           break;
         }
       }
-      _handlingConnectionChange = false;
+      handlingConnectionChange = false;
+      if (_client.isConnected) {
+        if (requests.isNotEmpty) {
+          handleConnectionChange(true);
+        } else {
+          _store.fetchUser();
+        }
+      }
     }
   }
 
+  @action
+  deleteAllRequests() async {
+    await _box.deleteAll(requests.map((e) => e.id));
+    for (var req in requests.reversed) _store.revertCachedResponse(req);
+    requests.clear();
+  }
+
+  @action
   Future _addRequests(UserRequest request) async {
     request.id = await _box.add(request);
     requests.add(request);
@@ -119,13 +173,19 @@ abstract class _UserBack with Store {
     );
   }
 
-  Future<BackResult<String>> deleteVehicle(String plate) async {
+  Future<BackResult<String>> deleteVehicle(VehicleModel vehicle) async {
+    final plate = vehicle.plate;
     final path = "/vehicles/$plate";
-    final cached = UserRequest(RequestVariant.deleteVehicle, path, null,
-        "Vehicle with plate $plate deleted successfully.");
+    final cached = UserRequest(
+      RequestVariant.deleteVehicle,
+      path,
+      vehicle.toJson(),
+      "Vehicle with plate $plate deleted successfully.",
+    );
     return _deleteVehicle(cached, true);
   }
 
+  @action
   Future<BackResult<String>> _deleteVehicle(
     UserRequest request,
     bool cache,
@@ -154,6 +214,7 @@ abstract class _UserBack with Store {
     return _updateVehicle(request, true);
   }
 
+  @action
   Future<BackResult<String>> _updateVehicle(
     UserRequest request,
     bool cache,
@@ -182,6 +243,7 @@ abstract class _UserBack with Store {
     return _createVehicle(request, true);
   }
 
+  @action
   Future<BackResult<VehicleModel>> _createVehicle(
       UserRequest request, bool cache) async {
     final resp = await _client.post(request.path, body: request.jsonBody);
@@ -224,11 +286,12 @@ abstract class _UserBack with Store {
     final request = UserRequest(
         RequestVariant.deletePaymentMethod,
         "/payment-methods/${method.id}",
-        null,
+        method.toJson(),
         "The payment method$name from ${method.provider} with last digits ${method.lastDigits} has been deleted");
     return _deletePaymentMethod(request, true);
   }
 
+  @action
   Future<BackResult<String>> _deletePaymentMethod(
       UserRequest request, bool cache) async {
     final resp = await _client.delete(request.path);

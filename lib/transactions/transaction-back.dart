@@ -11,9 +11,9 @@ class TransactionBack {
   Future<BackResult<List<TransactionModel>>> transactions() async {
     final resp = await _client.get(
       "/transactions",
-      headers: lastModified != null
-          ? {'if-modified-since': lastModified.toIso8601String()}
-          : null,
+      // headers: lastModified != null
+      //     ? {'if-modified-since': lastModified.toIso8601String()}
+      //     : null,
     );
 
     return resp.mapOk<List<TransactionModel>>(

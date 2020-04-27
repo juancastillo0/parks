@@ -6,8 +6,17 @@ import 'package:parks/common/back-client.dart';
 class AuthBack {
   final _client = GetIt.instance.get<BackClient>();
 
-  Future<BackResult<String>> signIn(String email, String password) async {
-    final body = {"email": email, "password": password};
+  Future<BackResult<String>> signIn(
+    String email,
+    String password,
+    String fcmToken,
+  ) async {
+    final body = {
+      "email": email,
+      "password": password,
+      "fcmToken": fcmToken,
+      "isFlutter": true
+    };
     final resp = await _client.post("/users/login", body: body);
 
     return resp.mapOk<String>(
@@ -27,12 +36,19 @@ class AuthBack {
   }
 
   Future<BackResult<String>> signUp(
-      String name, String email, String password, String phone) async {
+    String name,
+    String email,
+    String password,
+    String phone,
+    String fcmToken,
+  ) async {
     final body = {
       "name": name,
       "email": email,
       "password": password,
-      "phone": phone
+      "phone": phone,
+      "fcmToken": fcmToken,
+      "isFlutter": true
     };
     final resp = await _client.post("/users", body: body);
 

@@ -316,11 +316,11 @@ class _$RequestStateTearOff {
   }
 
   _Loading loading() {
-    return const _Loading();
+    return _Loading();
   }
 
   _None none() {
-    return const _None();
+    return _None();
   }
 }
 
@@ -395,16 +395,52 @@ class __$ErrCopyWithImpl<$Res> extends _$RequestStateCopyWithImpl<$Res>
 }
 
 class _$_Err extends _Err with DiagnosticableTreeMixin {
-  const _$_Err(this.message)
+  _$_Err(this.message)
       : assert(message != null),
         super._();
 
   @override
   final String message;
 
+  bool _didisLoading = false;
+  bool _isLoading;
+
+  @override
+  bool get isLoading {
+    if (_didisLoading == false) {
+      _didisLoading = true;
+      _isLoading = this.maybeWhen(loading: () => true, orElse: () => false);
+    }
+    return _isLoading;
+  }
+
+  bool _didisError = false;
+  bool _isError;
+
+  @override
+  bool get isError {
+    if (_didisError == false) {
+      _didisError = true;
+      _isError = this.maybeWhen(err: (_) => true, orElse: () => false);
+    }
+    return _isError;
+  }
+
+  bool _diderror = false;
+  String _error;
+
+  @override
+  String get error {
+    if (_diderror == false) {
+      _diderror = true;
+      _error = this.maybeWhen(err: (e) => e, orElse: () => null);
+    }
+    return _error;
+  }
+
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'RequestState.err(message: $message)';
+    return 'RequestState.err(message: $message, isLoading: $isLoading, isError: $isError, error: $error)';
   }
 
   @override
@@ -412,7 +448,10 @@ class _$_Err extends _Err with DiagnosticableTreeMixin {
     super.debugFillProperties(properties);
     properties
       ..add(DiagnosticsProperty('type', 'RequestState.err'))
-      ..add(DiagnosticsProperty('message', message));
+      ..add(DiagnosticsProperty('message', message))
+      ..add(DiagnosticsProperty('isLoading', isLoading))
+      ..add(DiagnosticsProperty('isError', isError))
+      ..add(DiagnosticsProperty('error', error));
   }
 
   @override
@@ -489,8 +528,8 @@ class _$_Err extends _Err with DiagnosticableTreeMixin {
 }
 
 abstract class _Err extends RequestState {
-  const _Err._() : super._();
-  const factory _Err(String message) = _$_Err;
+  _Err._() : super._();
+  factory _Err(String message) = _$_Err;
 
   String get message;
   _$ErrCopyWith<_Err> get copyWith;
@@ -511,17 +550,57 @@ class __$LoadingCopyWithImpl<$Res> extends _$RequestStateCopyWithImpl<$Res>
 }
 
 class _$_Loading extends _Loading with DiagnosticableTreeMixin {
-  const _$_Loading() : super._();
+  _$_Loading() : super._();
+
+  bool _didisLoading = false;
+  bool _isLoading;
+
+  @override
+  bool get isLoading {
+    if (_didisLoading == false) {
+      _didisLoading = true;
+      _isLoading = this.maybeWhen(loading: () => true, orElse: () => false);
+    }
+    return _isLoading;
+  }
+
+  bool _didisError = false;
+  bool _isError;
+
+  @override
+  bool get isError {
+    if (_didisError == false) {
+      _didisError = true;
+      _isError = this.maybeWhen(err: (_) => true, orElse: () => false);
+    }
+    return _isError;
+  }
+
+  bool _diderror = false;
+  String _error;
+
+  @override
+  String get error {
+    if (_diderror == false) {
+      _diderror = true;
+      _error = this.maybeWhen(err: (e) => e, orElse: () => null);
+    }
+    return _error;
+  }
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'RequestState.loading()';
+    return 'RequestState.loading(isLoading: $isLoading, isError: $isError, error: $error)';
   }
 
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
-    properties..add(DiagnosticsProperty('type', 'RequestState.loading'));
+    properties
+      ..add(DiagnosticsProperty('type', 'RequestState.loading'))
+      ..add(DiagnosticsProperty('isLoading', isLoading))
+      ..add(DiagnosticsProperty('isError', isError))
+      ..add(DiagnosticsProperty('error', error));
   }
 
   @override
@@ -590,8 +669,8 @@ class _$_Loading extends _Loading with DiagnosticableTreeMixin {
 }
 
 abstract class _Loading extends RequestState {
-  const _Loading._() : super._();
-  const factory _Loading() = _$_Loading;
+  _Loading._() : super._();
+  factory _Loading() = _$_Loading;
 }
 
 abstract class _$NoneCopyWith<$Res> {
@@ -609,17 +688,57 @@ class __$NoneCopyWithImpl<$Res> extends _$RequestStateCopyWithImpl<$Res>
 }
 
 class _$_None extends _None with DiagnosticableTreeMixin {
-  const _$_None() : super._();
+  _$_None() : super._();
+
+  bool _didisLoading = false;
+  bool _isLoading;
+
+  @override
+  bool get isLoading {
+    if (_didisLoading == false) {
+      _didisLoading = true;
+      _isLoading = this.maybeWhen(loading: () => true, orElse: () => false);
+    }
+    return _isLoading;
+  }
+
+  bool _didisError = false;
+  bool _isError;
+
+  @override
+  bool get isError {
+    if (_didisError == false) {
+      _didisError = true;
+      _isError = this.maybeWhen(err: (_) => true, orElse: () => false);
+    }
+    return _isError;
+  }
+
+  bool _diderror = false;
+  String _error;
+
+  @override
+  String get error {
+    if (_diderror == false) {
+      _diderror = true;
+      _error = this.maybeWhen(err: (e) => e, orElse: () => null);
+    }
+    return _error;
+  }
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'RequestState.none()';
+    return 'RequestState.none(isLoading: $isLoading, isError: $isError, error: $error)';
   }
 
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
-    properties..add(DiagnosticsProperty('type', 'RequestState.none'));
+    properties
+      ..add(DiagnosticsProperty('type', 'RequestState.none'))
+      ..add(DiagnosticsProperty('isLoading', isLoading))
+      ..add(DiagnosticsProperty('isError', isError))
+      ..add(DiagnosticsProperty('error', error));
   }
 
   @override
@@ -688,6 +807,6 @@ class _$_None extends _None with DiagnosticableTreeMixin {
 }
 
 abstract class _None extends RequestState {
-  const _None._() : super._();
-  const factory _None() = _$_None;
+  _None._() : super._();
+  factory _None() = _$_None;
 }

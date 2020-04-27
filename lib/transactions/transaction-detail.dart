@@ -33,6 +33,7 @@ class TransactionDetail extends HookWidget {
 
   @override
   Widget build(ctx) {
+    final store = useStore();
     final transactionStore = useTransactionStore();
     final textTheme = Theme.of(ctx).textTheme;
     return Observer(
@@ -103,8 +104,14 @@ class TransactionDetail extends HookWidget {
               ),
             ),
             SizedBox(height: 40),
-            if (transaction.state == TransactionState.Waiting)
-              acceptCancelPaymentButtons(ctx).padding(bottom: 20)
+            Observer(
+              builder: (_) => (transactionStore.selectedTransaction.state ==
+                          TransactionState.Waiting &&
+                      store.client.isConnected)
+                  ? acceptCancelPaymentButtons(ctx).padding(bottom: 20)
+                  : SizedBox(height: 1),
+            )
+
             // else if (transaction.state == TransactionState.Active)
             //   Padding(
             //     padding: EdgeInsets.symmetric(vertical: 20),
@@ -127,6 +134,7 @@ class TransactionDetail extends HookWidget {
 }
 
 Widget acceptCancelPaymentButtons(BuildContext ctx) {
+  final store = useStore(ctx);
   final userStore = useUserStore(ctx);
   final transactionStore = useTransactionStore(ctx);
   return Row(
@@ -149,7 +157,13 @@ Widget acceptCancelPaymentButtons(BuildContext ctx) {
       SizedBox(width: 40),
       RaisedButton(
         onPressed: userStore.user.paymentMethods.isEmpty
-            ? () => Navigator.of(ctx).pushNamed(Routes.createPaymentMethod)
+            ? () {
+                // store.showInfo(SnackBar(
+                //   content: Text(
+                //       "You have to create a payment method to accept a transaction"),
+                // ));
+                Navigator.of(ctx).pushNamed(Routes.createPaymentMethod);
+              }
             : () => showDialog(
                   context: ctx,
                   child: Dialog(child: SingleSelect()),
@@ -180,7 +194,9 @@ class SingleSelect extends HookWidget {
             Text(
               "Select the Payment Method",
               style: Theme.of(ctx).textTheme.headline6,
-            ).padding(bottom: 20, top: 25).alignment(Alignment.topLeft),
+            )
+                .padding(bottom: 20, top: 25, left: 5)
+                .alignment(Alignment.topLeft),
             ListView.separated(
               shrinkWrap: true,
               itemBuilder: (ctx, index) {
@@ -193,7 +209,11 @@ class SingleSelect extends HookWidget {
                   subtitle: Column(
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [Text(e.provider), Text("**** ${e.lastDigits}")],
+                    children: [
+                      Text(e.provider),
+                      Text("Last Digits: ${e.lastDigits}")
+                          .alignment(Alignment.centerRight)
+                    ],
                   ),
                   trailing: Radio(
                     value: e.id,
@@ -202,12 +222,12 @@ class SingleSelect extends HookWidget {
                   ),
                 );
               },
-              separatorBuilder: (_, __) => Divider(),
+              separatorBuilder: (_, __) => Divider(thickness: 2, height: 20),
               itemCount: userStore.user.paymentMethods.length,
             ).flexible(),
           ],
         )
-            .padding(horizontal: 20)
+            .padding(horizontal: 10)
             .constrained(maxHeight: min(mq.size.height * 0.7, 600)),
         SizedBox(height: 30),
         Row(

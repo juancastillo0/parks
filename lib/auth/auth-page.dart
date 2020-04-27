@@ -9,6 +9,9 @@ import 'package:parks/routes.gr.dart';
 import 'package:parks/validators/validators.dart';
 import 'package:styled_widget/styled_widget.dart';
 
+const EMAIL_REGEX =
+    r"^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$";
+
 class AuthPage extends HookWidget {
   AuthPage({
     Key key,
@@ -23,6 +26,7 @@ class AuthPage extends HookWidget {
     final _phone = useTextEditingController();
     final _formKey = useMemoized(() => GlobalKey<FormState>(), []);
 
+    final rootStore = useStore();
     final isSigningUp = useState(false);
     final autovalid = useState(false);
     final _isSigningUp = isSigningUp.value;
@@ -34,9 +38,16 @@ class AuthPage extends HookWidget {
         if (formState.validate()) {
           if (_isSigningUp) {
             await authStore.signUp(
-                _name.text, _email.text, _password.text, _phone.text);
+              _name.text,
+              _email.text.toLowerCase().replaceAll(" ", ""),
+              _password.text,
+              _phone.text.replaceAll(" ", ""),
+            );
           } else {
-            await authStore.signIn(_email.text, _password.text);
+            await authStore.signIn(
+              _email.text.toLowerCase().replaceAll(" ", ""),
+              _password.text,
+            );
           }
         }
       },
@@ -44,6 +55,7 @@ class AuthPage extends HookWidget {
     );
 
     if (authStore.isAuthenticated) {
+      print("authenticated ///////////////////////////////");
       Future.delayed(Duration.zero, () {
         ExtendedNavigator.rootNavigator.pushNamed(Routes.home);
       });
@@ -53,6 +65,18 @@ class AuthPage extends HookWidget {
     final isBigScreen = MediaQuery.of(ctx).size.width > 550;
     final constrainedWidth =
         _isSigningUp && isBigScreen ? 210 : double.infinity;
+
+    if (!rootStore.client.isConnected && !rootStore.client.isAuthorized) {
+      // Not authorized, not connected and not in home (maybe in auth), then go to home
+      print("other ///////////////////////////////");
+      Future.delayed(
+        Duration.zero,
+        () => Navigator.of(ctx).pushNamedAndRemoveUntil(
+          Routes.home,
+          (_) => false,
+        ),
+      );
+    }
 
     return Scaffold(
       appBar: AppBar(title: Text(_isSigningUp ? "Sign up" : "Log in")),
@@ -64,10 +88,11 @@ class AuthPage extends HookWidget {
           key: _formKey,
           child: Container(
             width: _isSigningUp && isBigScreen ? 450 : 350,
-            margin: EdgeInsets.only(left: 25, right: 25, top: 25, bottom: 25),
+            margin: EdgeInsets.only(left: 25, right: 25),
             child: ListView(
               shrinkWrap: true,
               children: <Widget>[
+                SizedBox(height: 25),
                 // NAME AND EMAIL
                 SizedBox(height: inputPadding),
                 if (_isSigningUp)
@@ -77,20 +102,34 @@ class AuthPage extends HookWidget {
                     children: [
                       TextFormField(
                         controller: _name,
-                        validator: StringValid(minLength: 3).firstError,
+                        validator: StringValid(
+                          minLength: 3,
+                          maxLength: 50,
+                        ).firstError,
+                        maxLength: 50,
                         decoration: InputDecoration(
-                            labelText: "Name", counterText: "-"),
+                          labelText: "Name",
+                          counterText: "-",
+                          prefixIcon: Icon(Icons.person),
+                        ),
                       )
                           .padding(bottom: inputPadding)
                           .constrained(maxWidth: constrainedWidth),
                       TextFormField(
                         controller: _phone,
-                        validator: StringValid(
-                          minLength: 5,
+                        maxLength: 10,
+                        validator: (v) => StringValid(
+                          minLength: 7,
+                          maxLength: 10,
                           pattern: RegExp(r'^[0-9]+$'),
-                        ).firstError,
+                        ).valid(v)
+                            ? null
+                            : "Invalid phone number",
                         decoration: InputDecoration(
-                            labelText: "Phone", counterText: "-"),
+                          labelText: "Phone",
+                          counterText: "-",
+                          prefixIcon: Icon(Icons.phone),
+                        ),
                         keyboardType: TextInputType.phone,
                       )
                           .padding(bottom: inputPadding)
@@ -99,12 +138,19 @@ class AuthPage extends HookWidget {
                   ),
                 TextFormField(
                   controller: _email,
-                  validator: StringValid(
+                  validator: (v) => StringValid(
                     minLength: 5,
-                    pattern: RegExp(r'^[\w]+@[\w]+(\.[\w]+)+$'),
-                  ).firstError,
-                  decoration:
-                      InputDecoration(labelText: "Email", counterText: "-"),
+                    maxLength: 256,
+                    pattern: RegExp(EMAIL_REGEX),
+                  ).valid(v)
+                      ? null
+                      : "Invalid email address",
+                  maxLength: 256,
+                  decoration: InputDecoration(
+                    labelText: "Email",
+                    counterText: "-",
+                    prefixIcon: Icon(Icons.email),
+                  ),
                   keyboardType: TextInputType.emailAddress,
                 ).padding(bottom: inputPadding),
                 // PASSWORDS
@@ -115,8 +161,15 @@ class AuthPage extends HookWidget {
                     TextFormField(
                       controller: _password,
                       decoration: InputDecoration(
-                          labelText: "Password", counterText: "-"),
-                      validator: StringValid(minLength: 3).firstError,
+                        labelText: "Password",
+                        counterText: "-",
+                        prefixIcon: Icon(Icons.lock),
+                      ),
+                      maxLength: 256,
+                      validator: StringValid(
+                        minLength: 3,
+                        maxLength: 256,
+                      ).firstError,
                       obscureText: true,
                     )
                         .padding(bottom: inputPadding)
@@ -124,15 +177,20 @@ class AuthPage extends HookWidget {
                     if (_isSigningUp)
                       TextFormField(
                         controller: _password2,
+                        maxLength: 256,
                         decoration: InputDecoration(
-                            labelText: "Verification Password",
-                            counterText: "-"),
+                          labelText: "Verification Password",
+                          counterText: "-",
+                        ),
                         validator: (password2) {
                           if (!_isSigningUp) return null;
                           if (password2.length == 0) return "Required";
                           if (password2 != _password.text)
                             return "The passwords don't match";
-                          return null;
+                          return StringValid(
+                            minLength: 3,
+                            maxLength: 256,
+                          ).firstError(password2);
                         },
                         obscureText: true,
                       )
@@ -140,9 +198,8 @@ class AuthPage extends HookWidget {
                           .constrained(maxWidth: constrainedWidth),
                   ],
                 ),
-
-                // SUBMIT BUTTON
-
+                //
+                // ---------------  SUBMIT BUTTON
                 Observer(
                   builder: (_) {
                     return RaisedButton(
@@ -167,6 +224,7 @@ class AuthPage extends HookWidget {
                   children: [Text("Or")],
                 ).padding(top: 8.0),
                 continueNoAuth(),
+                SizedBox(height: 25),
               ],
             ),
           ),

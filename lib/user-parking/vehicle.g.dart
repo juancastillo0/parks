@@ -19,19 +19,22 @@ class VehicleModelAdapter extends TypeAdapter<VehicleModel> {
     return VehicleModel()
       ..plate = fields[0] as String
       ..description = fields[1] as String
-      ..active = fields[2] as bool;
+      ..active = fields[2] as bool
+      ..saved = fields[3] as bool;
   }
 
   @override
   void write(BinaryWriter writer, VehicleModel obj) {
     writer
-      ..writeByte(3)
+      ..writeByte(4)
       ..writeByte(0)
       ..write(obj.plate)
       ..writeByte(1)
       ..write(obj.description)
       ..writeByte(2)
-      ..write(obj.active);
+      ..write(obj.active)
+      ..writeByte(3)
+      ..write(obj.saved);
   }
 }
 

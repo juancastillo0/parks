@@ -82,6 +82,9 @@ abstract class BackResult<T> implements _$BackResult<T> {
 
   bool get isOk => this.maybeWhen((value) => true, orElse: () => false);
 
+  bool get isTimeout => this
+      .maybeWhen((value) => false, timeout: () => true, orElse: () => false);
+
   BackResult<K> mapOk<K>(BackResult<K> Function(T) f) {
     return this.when<BackResult<K>>(
       f,
@@ -122,7 +125,7 @@ abstract class _BackClient with Store {
   }
 
   @observable
-  bool isConnected;
+  bool isConnected = true;
   @action
   _updateIsConnected(bool connected) => isConnected = connected;
 
@@ -193,6 +196,7 @@ abstract class _BackClient with Store {
   @action
   Future<BackResult<http.Response>> _requestWrapper(
       Future<http.Response> Function() request, bool retry) async {
+    if (!isConnected) return BackResult.offline();
     try {
       final respFuture = request().then((value) => BackResult(value));
       final resp = await Future.any<BackResult<http.Response>>(

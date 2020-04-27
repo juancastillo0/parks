@@ -34,18 +34,20 @@ abstract class _UserStore with Store {
   @observable
   bool loading = false;
 
-  @observable
-  ObservableList requestCache;
-
   @action
   Future fetchUser() async {
+    if (requests.length != 0) {
+      return;
+    }
     loading = true;
     final res = await _back.userInfo();
     final _user = res.okOrNull();
-    if (_user != null) user = _user;
+    if (_user != null) {
+      user = _user;
+    }
     loading = false;
   }
-  
+
   @computed
   ObservableList<UserRequest> get requests => _back.requests;
 
@@ -56,25 +58,48 @@ abstract class _UserStore with Store {
   void processCachedResponse(UserRequest req) {
     switch (req.variant) {
       case RequestVariant.createVehicle:
-        _createVehicle(VehicleModel.fromJson(req.jsonBody));
-        break;
-      case RequestVariant.deleteVehicle:
-        _deleteVehicle(req.path.split("/")[2]);
+        final vehicle = VehicleModel.fromJson(req.jsonBody);
+        user.vehicles[vehicle.plate].saved = true;
         break;
       case RequestVariant.updateVehicle:
-        _toggleVehicleState(VehicleModel.fromJson(req.jsonBody), true);
+        final vehicle = VehicleModel.fromJson(req.jsonBody);
+        user.vehicles[vehicle.plate].saved = true;
         break;
-      case RequestVariant.deletePaymentMethod:
-        return _deletePaymentMethod(req.path.split("/")[2]);
+      default:
         break;
     }
-    root.showInfo(SnackBar(
-      content: Text(req.successInfo),
-    ));
+  }
+
+  @action
+  deleteAllRequests() async {
+    await _back.deleteAllRequests();
+  }
+
+  @action
+  void revertCachedResponse(UserRequest req) {
+    switch (req.variant) {
+      case RequestVariant.createVehicle:
+        _deleteVehicle(VehicleModel.fromJson(req.jsonBody).plate);
+        break;
+      case RequestVariant.deleteVehicle:
+        _createVehicle(VehicleModel.fromJson(req.jsonBody));
+        break;
+      case RequestVariant.updateVehicle:
+        final vehicle = VehicleModel.fromJson(req.jsonBody);
+        _toggleVehicleState(vehicle..active = !vehicle.active, true);
+        break;
+      case RequestVariant.deletePaymentMethod:
+        _createPaymentMethod(PaymentMethod.fromJson(req.jsonBody));
+        break;
+    }
   }
 
   @action
   Future<String> createVehicle(VehicleModel vehicle) async {
+    vehicle.plate = vehicle.plate.replaceAll(RegExp(" "), "").toUpperCase();
+    if (user.vehicles.containsKey(vehicle.plate)) {
+      return "Vehicle with the plate ${vehicle.plate} already created";
+    }
     final res = await _back.createVehicle(vehicle);
     return res.okOrOffline(
       _createVehicle,
@@ -123,7 +148,7 @@ abstract class _UserStore with Store {
 
   @action
   Future deleteVehicle(String plate) async {
-    final res = await _back.deleteVehicle(plate);
+    final res = await _back.deleteVehicle(user.vehicles[plate]);
     return res.okOrOffline(
       (_) => _deleteVehicle(plate),
       offline: () {
@@ -187,9 +212,6 @@ abstract class _UserStore with Store {
 
   @action
   Future _persistUser(UserModel _user) async {
-    if (safeToPersist) {
-      await _box.put("user", _user);
-      persistenceState = PersistenceState.Persisted;
-    }
+    await _box.put("user", _user);
   }
 }

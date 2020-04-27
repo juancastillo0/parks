@@ -57,13 +57,20 @@ abstract class Result<T> implements _$Result<T> {
 
 @freezed
 abstract class RequestState implements _$RequestState {
-  const RequestState._();
-  const factory RequestState.err(String message) = _Err;
-  const factory RequestState.loading() = _Loading;
-  const factory RequestState.none() = _None;
+  RequestState._();
+  factory RequestState.err(String message) = _Err;
+  factory RequestState.loading() = _Loading;
+  factory RequestState.none() = _None;
 
   Widget asWidget() => this.when(
       err: (err) => Text(err),
       loading: () => CircularProgressIndicator(),
       none: () => Container(width: 0, height: 0));
+
+  bool get isLoading =>
+      this.maybeWhen(loading: () => true, orElse: () => false);
+
+  bool get isError => this.maybeWhen(err: (_) => true, orElse: () => false);
+
+  String get error => this.maybeWhen(err: (e) => e, orElse: () => null);
 }

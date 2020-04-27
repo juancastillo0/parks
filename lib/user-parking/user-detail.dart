@@ -2,13 +2,11 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:parks/common/mock-data.dart';
 import 'package:parks/common/root-store.dart';
 import 'package:parks/common/scaffold.dart';
 import 'package:parks/common/widgets.dart';
 import 'package:parks/routes.dart';
 import 'package:parks/routes.gr.dart';
-import 'package:parks/transactions/transaction-model.dart';
 import 'package:parks/user-parking/paymentMethod/listTile.dart';
 import 'package:parks/user-parking/vehicle.dart';
 import 'package:styled_widget/styled_widget.dart';
@@ -71,7 +69,7 @@ class UserParkingDetail extends HookWidget {
                 body: Observer(
                   builder: (_) => Column(
                     children: userStore.user.vehicles.values
-                        .map((v) => VehicleListTile(v))
+                        .map((v) => VehicleListTile(v, key: Key(v.plate)))
                         .toList(),
                   ),
                 ),
@@ -86,16 +84,18 @@ class UserParkingDetail extends HookWidget {
                             ? "Payment Methods (${userStore.user.paymentMethods.length})"
                             : "Payment (${userStore.user.paymentMethods.length})")),
                   ),
-                  trailing: IconButton(
-                    icon: Icon(Icons.add_circle_outline),
-                    onPressed: () =>
-                        navigator.pushNamed(Routes.createPaymentMethod),
-                  ),
+                  trailing: store.client.isConnected
+                      ? IconButton(
+                          icon: Icon(Icons.add_circle_outline),
+                          onPressed: () =>
+                              navigator.pushNamed(Routes.createPaymentMethod),
+                        )
+                      : null,
                 ),
                 body: Observer(
                   builder: (_) => Column(
                     children: userStore.user.paymentMethods
-                        .map((v) => PaymentMethodListTile(v))
+                        .map((v) => PaymentMethodListTile(v, key: Key(v.id)))
                         .toList(),
                   ),
                 ),
@@ -105,19 +105,18 @@ class UserParkingDetail extends HookWidget {
               .padding(bottom: 50)
               .constrained(maxWidth: 400)
               .alignment(Alignment.center),
-          if (!kIsWeb)
-            RaisedButton(
-              child: Text(
-                "Test Notification",
-              ),
-              onPressed: () => store.notificationService.testNotification(
-                  mockTransactions
-                      .firstWhere((element) =>
-                          element.state == TransactionState.Waiting)
-                      .vehicle
-                      .plate,
-                  4),
-            )
+          // if (!kIsWeb)
+          //   RaisedButton(
+          //     child: Text("Test Notification"),
+          //     onPressed: () => store.notificationService.testNotification(
+          //       mockTransactions
+          //           .firstWhere(
+          //               (element) => element.state == TransactionState.Waiting)
+          //           .vehicle
+          //           .plate,
+          //       3,
+          //     ),
+          //   )
         ],
       ).scrollable(),
     );

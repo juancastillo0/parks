@@ -16,43 +16,44 @@ import 'package:parks/routes.dart';
 import 'package:parks/routes.gr.dart';
 import 'package:styled_widget/styled_widget.dart';
 
-var _markers = (
+_markers(
   Completer<GoogleMapController> controller,
   ObservableMap<String, PlaceModel> places,
-) =>
-    <Marker>[
-      Marker(
-        markerId: MarkerId("-1"),
+) {
+  return <Marker>[
+    Marker(
+      markerId: MarkerId("fwefw"),
+      consumeTapEvents: true,
+      onTap: () async {
+        (await controller.future).showMarkerInfoWindow(MarkerId("fwefw"));
+      },
+      position: LatLng(4.6617833, -74.0507351),
+      icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed),
+      infoWindow: InfoWindow(
+        title: "Antiquarian",
+        snippet: "Sunt quae consectetur voluptatibus maxime facere et culpa.",
+      ),
+    ),
+    ...places.values.map((e) {
+      final markerId = MarkerId(e.id);
+      return Marker(
+        markerId: markerId,
         consumeTapEvents: true,
         onTap: () async {
-          (await controller.future).showMarkerInfoWindow(MarkerId("-1"));
+          (await controller.future).showMarkerInfoWindow(markerId);
         },
-        position: LatLng(4.6617833, -74.0507351),
-        icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed),
-        infoWindow: InfoWindow(
-          title: "Antiquarian",
-          snippet: "Sunt quae consectetur voluptatibus maxime facere et culpa.",
+        position: LatLng(e.latitud, e.longitud),
+        icon: BitmapDescriptor.defaultMarkerWithHue(
+          BitmapDescriptor.hueRed,
         ),
-      ),
-      ...places.values.map((e) {
-        final markerId = MarkerId(e.id.toString());
-        return Marker(
-          markerId: markerId,
-          consumeTapEvents: true,
-          onTap: () async {
-            (await controller.future).showMarkerInfoWindow(markerId);
-          },
-          position: LatLng(e.latitud, e.longitud),
-          icon: BitmapDescriptor.defaultMarkerWithHue(
-            BitmapDescriptor.hueRed,
-          ),
-          infoWindow: InfoWindow(
-            title: e.name,
-            snippet: e.description,
-          ),
-        );
-      })
-    ].toSet();
+        infoWindow: InfoWindow(
+          title: e.name,
+          snippet: e.description,
+        ),
+      );
+    }).toList()
+  ].toSet();
+}
 
 Widget animateList(
   Widget list,
@@ -80,6 +81,7 @@ class PlacesPage extends HookWidget {
     Completer<GoogleMapController> controller = useMemoized(() => Completer());
 
     useEffect(() {
+      locationService.location;
       store.placeStore.fetchPlaces();
       return null;
     }, []);
@@ -98,19 +100,6 @@ class PlacesPage extends HookWidget {
           );
         }
       },
-    );
-
-    final _map = useMemoized(
-      () => GoogleMap(
-        mapType: MapType.normal,
-        initialCameraPosition: _initialPosition,
-        onCameraMove: (position) {},
-        onMapCreated: (_controller) => controller.complete(_controller),
-        myLocationButtonEnabled: true,
-        mapToolbarEnabled: true,
-        myLocationEnabled: true,
-        markers: _markers(controller, store.placeStore.places),
-      ),
     );
 
     final showList = useState(false);
@@ -155,26 +144,43 @@ class PlacesPage extends HookWidget {
                   maxHeight: bigScreen ? double.infinity : box.maxHeight - 60,
                 );
 
-            return bigScreen
-                ? Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Column(
-                        mainAxisSize: MainAxisSize.max,
-                        crossAxisAlignment: CrossAxisAlignment.start,
+            return Observer(
+              builder: (_) {
+                final _map = GoogleMap(
+                  mapType: MapType.normal,
+                  initialCameraPosition: _initialPosition,
+                  onCameraMove: (position) {},
+                  onMapCreated: (_controller) =>
+                      controller.complete(_controller),
+                  myLocationButtonEnabled: true,
+                  mapToolbarEnabled: true,
+                  myLocationEnabled: true,
+                  markers: _markers(controller, store.placeStore.places),
+                );
+
+                return bigScreen
+                    ? Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          FlatButton.icon(
-                            onPressed: () {},
-                            icon: Icon(Icons.tune),
-                            label: Text("Filter"),
-                          ).constrained(height: 50),
-                          _list.flexible()
+                          Column(
+                            mainAxisSize: MainAxisSize.max,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              // FlatButton.icon(
+                              //   onPressed: () {},
+                              //   icon: Icon(Icons.tune),
+                              //   label: Text("Filter"),
+                              // ).constrained(height: 50),
+                              _list.flexible()
+                            ],
+                          ),
+                          _map.expanded()
                         ],
-                      ),
-                      _map.expanded()
-                    ],
-                  )
-                : Stack(children: [_map, animateList(_list, box, showList)]);
+                      )
+                    : Stack(
+                        children: [_map, animateList(_list, box, showList)]);
+              },
+            );
           },
         ),
       ),
@@ -201,10 +207,10 @@ class _ActionButtons extends HookWidget {
       children: [
         FloatingActionButton.extended(
           heroTag: null,
-          key: Key("Filter"),
+          key: Key("Location"),
           onPressed: goToUserLocation,
-          label: Text("Filter", style: textStyle),
-          icon: Icon(Icons.tune),
+          label: Text("My Location", style: textStyle),
+          icon: Icon(Icons.my_location),
         ).positioned(bottom: 5, right: 5),
         FloatingActionButton.extended(
           heroTag: null,

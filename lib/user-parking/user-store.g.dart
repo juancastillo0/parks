@@ -73,28 +73,18 @@ mixin _$UserStore on _UserStore, Store {
     }, _$loadingAtom, name: '${_$loadingAtom.name}_set');
   }
 
-  final _$requestCacheAtom = Atom(name: '_UserStore.requestCache');
-
-  @override
-  ObservableList<dynamic> get requestCache {
-    _$requestCacheAtom.context.enforceReadPolicy(_$requestCacheAtom);
-    _$requestCacheAtom.reportObserved();
-    return super.requestCache;
-  }
-
-  @override
-  set requestCache(ObservableList<dynamic> value) {
-    _$requestCacheAtom.context.conditionallyRunInAction(() {
-      super.requestCache = value;
-      _$requestCacheAtom.reportChanged();
-    }, _$requestCacheAtom, name: '${_$requestCacheAtom.name}_set');
-  }
-
   final _$fetchUserAsyncAction = AsyncAction('fetchUser');
 
   @override
   Future<dynamic> fetchUser() {
     return _$fetchUserAsyncAction.run(() => super.fetchUser());
+  }
+
+  final _$deleteAllRequestsAsyncAction = AsyncAction('deleteAllRequests');
+
+  @override
+  Future deleteAllRequests() {
+    return _$deleteAllRequestsAsyncAction.run(() => super.deleteAllRequests());
   }
 
   final _$createVehicleAsyncAction = AsyncAction('createVehicle');
@@ -155,6 +145,16 @@ mixin _$UserStore on _UserStore, Store {
   }
 
   @override
+  void revertCachedResponse(UserRequest req) {
+    final _$actionInfo = _$_UserStoreActionController.startAction();
+    try {
+      return super.revertCachedResponse(req);
+    } finally {
+      _$_UserStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
   void _createVehicle(VehicleModel vehicle) {
     final _$actionInfo = _$_UserStoreActionController.startAction();
     try {
@@ -207,7 +207,7 @@ mixin _$UserStore on _UserStore, Store {
   @override
   String toString() {
     final string =
-        'persistenceState: ${persistenceState.toString()},user: ${user.toString()},loading: ${loading.toString()},requestCache: ${requestCache.toString()},requests: ${requests.toString()},safeToPersist: ${safeToPersist.toString()}';
+        'persistenceState: ${persistenceState.toString()},user: ${user.toString()},loading: ${loading.toString()},requests: ${requests.toString()},safeToPersist: ${safeToPersist.toString()}';
     return '{$string}';
   }
 }

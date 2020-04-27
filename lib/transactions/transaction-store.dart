@@ -136,31 +136,53 @@ abstract class _TransactionStore with Store {
     final value = resp.okOrNull();
     if (value != null) {
       final map = Map.fromEntries(value.map((e) => MapEntry(e.id, e)));
+      for (var vv in map.values) print("map ${vv.state}");
       transactions.addAll(map);
+      transactions = ObservableMap.of(
+        Map.fromEntries(transactions.values.map((e) => MapEntry(e.id, e))),
+      );
       if (transactions.length > 0 && selectedTransaction == null)
         selectedTransaction = transactions.values.first;
 
       await _box.putAll(map);
+    } else {
+      print(value);
     }
     loading = false;
   }
 
+  @action
+  onTransactionMessage(TransactionModel t) async {
+    transactions.remove(t.id);
+    transactions.update(t.id, (_) => t, ifAbsent: () => t);
+    transactions[t.id] = t;
+    await _box.put(t.id, t);
+    _root.transactionStore.selectedTransaction = t;
+    print(t.state);
+  }
+
   Future<String> updateTransactionState(String id, bool accept) async {
     final resp = await _back.updateTransactionState(id, accept);
-    return resp.okOrError((accepted) {
-      if (accepted) {
-        final value = transactions.update(
-            id, (value) => value..state = TransactionState.Active);
-        if (selectedTransaction.id == id) selectedTransaction = value;
-      } else {
-        transactions.remove(id);
-        if (selectedTransaction.id == id) {
-          selectedTransaction =
-              transactions.length > 0 ? transactions.values.first : null;
+    return resp.okOrError(
+      (accepted) async {
+        if (accepted) {
+          final value = transactions.update(
+            id,
+            (value) => value..state = TransactionState.Active,
+          );
+          await _box.put(id, value);
+          if (selectedTransaction.id == id) selectedTransaction = value;
+        } else {
+          transactions.remove(id);
+          await _box.delete(id);
+          if (selectedTransaction.id == id) {
+            selectedTransaction =
+                transactions.length > 0 ? transactions.values.first : null;
+          }
         }
-      }
-      return null;
-    }, );
+        return null;
+      },
+    );
   }
 
   @action

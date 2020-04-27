@@ -3,6 +3,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:month_picker_dialog/month_picker_dialog.dart';
 import 'package:parks/common/root-store.dart';
 import 'package:parks/common/scaffold.dart';
+import 'package:parks/common/utils.dart';
 import 'package:parks/common/widgets.dart';
 import 'package:parks/routes.dart';
 import 'package:parks/user-parking/paymentMethod/model.dart';
@@ -17,84 +18,137 @@ class CreatePaymentMethodForm extends HookWidget {
     final description = useTextEditingController();
     final number = useTextEditingController();
     final provider = useTextEditingController();
+    final securityNumber = useTextEditingController();
     final obscureText = useState(true);
     final expDate = useState(DateTime.now().add(Duration(days: 365 * 2)));
     final navigator = useNavigator(ctx);
     final userStore = useUserStore(ctx);
     final inputPadding = 10.0;
 
+    final state = useState(RequestState.none());
+    final _formKey = useMemoized(() => GlobalKey<FormState>(), []);
+    final autovalid = useState(false);
+
     return Scaffold(
       appBar: AppBar(title: Text("Create Payment Method")),
       bottomNavigationBar: DefaultBottomNavigationBar(),
       body: MaterialResponsiveWrapper(
         breakpoint: 575,
-        child: Column(
-          children: <Widget>[
-            TextFormField(
-              controller: description,
-              decoration: InputDecoration(labelText: "Name", counterText: "-"),
-            ).padding(bottom: inputPadding, top: 40),
-            TextFormField(
-              controller: provider,
-              decoration:
-                  InputDecoration(labelText: "Provider", counterText: "-"),
-            ).padding(bottom: inputPadding),
-            TextFormField(
-              controller: number,
-              obscureText: obscureText.value,
-              validator: StringValid(minLength: 4).firstError,
-              decoration: InputDecoration(
-                labelText: "Number",
-                counterText: "-",
-                suffixIcon: IconButton(
-                  icon: Icon(Icons.remove_red_eye),
-                  onPressed: () => obscureText.value = !obscureText.value,
+        child: Form(
+          key: _formKey,
+          autovalidate: autovalid.value,
+          child: Column(
+            children: <Widget>[
+              //
+              //  -----------   Description
+              TextFormField(
+                controller: description,
+                maxLength: 50,
+                validator: StringValid(
+                  minLength: 3,
+                  maxLength: 50,
+                ).firstError,
+                decoration:
+                    InputDecoration(labelText: "Description", counterText: "-"),
+              ).padding(bottom: inputPadding, top: 40),
+              //
+              //  -----------   Provider
+              TextFormField(
+                controller: provider,
+                decoration:
+                    InputDecoration(labelText: "Provider", counterText: "-"),
+              ).padding(bottom: inputPadding),
+              //
+              //  -----------   Card Number
+              TextFormField(
+                controller: number,
+                obscureText: obscureText.value,
+                validator: StringValid(minLength: 4).firstError,
+                decoration: InputDecoration(
+                  labelText: "Number",
+                  counterText: "-",
+                  suffixIcon: IconButton(
+                    icon: Icon(Icons.remove_red_eye),
+                    onPressed: () => obscureText.value = !obscureText.value,
+                  ),
+                ),
+                keyboardType: TextInputType.phone,
+              ).padding(bottom: inputPadding),
+              //
+              //  -----------   Security Number
+              TextFormField(
+                controller: securityNumber,
+                maxLength: 4,
+                validator: StringValid(
+                  minLength: 3,
+                  maxLength: 4,
+                  pattern: RegExp(r"^[0-9]+$"),
+                ).firstError,
+                keyboardType: TextInputType.phone,
+                decoration: InputDecoration(
+                    labelText: "Security Number", counterText: "-"),
+              ).padding(bottom: inputPadding + 3),
+              //
+              //  -----------   Exp Date
+              Container(
+                padding: EdgeInsets.only(bottom: inputPadding + 3),
+                constraints: BoxConstraints.loose(Size(400, 100)),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [MonthPicker(expDate)],
                 ),
               ),
-              keyboardType: TextInputType.phone,
-            ).padding(bottom: inputPadding + 3),
-            Container(
-              padding: EdgeInsets.only(bottom: inputPadding + 3),
-              constraints: BoxConstraints.loose(Size(400, 100)),
-              child: Row(
+              //
+              //  -----------   Error
+              Text(state.value.error ?? "").padding(vertical: 10),
+              //
+              //  -----------   Actions
+              Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 mainAxisSize: MainAxisSize.min,
-                children: [MonthPicker(expDate)],
-              ),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                RaisedButton(
-                  onPressed: () => navigator.pop(),
-                  child: Text("CANCEL"),
-                ),
-                SizedBox(
-                  width: 50,
-                ),
-                RaisedButton(
-                  onPressed: () {
-                    userStore.createPaymentMethod(
-                      PaymentMethod(
-                        description: description.text,
-                        type: PaymentMethodType.Credit,
-                        lastDigits:
-                            number.text.substring(number.text.length - 4),
-                        provider: provider.text,
-                      ),
-                    );
-                    navigator.pop();
-                  },
-                  child: Text("CREATE"),
-                )
-              ],
-            ).padding(bottom: 40)
-          ],
-        )
-            .padding(horizontal: 30)
-            .scrollable(scrollDirection: Axis.vertical)
-            .constrained(maxWidth: 400),
+                children: <Widget>[
+                  RaisedButton(
+                    onPressed: () => navigator.pop(),
+                    child: Text("CANCEL"),
+                  ),
+                  SizedBox(
+                    width: 50,
+                  ),
+                  RaisedButton(
+                    onPressed: state.value.isLoading
+                        ? null
+                        : () async {
+                            autovalid.value = true;
+                            if (!_formKey.currentState.validate()) {
+                              return;
+                            }
+                            state.value = RequestState.loading();
+                            final error = await userStore.createPaymentMethod(
+                              PaymentMethod(
+                                description: description.text,
+                                type: PaymentMethodType.Credit,
+                                lastDigits: number.text
+                                    .substring(number.text.length - 4),
+                                provider: provider.text,
+                              ),
+                            );
+                            if (error != null) {
+                              state.value = RequestState.err(error);
+                            } else {
+                              navigator.pop();
+                            }
+                          },
+                    child: Text("CREATE"),
+                  )
+                ],
+              ).padding(bottom: 40)
+            ],
+          )
+              .padding(horizontal: 30)
+              .scrollable(scrollDirection: Axis.vertical)
+              .constrained(maxWidth: 400),
+        ),
       ).alignment(Alignment.center),
     );
   }
