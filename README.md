@@ -21,13 +21,29 @@ In this way, the user needs not to stand in a queue to receive a ticket and need
 not to stand in queue to pay his fee, plus he doesnt need to use any physical
 money because all transactions are done purely digital.
 
-#### How to run
-Clone project and start the app.
-In case you need to start the server,
+## How to run
+### Client (mobile app)
+
+- Clone project
+- Install dependencies "flutter packages get".
+- Execute code generation "flutter pub run build_runner build --delete-conflicting-outputs" 
+- Start the app with "flutter run".
+- Modify the server ip with the "http" icon in the appbar of the user interface in the application.
+
+You can see the web version of the application in https://juancastillo0.github.io/parks/#/
+
+The build apk is in https://github.com/juancastillo0/parks/blob/master/app-release.apk
+
+### Server
 
 - ssh daniel@157.230.14.37
 - samaria95
 - cd backend
 - yarn start
+
 ##### If the port is busy
 - fuser -n -k tcp 8080
+
+To execute it locally, see the server code in https://gitlab.com/isis3510_202010_team6/backend. Intructions for running it are in the README.md of the repository.
+
+
