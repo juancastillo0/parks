@@ -8,10 +8,10 @@ part of 'user-model.dart';
 
 UserModel _$UserModelFromJson(Map<String, dynamic> json) {
   return UserModel(
-    name: json['name'],
-    id: json['id'],
-    email: json['email'],
-    phone: json['phone'],
+    name: json['name'] as String,
+    id: json['id'] as String,
+    email: json['email'] as String,
+    phone: json['phone'] as String,
     paymentMethods:
         _ObservableListConverter.fromJson(json['paymentMethods'] as List),
     vehicles: _ObservableMapConverter.fromJson(

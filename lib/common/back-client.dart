@@ -29,24 +29,29 @@ BackResult<K> handle<K>(
 
 @freezed
 abstract class BackResult<T> implements _$BackResult<T> {
-  BackResult._();
   factory BackResult(T value) = _Ok<T>;
   factory BackResult.timeout() = _TimeOut<T>;
   factory BackResult.offline() = _Offline<T>;
   factory BackResult.unauthorized() = _Unauthorized<T>;
   factory BackResult.unknown() = _Unknown<T>;
   factory BackResult.error(String error) = _Error<T>;
+  BackResult._();
 
   T okOrNull() {
-    return this.maybeWhen(
+    return maybeWhen(
       (value) => value,
       orElse: () => null,
     );
   }
 
-  String okOrError(Function(T) f,
-      {String timeout, String offline, String unauthorized, String unknown}) {
-    return this.when(
+  String okOrError(
+    Function(T) f, {
+    String timeout,
+    String offline,
+    String unauthorized,
+    String unknown,
+  }) {
+    return this.when<String>(
       (value) {
         f(value);
         return null;
@@ -77,13 +82,13 @@ abstract class BackResult<T> implements _$BackResult<T> {
     );
   }
 
-  bool get isOffline => this
-      .maybeWhen((value) => false, offline: () => true, orElse: () => false);
+  bool get isOffline =>
+      maybeWhen((value) => false, offline: () => true, orElse: () => false);
 
-  bool get isOk => this.maybeWhen((value) => true, orElse: () => false);
+  bool get isOk => maybeWhen((value) => true, orElse: () => false);
 
-  bool get isTimeout => this
-      .maybeWhen((value) => false, timeout: () => true, orElse: () => false);
+  bool get isTimeout =>
+      maybeWhen((value) => false, timeout: () => true, orElse: () => false);
 
   BackResult<K> mapOk<K>(BackResult<K> Function(T) f) {
     return this.when<BackResult<K>>(
@@ -115,7 +120,7 @@ abstract class _BackClient with Store {
   @observable
   ConnectivityStatus connState;
   @observable
-  String baseUrl = "http://192.168.1.102:8080";
+  String baseUrl = "http://192.168.1.101:8080";
   @observable
   String token;
 
@@ -127,7 +132,7 @@ abstract class _BackClient with Store {
   @observable
   bool isConnected = true;
   @action
-  _updateIsConnected(bool connected) => isConnected = connected;
+  void _updateIsConnected(bool connected) => isConnected = connected;
 
   @action
   Future setToken(String _token) async {
@@ -139,7 +144,7 @@ abstract class _BackClient with Store {
   }
 
   @action
-  setBaseUrl(String _baseUrl) {
+  void setBaseUrl(String _baseUrl) {
     baseUrl = _baseUrl;
   }
 
@@ -159,8 +164,8 @@ abstract class _BackClient with Store {
     final _body = json.encode(body);
     final _headers = _defaultHeaders(headers);
 
-    final request =
-        () => _client.post("$baseUrl$url", body: _body, headers: _headers);
+    Future<http.Response> request() =>
+        _client.post("$baseUrl$url", body: _body, headers: _headers);
     return _requestWrapper(request, true);
   }
 
@@ -170,8 +175,8 @@ abstract class _BackClient with Store {
     final _body = json.encode(body);
     final _headers = _defaultHeaders(headers);
 
-    final request =
-        () => _client.put("$baseUrl$url", body: _body, headers: _headers);
+    Future<http.Response> request() =>
+        _client.put("$baseUrl$url", body: _body, headers: _headers);
     return _requestWrapper(request, true);
   }
 
@@ -180,7 +185,8 @@ abstract class _BackClient with Store {
       {Map<String, String> headers}) {
     final _headers = _defaultHeaders(headers);
 
-    final request = () => _client.delete("$baseUrl$url", headers: _headers);
+    Future<http.Response> request() =>
+        _client.delete("$baseUrl$url", headers: _headers);
     return _requestWrapper(request, true);
   }
 
@@ -189,7 +195,8 @@ abstract class _BackClient with Store {
       {Map<String, String> headers}) {
     final _headers = _defaultHeaders(headers);
 
-    final request = () => _client.get("$baseUrl$url", headers: _headers);
+    Future<http.Response> request() =>
+        _client.get("$baseUrl$url", headers: _headers);
     return _requestWrapper(request, true);
   }
 
@@ -200,7 +207,7 @@ abstract class _BackClient with Store {
     try {
       final respFuture = request().then((value) => BackResult(value));
       final resp = await Future.any<BackResult<http.Response>>(
-          [Future.delayed(Duration(seconds: 8)), respFuture]);
+          [Future.delayed(const Duration(seconds: 8)), respFuture]);
       if (resp != null) {
         if (resp.okOrNull().statusCode == 401) {
           token = null;
@@ -208,11 +215,12 @@ abstract class _BackClient with Store {
         } else {
           return resp;
         }
-      } else if (retry)
+      } else if (retry) {
         return Future.any<BackResult<http.Response>>(
             [_requestWrapper(request, false), respFuture]);
-      else
+      } else {
         return BackResult.timeout();
+      }
     } on SocketException catch (_) {
       if (isConnected && retry) {
         final _state = await _connectivity.checkConnectivity();
@@ -222,14 +230,16 @@ abstract class _BackClient with Store {
       }
       return BackResult.offline();
     } catch (e) {
-      print(e);
+      print("Request ERROR: $e");
       return BackResult.unknown();
     }
   }
 
   @action
-  _updateConnectivityState(ConnectivityStatus event) async {
-    isConnected = await _connectivity.checkConnection();
+  Future _updateConnectivityState(ConnectivityStatus event) async {
     connState = event;
+    isConnected = event != ConnectivityStatus.none
+        ? await _connectivity.checkConnection()
+        : false;
   }
 }

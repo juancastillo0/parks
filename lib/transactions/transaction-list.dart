@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:parks/common/bottom-nav-bar.dart';
 import 'package:parks/common/root-store.dart';
 import 'package:parks/common/scaffold.dart';
 import 'package:parks/common/widgets.dart';
 import 'package:parks/routes.dart';
-import 'package:parks/routes.gr.dart';
 import 'package:parks/transactions/transaction-detail.dart';
 import 'package:parks/transactions/transaction-filter.dart';
 import 'package:parks/transactions/transaction-model.dart';
@@ -16,7 +16,7 @@ import 'package:timeago/timeago.dart' as timeago;
 const WIDTH_BREAKPOINT = 900;
 
 class TransactionsPage extends HookWidget {
-  TransactionsPage({Key key}) : super(key: key);
+  const TransactionsPage({Key key}) : super(key: key);
 
   @override
   Widget build(ctx) {
@@ -26,32 +26,34 @@ class TransactionsPage extends HookWidget {
 
     return Scaffold(
         backgroundColor: Theme.of(ctx).backgroundColor,
-        appBar: DefaultAppBar(
-          title: Text("Transactions"),
-        ),
-        bottomNavigationBar: DefaultBottomNavigationBar(),
-        body: (bigScreen)
+        appBar: const DefaultAppBar(title: Text("Transactions")),
+        bottomNavigationBar: const DefaultBottomNavigationBar(),
+        body: bigScreen
             ? Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  TransactionList(bigScreen),
+                  TransactionList(bigScreen: bigScreen),
                   Observer(
-                    builder: (_) => transactionStore.transactions.length == 0
-                        ? Container()
-                        : transactionStore.selectedTransaction == null
-                            ? Center(child: Text("Select a transaction"))
-                            : TransactionDetail(
-                                transactionStore.selectedTransaction,
-                              ),
+                    builder: (_) {
+                      if (transactionStore.transactions.isEmpty) {
+                        return Container();
+                      } else if (transactionStore.selectedTransaction == null) {
+                        return const Center(
+                          child: Text("Select a transaction"),
+                        );
+                      } else {
+                        return const TransactionDetail();
+                      }
+                    },
                   )
                 ],
               )
-            : TransactionList(bigScreen));
+            : TransactionList(bigScreen: bigScreen));
   }
 }
 
 class TransactionList extends HookWidget {
-  const TransactionList(this.bigScreen, {Key key}) : super(key: key);
+  const TransactionList({this.bigScreen, Key key}) : super(key: key);
   final bool bigScreen;
   @override
   Widget build(ctx) {
@@ -64,17 +66,17 @@ class TransactionList extends HookWidget {
     return Observer(
       builder: (_) {
         final transactions = transactionStore.filteredTransactions;
-        if (transactions.length == 0) {
+        if (transactions.isEmpty) {
           return Center(
             child: transactionStore.loading
-                ? CircularProgressIndicator()
-                : Text("You don't have Transactions"),
+                ? const CircularProgressIndicator()
+                : const Text("You don't have transactions").fontSize(20),
           );
         }
         return ListView.builder(
-          padding: EdgeInsets.symmetric(horizontal: 20),
+          padding: const EdgeInsets.symmetric(horizontal: 20),
           itemBuilder: (_, index) {
-            if (index == 0) return TransactionFilter();
+            if (index == 0) return const TransactionFilter();
 
             return Observer(
               builder: (_) {
@@ -82,7 +84,7 @@ class TransactionList extends HookWidget {
                 final isSelected =
                     transactionStore.selectedTransaction == transaction;
                 return Card(
-                  margin: EdgeInsets.symmetric(vertical: 6),
+                  margin: const EdgeInsets.symmetric(vertical: 6),
                   child: TransactionListTile(transaction),
                   elevation: isSelected && bigScreen ? 4 : 1,
                 );
@@ -120,18 +122,14 @@ class TransactionListTile extends HookWidget {
     final isLargeScreen = mq.size.width > WIDTH_BREAKPOINT;
     return ListTile(
       onTap: () {
-        transactionStore.setSelectedTransaction(transaction);
-        if (!isLargeScreen)
-          navigator.pushNamed(
-            Routes.transactionDetail,
-            arguments: TransactionPageArguments(transaction: transaction),
-          );
+        transactionStore.selectedTransaction = transaction;
+        // TODO: <id> in path
+        if (!isLargeScreen) navigator.pushNamed(Routes.transactionDetail);
       },
-      contentPadding: EdgeInsets.all(8),
+      contentPadding: const EdgeInsets.all(8),
       title: textWithIcon(Icons.location_on, Text(transaction.place.name)),
       leading: Column(
         mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Icon(
             Icons.attach_money,
@@ -145,11 +143,15 @@ class TransactionListTile extends HookWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           [
-            textWithIcon(Icons.directions_car, Text(transaction.vehicle.plate)),
+            textWithIcon(
+              Icons.directions_car,
+              Text(transaction.vehicle.plate),
+            ),
             Text(transaction.state.toString().split(".")[1]),
           ].toRow(mainAxisAlignment: MainAxisAlignment.spaceBetween),
-          [Text(timeago.format(transaction.timestamp))]
-              .toRow(mainAxisAlignment: MainAxisAlignment.end),
+          [
+            Text(timeago.format(transaction.timestamp)),
+          ].toRow(mainAxisAlignment: MainAxisAlignment.end),
         ],
       ).padding(top: 8),
     ).backgroundColor(

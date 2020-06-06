@@ -2,19 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:get_it/get_it.dart';
+import 'package:parks/common/back-client.dart';
+import 'package:parks/common/bottom-nav-bar.dart';
+import 'package:parks/common/hive-utils.dart';
 import 'package:parks/common/root-store.dart';
-import 'package:parks/main.dart';
 import 'package:parks/routes.dart';
-import 'package:parks/routes.gr.dart';
 import 'package:styled_widget/styled_widget.dart';
-
-import 'back-client.dart';
 
 class DefaultAppBar extends HookWidget implements PreferredSizeWidget {
   const DefaultAppBar({Key key, this.title}) : super(key: key);
 
   final Widget title;
-  final Size _preferredSize = const Size.fromHeight(kToolbarHeight + 0.0);
+  static const Size _preferredSize = Size.fromHeight(kToolbarHeight + 0.0);
 
   @override
   Widget build(ctx) {
@@ -35,16 +34,16 @@ class DefaultAppBar extends HookWidget implements PreferredSizeWidget {
                     context: ctx,
                     builder: (_) => EndpointForm(backClient),
                   ),
-                  icon: Icon(Icons.http),
+                  icon: const Icon(Icons.http),
                 )
               : Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(
+                    const Icon(
                       Icons.signal_cellular_connected_no_internet_4_bar,
                       color: Colors.yellowAccent,
                     ).padding(right: 6),
-                    Text("Offline")
+                    const Text("Offline")
                         .textColor(colorScheme.onPrimary)
                         .padding(right: 6),
                   ],
@@ -99,15 +98,15 @@ Future onTapOffline(BuildContext ctx, RootStore store) async {
                           await store.userStore.deleteAllRequests();
                           Navigator.of(ctx).pop();
                         },
-                        icon: Icon(Icons.delete),
-                        label: Text("Delete All"),
+                        icon: const Icon(Icons.delete),
+                        label: const Text("Delete All"),
                       ),
                     ],
                   ).padding(vertical: 10),
                   ...store.pendingRequests.map((r) {
                     return ListTile(title: r.asWidget());
                   }),
-                  SizedBox(height: 10)
+                  const SizedBox(height: 10)
                 ],
               )
                 .padding(horizontal: 20)
@@ -125,122 +124,35 @@ class EndpointForm extends HookWidget {
   @override
   Widget build(ctx) {
     final c = useTextEditingController(text: backClient.baseUrl);
+    final placesBox = getPlacesBox();
     return AlertDialog(
-      title: Text('Server Endpoint'),
+      title: const Text('Server Endpoint'),
       content: SingleChildScrollView(
         child: ListBody(
           children: <Widget>[
+            RaisedButton(
+                child: const Text("Delete Places").textColor(Colors.white),
+                onPressed: () => placesBox.clear(),
+                color: Colors.red[800]),
             TextField(
               controller: c,
-              decoration: InputDecoration(labelText: "URL"),
+              decoration: const InputDecoration(labelText: "URL"),
             ).padding(top: 20),
           ],
         ),
       ),
       actions: <Widget>[
         FlatButton(
-          child: Text('Cancel'),
+          child: const Text('Cancel'),
           onPressed: () => Navigator.of(ctx).pop(),
         ),
         FlatButton(
-          child: Text('Accept'),
+          child: const Text('Accept'),
           onPressed: () {
-            backClient.setBaseUrl(c.text);
+            backClient.setBaseUrl(c.text.trim());
           },
         ),
       ],
     );
-  }
-}
-
-String getCurrentRoute([NavigatorState navigator]) {
-  if (navigator == null) navigator = useNavigator();
-  var name;
-  navigator.popUntil(
-    (route) {
-      name = route.settings.name;
-      return true;
-    },
-  );
-  return name;
-}
-
-const mainRoutes = [
-  {"name": Routes.transactions, "text": "Transactions"},
-  {"name": Routes.home, "text": "Parkings"},
-  {"name": Routes.profile, "text": "Settings"}
-];
-
-class DefaultBottomNavigationBar extends HookWidget {
-  const DefaultBottomNavigationBar({Key key}) : super(key: key);
-
-  @override
-  Widget build(ctx) {
-    final navigator = useNavigator(ctx);
-    final route = getCurrentRoute(navigator);
-    final rootStore = useStore(ctx);
-    final authStore = useAuthStore(ctx);
-
-    return Observer(builder: (ctx) {
-      if (rootStore.snackbar != null) {
-        final scaffold = Scaffold.of(ctx);
-        Future.delayed(
-          Duration.zero,
-          () => rootStore.setSnackbarController(
-            scaffold.showSnackBar(rootStore.snackbar),
-          ),
-        );
-      }
-
-      if (!rootStore.client.isAuthorized &&
-          route != Routes.home &&
-          route != Routes.placeDetail) {
-        if (route != Routes.auth || !rootStore.client.isConnected) {
-          Future.delayed(
-            Duration.zero,
-            () => navigator.pushNamedAndRemoveUntil(
-              Routes.home,
-              (route) => false,
-            ),
-          );
-        }
-      }
-      return Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        mainAxisSize: MainAxisSize.max,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: mainRoutes.map((routeMap) {
-          final text = routeMap['text'];
-          final name = routeMap['name'];
-
-          if (route == name) {
-            return FlatButton(
-              onPressed: null,
-              child: Text(text).fontWeight(FontWeight.bold),
-              disabledTextColor: Colors.black,
-            )
-                .decorated(
-                    border: Border(
-                  top: BorderSide(color: colorScheme.secondary, width: 3),
-                ))
-                .expanded();
-          } else {
-            return FlatButton(
-              onPressed: !authStore.isAuthenticated && name != Routes.home
-                  ? null
-                  : () => navigator.pushNamedAndRemoveUntil(
-                        name,
-                        (route) => false,
-                      ),
-              child: Text(text),
-              padding: EdgeInsets.all(0),
-            ).expanded();
-          }
-        }).toList(),
-      )
-          .constrained(maxHeight: 50)
-          .backgroundColor(colorScheme.surface)
-          .elevation(10, shadowColor: Colors.grey[800]);
-    });
   }
 }

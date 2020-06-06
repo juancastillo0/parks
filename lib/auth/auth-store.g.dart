@@ -15,39 +15,12 @@ mixin _$AuthStore on _AuthStore, Store {
   bool get isAuthenticated => (_$isAuthenticatedComputed ??=
           Computed<bool>(() => super.isAuthenticated))
       .value;
-  Computed<bool> _$isLoadingComputed;
-
-  @override
-  bool get isLoading =>
-      (_$isLoadingComputed ??= Computed<bool>(() => super.isLoading)).value;
-  Computed<String> _$errorComputed;
-
-  @override
-  String get error =>
-      (_$errorComputed ??= Computed<String>(() => super.error)).value;
-
-  final _$stateAtom = Atom(name: '_AuthStore.state');
-
-  @override
-  RequestState get state {
-    _$stateAtom.context.enforceReadPolicy(_$stateAtom);
-    _$stateAtom.reportObserved();
-    return super.state;
-  }
-
-  @override
-  set state(RequestState value) {
-    _$stateAtom.context.conditionallyRunInAction(() {
-      super.state = value;
-      _$stateAtom.reportChanged();
-    }, _$stateAtom, name: '${_$stateAtom.name}_set');
-  }
 
   final _$_updateStateBackClientAsyncAction =
       AsyncAction('_updateStateBackClient');
 
   @override
-  Future _updateStateBackClient(bool authenticated) {
+  Future<dynamic> _updateStateBackClient(bool authenticated) {
     return _$_updateStateBackClientAsyncAction
         .run(() => super._updateStateBackClient(authenticated));
   }
@@ -55,33 +28,26 @@ mixin _$AuthStore on _AuthStore, Store {
   final _$signInAsyncAction = AsyncAction('signIn');
 
   @override
-  Future<void> signIn(String email, String password) {
+  Future<String> signIn(String email, String password) {
     return _$signInAsyncAction.run(() => super.signIn(email, password));
   }
 
   final _$signUpAsyncAction = AsyncAction('signUp');
 
   @override
-  Future<void> signUp(
+  Future<String> signUp(
       String name, String email, String password, String phone) {
     return _$signUpAsyncAction
         .run(() => super.signUp(name, email, password, phone));
   }
 
-  final _$signOutAsyncAction = AsyncAction('signOut');
-
-  @override
-  Future signOut() {
-    return _$signOutAsyncAction.run(() => super.signOut());
-  }
-
   final _$_AuthStoreActionController = ActionController(name: '_AuthStore');
 
   @override
-  void resetError() {
+  Future<dynamic> signOut() {
     final _$actionInfo = _$_AuthStoreActionController.startAction();
     try {
-      return super.resetError();
+      return super.signOut();
     } finally {
       _$_AuthStoreActionController.endAction(_$actionInfo);
     }
@@ -89,8 +55,7 @@ mixin _$AuthStore on _AuthStore, Store {
 
   @override
   String toString() {
-    final string =
-        'state: ${state.toString()},isAuthenticated: ${isAuthenticated.toString()},isLoading: ${isLoading.toString()},error: ${error.toString()}';
+    final string = 'isAuthenticated: ${isAuthenticated.toString()}';
     return '{$string}';
   }
 }

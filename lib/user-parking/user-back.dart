@@ -69,14 +69,14 @@ abstract class _UserBack with Store {
   _UserBack(this._store) {
     _box = getUserRequestsBox();
     requests = ObservableList<UserRequest>.of(
-      _box.toMap().entries.map((e) => e.value..id = e.key),
+      _box.toMap().entries.map((e) => e.value..id = e.key as int),
     );
     reaction((r) => _client.isConnected, handleConnectionChange);
   }
 
   final BackClient _client = GetIt.instance.get<BackClient>();
 
-  UserStore _store;
+  final UserStore _store;
 
   Box<UserRequest> _box;
 
@@ -87,7 +87,7 @@ abstract class _UserBack with Store {
   bool handlingConnectionChange = false;
 
   @action
-  handleConnectionChange(bool isConnected) async {
+  Future handleConnectionChange(bool isConnected) async {
     print(isConnected);
     print(handlingConnectionChange);
     if (isConnected && !handlingConnectionChange) {
@@ -130,9 +130,11 @@ abstract class _UserBack with Store {
   }
 
   @action
-  deleteAllRequests() async {
+  Future deleteAllRequests() async {
     await _box.deleteAll(requests.map((e) => e.id));
-    for (var req in requests.reversed) _store.revertCachedResponse(req);
+    for (final req in requests.reversed) {
+      _store.revertCachedResponse(req);
+    }
     requests.clear();
   }
 
@@ -146,13 +148,13 @@ abstract class _UserBack with Store {
   Future<BackResult<dynamic>> _makeRequest(UserRequest req) async {
     switch (req.variant) {
       case RequestVariant.createVehicle:
-        return await _createVehicle(req, false);
+        return _createVehicle(req, false);
       case RequestVariant.deleteVehicle:
-        return await _deleteVehicle(req, false);
+        return _deleteVehicle(req, false);
       case RequestVariant.updateVehicle:
-        return await _updateVehicle(req, false);
+        return _updateVehicle(req, false);
       case RequestVariant.deletePaymentMethod:
-        return await _deletePaymentMethod(req, false);
+        return _deletePaymentMethod(req, false);
       default:
         return null;
     }
@@ -165,7 +167,9 @@ abstract class _UserBack with Store {
         switch (resp.statusCode) {
           case 200:
             final _body = json.decode(resp.body);
-            return BackResult(UserModel.fromJson(_body));
+            return BackResult(UserModel.fromJson(
+              _body as Map<String, dynamic>,
+            ));
           default:
             return BackResult.unknown();
         }
@@ -251,7 +255,9 @@ abstract class _UserBack with Store {
       (resp) {
         switch (resp.statusCode) {
           case 201:
-            return BackResult(VehicleModel.fromJson(json.decode(resp.body)));
+            return BackResult(VehicleModel.fromJson(
+              json.decode(resp.body) as Map<String, dynamic>,
+            ));
           default:
             return BackResult.unknown();
         }
@@ -271,7 +277,9 @@ abstract class _UserBack with Store {
       (resp) {
         switch (resp.statusCode) {
           case 201:
-            return BackResult(PaymentMethod.fromJson(json.decode(resp.body)));
+            return BackResult(PaymentMethod.fromJson(
+              json.decode(resp.body) as Map<String, dynamic>,
+            ));
           default:
             return BackResult.unknown();
         }
@@ -282,7 +290,7 @@ abstract class _UserBack with Store {
   Future<BackResult<String>> deletePaymentMethod(PaymentMethod method) async {
     final description = method.description;
     final name =
-        description == null || description == "" ? "" : " " + description;
+        description == null || description == "" ? "" : " $description";
     final request = UserRequest(
         RequestVariant.deletePaymentMethod,
         "/payment-methods/${method.id}",

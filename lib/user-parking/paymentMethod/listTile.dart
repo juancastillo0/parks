@@ -13,7 +13,7 @@ class PaymentMethodListTile extends HookWidget {
   Widget build(ctx) {
     final userStore = useUserStore(ctx);
     return ListTile(
-      contentPadding: EdgeInsets.all(16),
+      contentPadding: const EdgeInsets.all(16),
       title: Text(method.description),
       leading: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -27,15 +27,15 @@ class PaymentMethodListTile extends HookWidget {
         ],
       ),
       trailing: IconButton(
-        icon: Icon(Icons.delete),
+        icon: const Icon(Icons.delete),
         onPressed: deleteDialog(
           ctx,
           () async {
             await userStore.deletePaymentMethod(method);
             Navigator.of(ctx).pop();
           },
-          Text("Delete Payment Method"),
-          Text("Are you sure you want to delete the payment method?"),
+          const Text("Delete Payment Method"),
+          const Text("Are you sure you want to delete the payment method?"),
         ),
       ),
     );

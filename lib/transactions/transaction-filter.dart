@@ -39,14 +39,13 @@ class TransactionFilter extends HookWidget {
 
     if (!open.value) {
       return Row(
-        mainAxisSize: MainAxisSize.max,
         children: [
           FlatButton.icon(
             onPressed: toggleOpen,
-            icon: Icon(Icons.tune),
-            label: Text("Filter"),
+            icon: const Icon(Icons.tune),
+            label: const Text("Filter"),
           ),
-          SizedBox(width: 3),
+          const SizedBox(width: 3),
           Wrap(
             spacing: 4,
             children: transactionStore.filter.places
@@ -67,10 +66,10 @@ class TransactionFilter extends HookWidget {
 
     return ListView(
       shrinkWrap: true,
-      physics: NeverScrollableScrollPhysics(),
-      padding: EdgeInsets.symmetric(horizontal: 35),
+      physics: const NeverScrollableScrollPhysics(),
+      padding: const EdgeInsets.symmetric(horizontal: 35),
       children: [
-        SizedBox(height: 10),
+        const SizedBox(height: 10),
         Observer(
           builder: (ctx) => MultiSelect<TransactionPlaceModel>(
             idFn: (e) => e.name,
@@ -78,12 +77,12 @@ class TransactionFilter extends HookWidget {
             openDialog: openPlacesDialog,
             selected: transactionStore.filter.places,
             title: Row(children: [
-              Icon(Icons.place, size: 24),
+              const Icon(Icons.place, size: 24),
               Text("Places", style: titleStyle).padding(horizontal: 8),
             ]),
           ),
         ),
-        SizedBox(height: 10),
+        const SizedBox(height: 10),
         Observer(
           builder: (_) => MultiSelect<VehicleModel>(
             idFn: (e) => e.plate,
@@ -91,25 +90,26 @@ class TransactionFilter extends HookWidget {
             openDialog: openVehiclesDialog,
             selected: transactionStore.filter.vehicles,
             title: Row(children: [
-              Icon(Icons.directions_car, size: 24),
+              const Icon(Icons.directions_car, size: 24),
               Text("Vehicles", style: titleStyle).padding(horizontal: 8),
             ]),
           ),
         ),
-        SizedBox(height: 15),
+        const SizedBox(height: 15),
         Observer(
           builder: (_) {
             final interval = transactionStore.costInterval;
             final minCost = transactionStore.filter.minCost ?? interval.min;
             final maxCost = transactionStore.filter.maxCost ?? interval.max;
-            if (transactionStore.transactions.length == 0 || maxCost <= minCost)
+            if (transactionStore.transactions.isEmpty || maxCost <= minCost) {
               return Container(width: 0, height: 0);
+            }
 
             return Column(
               mainAxisSize: MainAxisSize.min,
               children: [
                 Row(children: [
-                  Icon(Icons.attach_money, size: 24),
+                  const Icon(Icons.attach_money, size: 24),
                   Text("Cost", style: titleStyle).padding(horizontal: 8),
                 ]),
                 RangeSlider(
@@ -132,13 +132,13 @@ class TransactionFilter extends HookWidget {
           children: [
             FlatButton.icon(
               onPressed: transactionStore.resetFilter,
-              icon: Icon(Icons.settings_backup_restore),
-              label: Text("Reset"),
+              icon: const Icon(Icons.settings_backup_restore),
+              label: const Text("Reset"),
             ),
             FlatButton.icon(
               onPressed: toggleOpen,
-              icon: Icon(Icons.close),
-              label: Text("Close"),
+              icon: const Icon(Icons.close),
+              label: const Text("Close"),
             ),
           ],
         ).padding(top: 8, bottom: 20),

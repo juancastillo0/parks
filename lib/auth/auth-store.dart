@@ -1,11 +1,9 @@
-import 'package:auto_route/auto_route.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mobx/mobx.dart';
 import 'package:parks/auth/auth-back.dart';
 import 'package:parks/common/back-client.dart';
 import 'package:parks/common/root-store.dart';
-import 'package:parks/common/utils.dart';
-import 'package:parks/routes.gr.dart';
+import 'package:parks/routes.dart';
 
 part 'auth-store.g.dart';
 
@@ -21,8 +19,8 @@ abstract class _AuthStore with Store {
   final BackClient _backClient = GetIt.I.get<BackClient>();
 
   @action
-  _updateStateBackClient(bool authenticated) async {
-    final nav = ExtendedNavigator.rootNavigator;
+  Future _updateStateBackClient(bool authenticated) async {
+    final nav = getNavigator();
     if (authenticated) {
       _root.userStore.fetchUser();
       if (nav != null) nav.pushNamedAndRemoveUntil(Routes.home, (_) => false);
@@ -30,75 +28,42 @@ abstract class _AuthStore with Store {
       await _root.clearData();
       if (nav != null) nav.pushNamedAndRemoveUntil(Routes.home, (_) => false);
     }
-    state = RequestState.none();
   }
-
-  @observable
-  RequestState state = RequestState.none();
 
   @computed
   bool get isAuthenticated {
     return _backClient.isAuthorized;
   }
 
-  @computed
-  bool get isLoading {
-    return state.maybeWhen(
-      loading: () => true,
-      orElse: () => false,
-    );
-  }
-
-  @computed
-  String get error {
-    return state.maybeWhen(
-      err: (err) => err,
-      orElse: () => null,
-    );
-  }
-
   @action
-  Future<void> signIn(String email, String password) async {
-    if (isAuthenticated || isLoading) return;
+  Future<String> signIn(String email, String password) async {
+    if (isAuthenticated) return null;
 
-    state = RequestState.loading();
     final fcmToken = await _root.notificationService.getToken();
     final res = await _back.signIn(email, password, fcmToken);
-    final _error = res.okOrError(
-      (value) async => await _backClient.setToken(value),
+    return res.okOrError(
+      _backClient.setToken,
       unauthorized: null,
     );
-    if (_error != null) state = RequestState.err(_error);
   }
 
   @action
-  Future<void> signUp(
+  Future<String> signUp(
     String name,
     String email,
     String password,
     String phone,
   ) async {
-    if (isAuthenticated || isLoading) return;
+    if (isAuthenticated) return null;
 
-    state = RequestState.loading();
     final fcmToken = await _root.notificationService.getToken();
     final res = await _back.signUp(name, email, password, phone, fcmToken);
-    final _error = res.okOrError(
-      (value) async => await _backClient.setToken(value),
+    return res.okOrError(
+      _backClient.setToken,
       unauthorized: null,
     );
-    if (_error != null) state = RequestState.err(_error);
   }
 
   @action
-  signOut() async {
-    await _backClient.setToken(null);
-  }
-
-  @action
-  void resetError() {
-    if (error != null) {
-      state = RequestState.none();
-    }
-  }
+  Future signOut() => _backClient.setToken(null);
 }

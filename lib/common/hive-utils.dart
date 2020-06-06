@@ -90,13 +90,13 @@ Box getSettingsBox() {
 }
 
 class SettingsBox {
-  static String _tokenKey = "token";
+  static const String _tokenKey = "token";
 
   static Future setToken(String token) async {
     await getSettingsBox().put(_tokenKey, token);
   }
 
   static String getToken() {
-    return getSettingsBox().get(_tokenKey);
+    return getSettingsBox().get(_tokenKey) as String;
   }
 }

@@ -2,11 +2,11 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:parks/common/bottom-nav-bar.dart';
 import 'package:parks/common/root-store.dart';
 import 'package:parks/common/scaffold.dart';
 import 'package:parks/common/widgets.dart';
 import 'package:parks/routes.dart';
-import 'package:parks/routes.gr.dart';
 import 'package:parks/user-parking/paymentMethod/listTile.dart';
 import 'package:parks/user-parking/vehicle.dart';
 import 'package:styled_widget/styled_widget.dart';
@@ -25,8 +25,8 @@ class UserParkingDetail extends HookWidget {
     final expanded = useState([true, false]);
 
     return Scaffold(
-      appBar: DefaultAppBar(title: Text("Profile")),
-      bottomNavigationBar: DefaultBottomNavigationBar(),
+      appBar: const DefaultAppBar(title: Text("Profile")),
+      bottomNavigationBar: const DefaultBottomNavigationBar(),
       body: Column(
         children: [
           Text(
@@ -37,12 +37,12 @@ class UserParkingDetail extends HookWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               [
-                textWithIcon(Icons.email, Text("Email")),
+                textWithIcon(Icons.email, const Text("Email")),
                 Text(userStore.user.email).fontSize(16)
               ].toColumn(),
-              SizedBox(width: 60),
+              const SizedBox(width: 60),
               [
-                textWithIcon(Icons.phone, Text("Phone")),
+                textWithIcon(Icons.phone, const Text("Phone")),
                 Text(userStore.user.phone?.toString() ?? "No phone")
                     .fontSize(16)
               ].toColumn(),
@@ -62,7 +62,7 @@ class UserParkingDetail extends HookWidget {
                         Text("Vehicles (${userStore.user.vehicles.length})")),
                   ),
                   trailing: IconButton(
-                    icon: Icon(Icons.add_circle_outline),
+                    icon: const Icon(Icons.add_circle_outline),
                     onPressed: () => createVehicleDialog(ctx),
                   ),
                 ),
@@ -84,13 +84,14 @@ class UserParkingDetail extends HookWidget {
                             ? "Payment Methods (${userStore.user.paymentMethods.length})"
                             : "Payment (${userStore.user.paymentMethods.length})")),
                   ),
-                  trailing: store.client.isConnected
-                      ? IconButton(
-                          icon: Icon(Icons.add_circle_outline),
-                          onPressed: () =>
-                              navigator.pushNamed(Routes.createPaymentMethod),
-                        )
-                      : null,
+                  trailing: Observer(
+                      builder: (_) => store.client.isConnected
+                          ? IconButton(
+                              icon: const Icon(Icons.add_circle_outline),
+                              onPressed: () => navigator
+                                  .pushNamed(Routes.createPaymentMethod),
+                            )
+                          : const SizedBox(width: 0, height: 0,)),
                 ),
                 body: Observer(
                   builder: (_) => Column(

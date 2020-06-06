@@ -7,14 +7,14 @@ import "package:js/js.dart";
 
 @JS('getCurrentPosition') // Accessing method getCurrentPosition from Geolocation API
 external void getCurrentPosition(
-    Function successCallback(GeolocationPosition position),
-    Function errorCallback(GeolocationPositionError error),
+    Function(GeolocationPosition position) successCallback,
+    Function(GeolocationPositionError error) errorCallback,
     PositionOptions options);
 
 @JS('watchPosition') // Accessing method watchPosition from Geolocation API
 external num watchPosition(
-    Function successCallback(GeolocationPosition position),
-    Function errorCallback(GeolocationPositionError error),
+    Function(GeolocationPosition position) successCallback,
+    Function(GeolocationPositionError error) errorCallback,
     PositionOptions options);
 
 @JS('clearWatch') // Accessing method clearWatch from Geolocation API
@@ -84,7 +84,7 @@ class PositionOptions {
 }
 
 Future<GeolocationPosition> getLocationJs({PositionOptions options}) {
-  var completer = new Completer<GeolocationPosition>();
+  final completer = Completer<GeolocationPosition>();
 
   getCurrentPosition(allowInterop((l) {
     completer.complete(l);

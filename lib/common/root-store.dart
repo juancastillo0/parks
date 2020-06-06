@@ -22,10 +22,10 @@ class RootStore extends _RootStore with _$RootStore {
 
 abstract class _RootStore with Store {
   _RootStore(this.client) {
-    userStore = UserStore(this);
-    transactionStore = TransactionStore(this);
-    if (!kIsWeb) notificationService = NotificationService(this);
-    authStore = AuthStore(this);
+    userStore = UserStore(this as RootStore);
+    transactionStore = TransactionStore(this as RootStore);
+    if (!kIsWeb) notificationService = NotificationService(this as RootStore);
+    authStore = AuthStore(this as RootStore);
   }
 
   BackClient client;
@@ -34,8 +34,10 @@ abstract class _RootStore with Store {
     await getUserBox().clear();
     await getTransactionsBox().clear();
     await getUserRequestsBox().clear();
-    userStore = UserStore(this);
-    transactionStore = TransactionStore(this);
+    await getSettingsBox().clear();
+
+    userStore = UserStore(this as RootStore);
+    transactionStore = TransactionStore(this as RootStore);
   }
 
   @observable
@@ -51,6 +53,9 @@ abstract class _RootStore with Store {
   @observable
   NotificationService notificationService;
 
+  final GlobalKey<NavigatorState> navigatorKey = GlobalKey();
+  NavigatorState get navigator => navigatorKey.currentState;
+
   // UI
 
   @observable
@@ -64,8 +69,9 @@ abstract class _RootStore with Store {
   }
 
   @action
-  setSnackbarController(
-      ScaffoldFeatureController<SnackBar, SnackBarClosedReason> c) {
+  void setSnackbarController(
+    ScaffoldFeatureController<SnackBar, SnackBarClosedReason> c,
+  ) {
     snackbarController = c;
     if (snackbarController != null) {
       snackbarController.closed.then((value) {
@@ -85,26 +91,27 @@ abstract class _RootStore with Store {
   ObservableList<SnackBar> infoList = ObservableList<SnackBar>();
 
   @action
-  showInfo(SnackBar info) {
-    if (snackbar == null)
+  void showInfo(SnackBar info) {
+    if (snackbar == null) {
       snackbar = info;
-    else
+    } else {
       infoList.add(info);
+    }
   }
 
   @action
-  showError(String error) {
-    showInfo(SnackBar(
-      content: Text(error, style: TextStyle(color: Colors.white)),
-      backgroundColor: Colors.red[900],
-    ));
+  void showError(String error) {
+    showInfo(
+      SnackBar(
+        content: Text(error, style: const TextStyle(color: Colors.white)),
+        backgroundColor: Colors.red[900],
+      ),
+    );
   }
 }
 
 RootStore useStore([BuildContext context]) {
-  if (context == null) {
-    context = hooks.useContext();
-  }
+  context ??= hooks.useContext();
   return Provider.of<RootStore>(context, listen: false);
 }
 

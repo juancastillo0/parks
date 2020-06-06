@@ -402,45 +402,9 @@ class _$_Err extends _Err with DiagnosticableTreeMixin {
   @override
   final String message;
 
-  bool _didisLoading = false;
-  bool _isLoading;
-
-  @override
-  bool get isLoading {
-    if (_didisLoading == false) {
-      _didisLoading = true;
-      _isLoading = this.maybeWhen(loading: () => true, orElse: () => false);
-    }
-    return _isLoading;
-  }
-
-  bool _didisError = false;
-  bool _isError;
-
-  @override
-  bool get isError {
-    if (_didisError == false) {
-      _didisError = true;
-      _isError = this.maybeWhen(err: (_) => true, orElse: () => false);
-    }
-    return _isError;
-  }
-
-  bool _diderror = false;
-  String _error;
-
-  @override
-  String get error {
-    if (_diderror == false) {
-      _diderror = true;
-      _error = this.maybeWhen(err: (e) => e, orElse: () => null);
-    }
-    return _error;
-  }
-
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'RequestState.err(message: $message, isLoading: $isLoading, isError: $isError, error: $error)';
+    return 'RequestState.err(message: $message)';
   }
 
   @override
@@ -448,10 +412,7 @@ class _$_Err extends _Err with DiagnosticableTreeMixin {
     super.debugFillProperties(properties);
     properties
       ..add(DiagnosticsProperty('type', 'RequestState.err'))
-      ..add(DiagnosticsProperty('message', message))
-      ..add(DiagnosticsProperty('isLoading', isLoading))
-      ..add(DiagnosticsProperty('isError', isError))
-      ..add(DiagnosticsProperty('error', error));
+      ..add(DiagnosticsProperty('message', message));
   }
 
   @override
@@ -552,55 +513,15 @@ class __$LoadingCopyWithImpl<$Res> extends _$RequestStateCopyWithImpl<$Res>
 class _$_Loading extends _Loading with DiagnosticableTreeMixin {
   _$_Loading() : super._();
 
-  bool _didisLoading = false;
-  bool _isLoading;
-
-  @override
-  bool get isLoading {
-    if (_didisLoading == false) {
-      _didisLoading = true;
-      _isLoading = this.maybeWhen(loading: () => true, orElse: () => false);
-    }
-    return _isLoading;
-  }
-
-  bool _didisError = false;
-  bool _isError;
-
-  @override
-  bool get isError {
-    if (_didisError == false) {
-      _didisError = true;
-      _isError = this.maybeWhen(err: (_) => true, orElse: () => false);
-    }
-    return _isError;
-  }
-
-  bool _diderror = false;
-  String _error;
-
-  @override
-  String get error {
-    if (_diderror == false) {
-      _diderror = true;
-      _error = this.maybeWhen(err: (e) => e, orElse: () => null);
-    }
-    return _error;
-  }
-
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'RequestState.loading(isLoading: $isLoading, isError: $isError, error: $error)';
+    return 'RequestState.loading()';
   }
 
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
-    properties
-      ..add(DiagnosticsProperty('type', 'RequestState.loading'))
-      ..add(DiagnosticsProperty('isLoading', isLoading))
-      ..add(DiagnosticsProperty('isError', isError))
-      ..add(DiagnosticsProperty('error', error));
+    properties..add(DiagnosticsProperty('type', 'RequestState.loading'));
   }
 
   @override
@@ -690,55 +611,15 @@ class __$NoneCopyWithImpl<$Res> extends _$RequestStateCopyWithImpl<$Res>
 class _$_None extends _None with DiagnosticableTreeMixin {
   _$_None() : super._();
 
-  bool _didisLoading = false;
-  bool _isLoading;
-
-  @override
-  bool get isLoading {
-    if (_didisLoading == false) {
-      _didisLoading = true;
-      _isLoading = this.maybeWhen(loading: () => true, orElse: () => false);
-    }
-    return _isLoading;
-  }
-
-  bool _didisError = false;
-  bool _isError;
-
-  @override
-  bool get isError {
-    if (_didisError == false) {
-      _didisError = true;
-      _isError = this.maybeWhen(err: (_) => true, orElse: () => false);
-    }
-    return _isError;
-  }
-
-  bool _diderror = false;
-  String _error;
-
-  @override
-  String get error {
-    if (_diderror == false) {
-      _diderror = true;
-      _error = this.maybeWhen(err: (e) => e, orElse: () => null);
-    }
-    return _error;
-  }
-
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'RequestState.none(isLoading: $isLoading, isError: $isError, error: $error)';
+    return 'RequestState.none()';
   }
 
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
-    properties
-      ..add(DiagnosticsProperty('type', 'RequestState.none'))
-      ..add(DiagnosticsProperty('isLoading', isLoading))
-      ..add(DiagnosticsProperty('isError', isError))
-      ..add(DiagnosticsProperty('error', error));
+    properties..add(DiagnosticsProperty('type', 'RequestState.none'));
   }
 
   @override

@@ -196,7 +196,7 @@ mixin _$RootStore on _RootStore, Store {
   final _$_RootStoreActionController = ActionController(name: '_RootStore');
 
   @override
-  dynamic setSnackbarController(
+  void setSnackbarController(
       ScaffoldFeatureController<SnackBar, SnackBarClosedReason> c) {
     final _$actionInfo = _$_RootStoreActionController.startAction();
     try {
@@ -207,7 +207,7 @@ mixin _$RootStore on _RootStore, Store {
   }
 
   @override
-  dynamic showInfo(SnackBar info) {
+  void showInfo(SnackBar info) {
     final _$actionInfo = _$_RootStoreActionController.startAction();
     try {
       return super.showInfo(info);
@@ -217,7 +217,7 @@ mixin _$RootStore on _RootStore, Store {
   }
 
   @override
-  dynamic showError(String error) {
+  void showError(String error) {
     final _$actionInfo = _$_RootStoreActionController.startAction();
     try {
       return super.showError(error);

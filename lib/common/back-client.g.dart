@@ -104,7 +104,7 @@ mixin _$BackClient on _BackClient, Store {
       AsyncAction('_updateConnectivityState');
 
   @override
-  Future _updateConnectivityState(ConnectivityStatus event) {
+  Future<dynamic> _updateConnectivityState(ConnectivityStatus event) {
     return _$_updateConnectivityStateAsyncAction
         .run(() => super._updateConnectivityState(event));
   }
@@ -112,7 +112,7 @@ mixin _$BackClient on _BackClient, Store {
   final _$_BackClientActionController = ActionController(name: '_BackClient');
 
   @override
-  dynamic _updateIsConnected(bool connected) {
+  void _updateIsConnected(bool connected) {
     final _$actionInfo = _$_BackClientActionController.startAction();
     try {
       return super._updateIsConnected(connected);
@@ -122,7 +122,7 @@ mixin _$BackClient on _BackClient, Store {
   }
 
   @override
-  dynamic setBaseUrl(String _baseUrl) {
+  void setBaseUrl(String _baseUrl) {
     final _$actionInfo = _$_BackClientActionController.startAction();
     try {
       return super.setBaseUrl(_baseUrl);

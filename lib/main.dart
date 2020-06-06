@@ -1,14 +1,13 @@
 import 'dart:io';
 
-import 'package:auto_route/auto_route.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:parks/common/back-client.dart';
+import 'package:parks/common/bottom-nav-bar.dart';
 import 'package:parks/common/hive-utils.dart';
 import 'package:parks/common/root-store.dart';
-import 'package:parks/common/scaffold.dart';
-import 'package:parks/routes.gr.dart';
+import 'package:parks/routes.dart';
 import 'package:provider/provider.dart';
 
 void _enablePlatformOverrideForDesktop() {
@@ -17,7 +16,7 @@ void _enablePlatformOverrideForDesktop() {
   }
 }
 
-void main() async {
+Future main() async {
   print("init");
   _enablePlatformOverrideForDesktop();
   await initHive(mock: false);
@@ -31,7 +30,7 @@ void main() async {
 }
 
 class MyApp extends StatelessWidget {
-  MyApp(this.rootStore);
+  const MyApp(this.rootStore);
   final RootStore rootStore;
 
   @override
@@ -45,7 +44,7 @@ class MyApp extends StatelessWidget {
             if (Routes.home == getCurrentRoute()) {
               return true;
             } else {
-              ExtendedNavigator.rootNavigator.pushNamedAndRemoveUntil(
+              rootStore.navigator.pushNamedAndRemoveUntil(
                 Routes.home,
                 (route) => false,
               );
@@ -57,20 +56,21 @@ class MyApp extends StatelessWidget {
             theme: ThemeData.from(
               colorScheme: colorScheme,
             ).copyWith(
-              inputDecorationTheme: InputDecorationTheme(
+              inputDecorationTheme: const InputDecorationTheme(
                 isDense: true,
                 border: OutlineInputBorder(),
                 labelStyle: TextStyle(fontSize: 18),
                 counterStyle: TextStyle(color: Colors.transparent),
               ),
             ),
-            builder: ExtendedNavigator<Router>(router: Router()),
+            navigatorKey: rootStore.navigatorKey,
+            onGenerateRoute: onGenerateRoute,
           ),
         ));
   }
 }
 
-var colorScheme = ColorScheme.light(
+final colorScheme = ColorScheme.light(
   primary: Color(0xff263238),
   primaryVariant: Color(0xffafc2cb),
   onPrimary: Colors.white,

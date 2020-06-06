@@ -115,7 +115,7 @@ mixin _$TransactionFilterStore on _TransactionFilterStore, Store {
       ActionController(name: '_TransactionFilterStore');
 
   @override
-  dynamic setCostInteval(material.RangeValues range) {
+  void setCostInteval(material.RangeValues range) {
     final _$actionInfo =
         _$_TransactionFilterStoreActionController.startAction();
     try {
@@ -126,7 +126,7 @@ mixin _$TransactionFilterStore on _TransactionFilterStore, Store {
   }
 
   @override
-  dynamic setMinCost(double cost) {
+  void setMinCost(double cost) {
     final _$actionInfo =
         _$_TransactionFilterStoreActionController.startAction();
     try {
@@ -137,7 +137,7 @@ mixin _$TransactionFilterStore on _TransactionFilterStore, Store {
   }
 
   @override
-  dynamic setMaxCost(double cost) {
+  void setMaxCost(double cost) {
     final _$actionInfo =
         _$_TransactionFilterStoreActionController.startAction();
     try {
@@ -148,7 +148,7 @@ mixin _$TransactionFilterStore on _TransactionFilterStore, Store {
   }
 
   @override
-  dynamic setMinTime(DateTime time) {
+  void setMinTime(DateTime time) {
     final _$actionInfo =
         _$_TransactionFilterStoreActionController.startAction();
     try {
@@ -159,7 +159,7 @@ mixin _$TransactionFilterStore on _TransactionFilterStore, Store {
   }
 
   @override
-  dynamic setMaxTime(DateTime time) {
+  void setMaxTime(DateTime time) {
     final _$actionInfo =
         _$_TransactionFilterStoreActionController.startAction();
     try {
@@ -170,7 +170,7 @@ mixin _$TransactionFilterStore on _TransactionFilterStore, Store {
   }
 
   @override
-  dynamic reset() {
+  void reset() {
     final _$actionInfo =
         _$_TransactionFilterStoreActionController.startAction();
     try {
@@ -305,7 +305,7 @@ mixin _$TransactionStore on _TransactionStore, Store {
   final _$onTransactionMessageAsyncAction = AsyncAction('onTransactionMessage');
 
   @override
-  Future onTransactionMessage(TransactionModel t) {
+  Future<dynamic> onTransactionMessage(TransactionModel t) {
     return _$onTransactionMessageAsyncAction
         .run(() => super.onTransactionMessage(t));
   }
@@ -314,17 +314,7 @@ mixin _$TransactionStore on _TransactionStore, Store {
       ActionController(name: '_TransactionStore');
 
   @override
-  dynamic setSelectedTransaction(TransactionModel transaction) {
-    final _$actionInfo = _$_TransactionStoreActionController.startAction();
-    try {
-      return super.setSelectedTransaction(transaction);
-    } finally {
-      _$_TransactionStoreActionController.endAction(_$actionInfo);
-    }
-  }
-
-  @override
-  dynamic resetFilter() {
+  void resetFilter() {
     final _$actionInfo = _$_TransactionStoreActionController.startAction();
     try {
       return super.resetFilter();

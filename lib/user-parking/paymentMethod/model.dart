@@ -12,6 +12,14 @@ enum PaymentMethodType {
 @HiveType(typeId: 4)
 @JsonSerializable()
 class PaymentMethod {
+  PaymentMethod({
+    this.id,
+    this.description,
+    this.type,
+    this.lastDigits,
+    this.provider,
+  });
+
   @HiveField(0)
   String description;
 
@@ -31,12 +39,4 @@ class PaymentMethod {
   factory PaymentMethod.fromJson(Map<String, dynamic> json) =>
       _$PaymentMethodFromJson(json);
   Map<String, dynamic> toJson() => _$PaymentMethodToJson(this);
-
-  PaymentMethod({
-    this.id,
-    this.description,
-    this.type,
-    this.lastDigits,
-    this.provider,
-  });
 }

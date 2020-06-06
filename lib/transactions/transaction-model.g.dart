@@ -140,8 +140,9 @@ TransactionModel _$TransactionModelFromJson(Map<String, dynamic> json) {
     endTimestamp: json['endTime'] == null
         ? null
         : DateTime.parse(json['endTime'] as String),
-    place: _TransactionPlaceConverter.fromJSON(json['parking_lot_id']),
-    state: _TransactionStateConverter.fromJson(json['state']),
+    place:
+        _TransactionPlaceConverter.fromJSON(json['parking_lot_id'] as String),
+    state: _TransactionStateConverter.fromJson(json['state'] as String),
     vehicle:
         _TransactionVehicleConverter.fromJson(json['vehicle_plate'] as String),
     cost: json['cost'] as int ?? 0,

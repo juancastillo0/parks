@@ -20,7 +20,8 @@ abstract class _UserStore with Store {
   _UserStore(this.root) {
     _box = getUserBox();
     user = _box.get("user");
-    _back = UserBack(this);
+    //ignore: argument_type_not_assignable
+    _back = UserBack(this as UserStore);
     reaction((_reaction) => user, _persistUser);
   }
   RootStore root;
@@ -36,7 +37,7 @@ abstract class _UserStore with Store {
 
   @action
   Future fetchUser() async {
-    if (requests.length != 0) {
+    if (requests.isNotEmpty) {
       return;
     }
     loading = true;
@@ -71,7 +72,7 @@ abstract class _UserStore with Store {
   }
 
   @action
-  deleteAllRequests() async {
+  Future deleteAllRequests() async {
     await _back.deleteAllRequests();
   }
 
@@ -106,7 +107,7 @@ abstract class _UserStore with Store {
       offline: () {
         vehicle.saved = false;
         _createVehicle(vehicle);
-        root.showInfo(SnackBar(
+        root.showInfo(const SnackBar(
           content: Text(
             "The vehicle will be created when you recover your connection.",
           ),
@@ -128,7 +129,7 @@ abstract class _UserStore with Store {
       (_) => _toggleVehicleState(toggled, true),
       offline: () {
         _toggleVehicleState(toggled, false);
-        root.showInfo(SnackBar(
+        root.showInfo(const SnackBar(
           content: Text(
             "The vehicle will be updated when you recover your connection.",
           ),
@@ -139,12 +140,19 @@ abstract class _UserStore with Store {
   }
 
   @action
-  void _toggleVehicleState(VehicleModel toggled, bool saved) =>
-      user.vehicles.update(toggled.plate, (value) {
-        value.saved = saved;
-        value.active = toggled.active;
-        return value;
-      });
+  void _toggleVehicleState(VehicleModel toggled, bool saved) {
+    root.showInfo(SnackBar(
+      content: Text(
+        "You will ${toggled.active ? '' : 'not '}receive notifications"
+        " from the vehicle with plates ${toggled.plate}.",
+      ),
+    ));
+    user.vehicles.update(toggled.plate, (value) {
+      value.saved = saved;
+      value.active = toggled.active;
+      return value;
+    });
+  }
 
   @action
   Future deleteVehicle(String plate) async {
@@ -191,7 +199,7 @@ abstract class _UserStore with Store {
       (_) => _deletePaymentMethod(method.id),
       offline: () {
         _deletePaymentMethod(method.id);
-        root.showInfo(SnackBar(
+        root.showInfo(const SnackBar(
           content: Text(
             "The payment method will be removed when you recover your connection.",
           ),

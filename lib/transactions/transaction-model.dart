@@ -36,7 +36,8 @@ class TransactionPlaceModel {
     id = place.id;
   }
 
-  bool operator ==(other) {
+  @override
+  bool operator ==(dynamic other) {
     return id == other.id;
   }
 
@@ -99,10 +100,12 @@ class TransactionModel {
     return currencyString(cost);
   }
 
-  bool operator ==(other) {
+  @override
+  bool operator ==(dynamic other) {
     return id == other.id;
   }
 
+  @override
   int get hashCode => id.hashCode;
 
   static int compareTo(TransactionModel a, TransactionModel b) {
@@ -126,7 +129,7 @@ class TransactionModel {
 //////////////////////////////////////////
 
 class _TransactionPlaceConverter {
-  static TransactionPlaceModel fromJSON(jsonValue) {
+  static TransactionPlaceModel fromJSON(String jsonValue) {
     final rootStore = GetIt.instance.get<RootStore>();
     final place = rootStore.placeStore.places[jsonValue];
     if (place != null) {
@@ -145,10 +148,11 @@ class _TransactionVehicleConverter {
   static VehicleModel fromJson(String jsonValue) {
     final rootStore = GetIt.instance.get<RootStore>();
     final vehicle = rootStore.userStore.user.vehicles[jsonValue];
-    if (vehicle != null)
+    if (vehicle != null) {
       return vehicle;
-    else
+    } else {
       return VehicleModel()..plate = jsonValue;
+    }
   }
 
   static String toJson(VehicleModel object) {
@@ -157,7 +161,7 @@ class _TransactionVehicleConverter {
 }
 
 class _TransactionStateConverter {
-  static TransactionState fromJson(jsonValue) {
+  static TransactionState fromJson(String jsonValue) {
     switch (jsonValue) {
       case "WAITING":
         return TransactionState.Waiting;

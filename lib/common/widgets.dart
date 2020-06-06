@@ -19,11 +19,11 @@ Future Function() deleteDialog(
           content: content,
           actions: [
             FlatButton(
-              child: Text("CANCEL"),
+              child: const Text("CANCEL"),
               onPressed: () => navigator.pop(),
             ),
             FlatButton(
-              child: Text("DELETE").textColor(Colors.white),
+              child: const Text("DELETE").textColor(Colors.white),
               color: Colors.red[800],
               onPressed: onPressed,
             )
@@ -58,7 +58,7 @@ class MaterialResponsiveWrapper extends HookWidget {
   }
 }
 
-Widget textWithIcon(IconData icon, Text text, {bool right: false}) {
+Widget textWithIcon(IconData icon, Text text, {bool right = false}) {
   if (right) {
     return [text, Icon(icon).padding(left: 10)]
         .toRow(mainAxisSize: MainAxisSize.min);

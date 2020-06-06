@@ -19,7 +19,7 @@ class StringValidErrors {
 }
 
 class StringValid {
-  Set<String Function(String)> _callbacks = Set();
+  final Set<String Function(String)> _callbacks = {};
 
   int _minLength;
   int _maxLength;
@@ -42,7 +42,7 @@ class StringValid {
   }
 
   String firstError(String val) {
-    for (var c in _callbacks) {
+    for (final c in _callbacks) {
       final error = c(val);
       if (error != null) return error;
     }
@@ -51,7 +51,7 @@ class StringValid {
 
   StringValidErrors errors(String val) {
     final errors = StringValidErrors();
-    for (var c in _callbacks) {
+    for (final c in _callbacks) {
       final error = c(val);
       if (error != null) {
         if (c == errorMinLength) {
@@ -67,8 +67,8 @@ class StringValid {
   }
 
   List<String> errorList(String val) {
-    final errorList = List<String>();
-    for (var c in _callbacks) {
+    final errorList = <String>[];
+    for (final c in _callbacks) {
       final error = c(val);
       if (error != null) errorList.add(error);
     }

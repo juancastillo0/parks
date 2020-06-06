@@ -19,7 +19,7 @@ Future Function() multiSelectDialog<T>(
             .textAlignment(TextAlign.center)
             .padding(bottom: 12)
             .border(bottom: 1, color: Colors.black26),
-        contentPadding: EdgeInsets.all(25),
+        contentPadding: const EdgeInsets.all(25),
         children: items
             .map(
               (e) => Observer(
@@ -70,7 +70,7 @@ class MultiSelect<T> extends HookWidget {
           children: <Widget>[
             InkWell(onTap: openDialog, child: title),
             IconButton(
-              icon: Icon(Icons.settings_backup_restore),
+              icon: const Icon(Icons.settings_backup_restore),
               onPressed: selected.isNotEmpty ? selected.clear : null,
             )
           ],
@@ -80,7 +80,9 @@ class MultiSelect<T> extends HookWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               if (selected.isEmpty)
-                Text("No items selected").fontSize(16).padding(vertical: 8),
+                const Text("No items selected")
+                    .fontSize(16)
+                    .padding(vertical: 8),
               Wrap(
                 spacing: 4,
                 children: selected
@@ -93,12 +95,9 @@ class MultiSelect<T> extends HookWidget {
                   .scrollable(scrollDirection: Axis.horizontal)
                   .constrained(maxWidth: box.maxWidth - 50, maxHeight: 50),
               IconButton(
-                constraints: BoxConstraints.expand(width: 50, height: 50),
+                constraints: const BoxConstraints.expand(width: 50, height: 50),
                 onPressed: openDialog,
-                icon: Icon(
-                  Icons.arrow_drop_down,
-                  size: 26,
-                ),
+                icon: const Icon(Icons.arrow_drop_down, size: 26),
               )
             ],
           ).border(bottom: 1, color: Colors.black12),

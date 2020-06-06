@@ -83,7 +83,7 @@ mixin _$UserStore on _UserStore, Store {
   final _$deleteAllRequestsAsyncAction = AsyncAction('deleteAllRequests');
 
   @override
-  Future deleteAllRequests() {
+  Future<dynamic> deleteAllRequests() {
     return _$deleteAllRequestsAsyncAction.run(() => super.deleteAllRequests());
   }
 

@@ -44,8 +44,8 @@ class VehicleModelAdapter extends TypeAdapter<VehicleModel> {
 
 VehicleModel _$VehicleModelFromJson(Map<String, dynamic> json) {
   return VehicleModel(
-    plate: json['plate'],
-    description: json['description'],
+    plate: json['plate'] as String,
+    description: json['description'] as String,
     active: _ActiveVehicleModel.fromJson(json['state'] as String),
   );
 }

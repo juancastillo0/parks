@@ -9,6 +9,16 @@ part 'place-store.g.dart';
 @JsonSerializable()
 @HiveType(typeId: 8)
 class PlaceModel {
+  PlaceModel({
+    this.id,
+    this.name,
+    this.latitud,
+    this.longitud,
+    this.description,
+    this.rating,
+    this.address,
+  });
+
   @HiveField(0)
   String id;
   @HiveField(1)
@@ -28,16 +38,6 @@ class PlaceModel {
   factory PlaceModel.fromJson(Map<String, dynamic> json) =>
       _$PlaceModelFromJson(json);
   Map<String, dynamic> toJson() => _$PlaceModelToJson(this);
-
-  PlaceModel({
-    this.id,
-    this.name,
-    this.latitud,
-    this.longitud,
-    this.description,
-    this.rating,
-    this.address,
-  });
 }
 
 class PlaceStore extends _PlaceStore with _$PlaceStore {}
@@ -51,13 +51,17 @@ abstract class _PlaceStore with Store {
     fetchPlaces();
   }
 
-  PlaceBack _back = PlaceBack();
+  final PlaceBack _back = PlaceBack();
   Box<PlaceModel> _box;
 
   @observable
   ObservableMap<String, PlaceModel> places;
   @observable
   bool loading = false;
+  @observable
+  bool showList = false;
+  @computed
+  ObservableList<PlaceModel> get placesList => ObservableList.of(places.values);
 
   @action
   Future fetchPlaces() async {

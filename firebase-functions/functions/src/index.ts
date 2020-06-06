@@ -74,6 +74,35 @@ export const sendNotification = functions.https.onRequest(
   }
 );
 
+export const sendNotification2 = functions.https.onRequest(
+  async (request: Request, response: Response) => {
+    let body: { [key: string]: any };
+    if (typeof request.body === "string") {
+      body = JSON.parse(request.body);
+    } else {
+      body = request.body;
+    }
+
+    if ("seconds" in body) {
+      await sleep(body.seconds * 1000);
+    }
+
+    if (
+      "data" in body.payload &&
+      "transaction" in body.payload.data &&
+      typeof body.payload.data.transaction !== "string"
+    ) {
+      body.payload.data.transaction = JSON.stringify(
+        body.payload.data.transaction
+      );
+    }
+
+    await fcm.sendToDevice(body.token, body.payload, body.options);
+
+    return response.status(200).json("ok");
+  }
+);
+
 export const sendToTopic = functions.firestore
   .document("puppies/{puppyId}")
   .onCreate(async (snapshot: admin.firestore.DocumentSnapshot) => {

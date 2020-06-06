@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:parks/common/bottom-nav-bar.dart';
 import 'package:parks/common/scaffold.dart';
 import 'package:parks/common/widgets.dart';
 import 'package:parks/place/place-store.dart';
@@ -8,27 +9,30 @@ import 'package:styled_widget/styled_widget.dart';
 class PlacePage extends HookWidget {
   final PlaceModel place;
 
-  PlacePage({Key key, this.place}) : super(key: key);
+  const PlacePage({Key key, this.place}) : super(key: key);
 
   @override
   Widget build(ctx) {
     final textTheme = Theme.of(ctx).textTheme;
     final mq = MediaQuery.of(ctx);
     return Scaffold(
-      appBar: DefaultAppBar(title: Text("Place")),
-      bottomNavigationBar: DefaultBottomNavigationBar(),
+      appBar: const DefaultAppBar(title: Text("Place")),
+      bottomNavigationBar: const DefaultBottomNavigationBar(),
       body: Column(
         children: [
-          Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-            Image.asset(
-              'assets/place-image.png',
-              fit: BoxFit.cover,
-            ),
-            Image.asset(
-              "assets/parking-hypermarket.jpg",
-              fit: BoxFit.cover,
-            ),
-          ])
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Image.asset(
+                'assets/place-image.png',
+                fit: BoxFit.cover,
+              ),
+              Image.asset(
+                "assets/parking-hypermarket.jpg",
+                fit: BoxFit.cover,
+              ),
+            ],
+          )
               .constrained(maxHeight: mq.size.height * 0.4)
               .scrollable(scrollDirection: Axis.horizontal),
           MaterialResponsiveWrapper(
@@ -49,7 +53,7 @@ class PlacePage extends HookWidget {
                     .padding(top: 16),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
+                  children: const <Widget>[
                     Icon(Icons.star),
                     Icon(Icons.star),
                     Icon(Icons.star),
@@ -59,7 +63,7 @@ class PlacePage extends HookWidget {
                 ).padding(all: 16),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
+                  children: const <Widget>[
                     Text("8 Reviews", style: TextStyle(fontSize: 18)),
                     Icon(Icons.arrow_drop_down)
                   ],
@@ -70,7 +74,7 @@ class PlacePage extends HookWidget {
             )
                 .padding(horizontal: 20)
                 .constrained(maxWidth: 550)
-                .scrollable(scrollDirection: Axis.vertical),
+                .scrollable(),
           ).flexible()
         ],
       ),

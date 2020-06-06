@@ -8,8 +8,14 @@ part "user-model.g.dart";
 
 @JsonSerializable()
 class UserModel extends _UserModel with _$UserModel {
-  UserModel({name, id, email, phone, paymentMethods, vehicles})
-      : super(
+  UserModel({
+    String name,
+    String id,
+    String email,
+    String phone,
+    ObservableList<PaymentMethod> paymentMethods,
+    ObservableMap<String, VehicleModel> vehicles,
+  }) : super(
           name: name,
           id: id,
           email: email,
@@ -68,8 +74,8 @@ class UserModelAdapter extends TypeAdapter<UserModel> {
 
   @override
   UserModel read(BinaryReader reader) {
-    var numOfFields = reader.readByte();
-    var fields = <int, dynamic>{
+    final numOfFields = reader.readByte();
+    final fields = <int, dynamic>{
       for (var i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return UserModel()
@@ -77,7 +83,9 @@ class UserModelAdapter extends TypeAdapter<UserModel> {
       ..name = fields[1] as String
       ..email = fields[2] as String
       ..phone = fields[3] as String
-      ..vehicles = ObservableMap.of(Map.from(fields[4]))
+      //ignore: argument_type_not_assignable
+      ..vehicles =
+          ObservableMap.of(Map.from(fields[4] as Map<dynamic, dynamic>))
       ..paymentMethods =
           ObservableList.of((fields[5] as List)?.cast<PaymentMethod>());
   }
@@ -102,21 +110,30 @@ class UserModelAdapter extends TypeAdapter<UserModel> {
 }
 
 class _ObservableListConverter {
-  static ObservableList<PaymentMethod> fromJson(List<dynamic> json) =>
-      ObservableList.of(json.map((e) => PaymentMethod.fromJson(e)));
+  static ObservableList<PaymentMethod> fromJson(
+    List<dynamic> json,
+  ) =>
+      ObservableList.of(
+        json.map((e) => PaymentMethod.fromJson(e as Map<String, dynamic>)),
+      );
 
   static List<Map<String, dynamic>> toJson(
-          ObservableList<PaymentMethod> list) =>
+    ObservableList<PaymentMethod> list,
+  ) =>
       list.map((e) => e.toJson()).toList();
 }
 
 class _ObservableMapConverter {
   static ObservableMap<String, VehicleModel> fromJson(
-          Map<String, dynamic> json) =>
+    Map<String, dynamic> json,
+  ) =>
       ObservableMap.of(
-          json.map((k, e) => MapEntry(k, VehicleModel.fromJson(e))));
+        json.map((k, e) =>
+            MapEntry(k, VehicleModel.fromJson(e as Map<String, dynamic>))),
+      );
 
   static Map<String, Map<String, dynamic>> toJson(
-          ObservableMap<String, VehicleModel> map) =>
+    ObservableMap<String, VehicleModel> map,
+  ) =>
       map.map((k, e) => MapEntry(k, e.toJson()));
 }

@@ -15,7 +15,7 @@ class PlaceBack {
         case 200:
           final _body = json.decode(resp.body) as List<dynamic>;
           return BackResult(
-            _body.map((e) => PlaceModel.fromJson(e)).toList(),
+            _body.map((e) => PlaceModel.fromJson(e as Map<String, dynamic>)).toList(),
           );
         default:
           return BackResult.error("Server error");

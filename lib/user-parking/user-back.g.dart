@@ -128,7 +128,7 @@ mixin _$UserBack on _UserBack, Store {
       AsyncAction('handleConnectionChange');
 
   @override
-  Future handleConnectionChange(bool isConnected) {
+  Future<dynamic> handleConnectionChange(bool isConnected) {
     return _$handleConnectionChangeAsyncAction
         .run(() => super.handleConnectionChange(isConnected));
   }
@@ -136,7 +136,7 @@ mixin _$UserBack on _UserBack, Store {
   final _$deleteAllRequestsAsyncAction = AsyncAction('deleteAllRequests');
 
   @override
-  Future deleteAllRequests() {
+  Future<dynamic> deleteAllRequests() {
     return _$deleteAllRequestsAsyncAction.run(() => super.deleteAllRequests());
   }
 

@@ -16,17 +16,19 @@ part 'vehicle.g.dart';
 @HiveType(typeId: 2)
 @JsonSerializable(includeIfNull: false)
 class VehicleModel extends _VehicleModel with _$VehicleModel {
-  VehicleModel({plate, description, active})
+  VehicleModel({String plate, String description, bool active})
       : super(plate: plate, description: description, active: active);
 
   factory VehicleModel.fromJson(Map<String, dynamic> json) =>
       _$VehicleModelFromJson(json);
   Map<String, dynamic> toJson() => _$VehicleModelToJson(this);
 
-  bool operator ==(other) {
+  @override
+  bool operator ==(dynamic other) {
     return plate == other.plate;
   }
 
+  @override
   int get hashCode => plate.hashCode;
 }
 
@@ -66,66 +68,72 @@ class VehicleListTile extends hooks.HookWidget {
   Widget build(ctx) {
     final userStore = useUserStore(ctx);
     return Observer(
-      builder: (_) => ListTile(
-        contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(vehicle.plate),
-            if (!vehicle.saved)
-              Text(
-                "Not saved",
-                style: Theme.of(ctx).textTheme.subtitle2,
-              )
-          ],
-        ),
-        leading: Switch(
-          value: vehicle.active,
-          onChanged: (_) => userStore.toggleVehicleState(vehicle),
-        ),
-        subtitle: Text(vehicle.description),
-        trailing: IconButton(
-          icon: Icon(Icons.delete),
-          onPressed: deleteDialog(
-            ctx,
-            () {
-              userStore.deleteVehicle(vehicle.plate);
-              Navigator.of(ctx).pop();
-            },
-            Text("Delete Vehicle"),
-            Text("Are you sure you want to delete the car?"),
+      builder: (_) {
+        return ListTile(
+          contentPadding:
+              const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(vehicle.plate),
+              if (!vehicle.saved)
+                Text(
+                  "Not saved",
+                  style: Theme.of(ctx).textTheme.subtitle2,
+                )
+            ],
           ),
-        ),
-      ),
+          leading: Switch(
+            value: vehicle.active,
+            onChanged: (_) => userStore.toggleVehicleState(vehicle),
+          ),
+          subtitle: Text(vehicle.description),
+          trailing: IconButton(
+            icon: const Icon(Icons.delete),
+            onPressed: deleteDialog(
+              ctx,
+              () {
+                userStore.deleteVehicle(vehicle.plate);
+                Navigator.of(ctx).pop();
+              },
+              const Text("Delete Vehicle"),
+              const Text("Are you sure you want to delete the car?"),
+            ),
+          ),
+        );
+      },
     );
   }
 }
 
 class _ActiveVehicleModel {
   static bool fromJson(String jsonValue) {
-    return jsonValue == "ACTIVE" ? true : false;
+    return jsonValue == "ACTIVE";
   }
 
+  // ignore: avoid_positional_boolean_parameters
   static String toJson(bool object) {
     return object == null || object ? "ACTIVE" : "INACTIVE";
   }
 }
 
-createVehicleDialog(BuildContext ctx) async {
+Future createVehicleDialog(BuildContext ctx) async {
   await showDialog(
     context: ctx,
     builder: (ctx) => Dialog(
-      insetPadding: EdgeInsets.symmetric(horizontal: 35, vertical: 20),
+      insetPadding: const EdgeInsets.symmetric(horizontal: 35, vertical: 20),
       child: [
-        SizedBox(height: 15),
-        Text("Create Vehicle", style: Theme.of(ctx).textTheme.headline6)
-            .alignment(Alignment.center)
-            .padding(bottom: 16),
-        SizedBox(height: 10),
-        CreateVehicleForm(),
+        const SizedBox(height: 15),
+        Text(
+          "Create Vehicle",
+          style: Theme.of(ctx).textTheme.headline6,
+        ).alignment(Alignment.center).padding(bottom: 16),
+        const SizedBox(height: 10),
+        const CreateVehicleForm(),
       ]
           .toColumn(mainAxisSize: MainAxisSize.min)
+          .scrollable()
           .padding(horizontal: 25)
           .constrained(maxWidth: 400)
           .backgroundColor(Colors.white),
@@ -136,6 +144,7 @@ createVehicleDialog(BuildContext ctx) async {
 class CreateVehicleForm extends hooks.HookWidget {
   const CreateVehicleForm({Key key}) : super(key: key);
 
+  @override
   Widget build(ctx) {
     final plateC = hooks.useTextEditingController();
     final descriptionC = hooks.useTextEditingController();
@@ -146,9 +155,31 @@ class CreateVehicleForm extends hooks.HookWidget {
     final _formKey = hooks.useMemoized(() => GlobalKey<FormState>(), []);
     final autovalid = hooks.useState(false);
 
+    Future submit() async {
+      autovalid.value = true;
+      if (_formKey.currentState.validate()) {
+        state.value = RequestState.loading();
+        final error = await userStore.createVehicle(
+          VehicleModel(
+            active: true,
+            description: descriptionC.text,
+            plate: plateC.text.toUpperCase(),
+          ),
+        );
+        if (error != null) {
+          state.value = RequestState.err(error);
+        } else {
+          navigator.pop();
+        }
+      }
+    }
+
     return Form(
       key: _formKey,
       autovalidate: autovalid.value,
+      onChanged: () {
+        if (state.value.isError) state.value = RequestState.none();
+      },
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -166,7 +197,7 @@ class CreateVehicleForm extends hooks.HookWidget {
             ).valid(v)
                 ? null
                 : "Should be a valid plate, e.g. 'ABC 123'",
-            decoration: InputDecoration(
+            decoration: const InputDecoration(
               labelText: "Plate",
               counterText: "-",
               prefixIcon: Icon(Icons.directions_car),
@@ -183,7 +214,7 @@ class CreateVehicleForm extends hooks.HookWidget {
             ).valid(v)
                 ? null
                 : "Minimum length 3 and maximum 40",
-            decoration: InputDecoration(
+            decoration: const InputDecoration(
               labelText: "Description",
               counterText: "-",
               helperText: "Helpful description for you to remember",
@@ -197,37 +228,26 @@ class CreateVehicleForm extends hooks.HookWidget {
               .padding(vertical: 3),
           //
           // ----------------- Actions
-          ButtonBar(
-            alignment: MainAxisAlignment.end,
-            children: <Widget>[
-              FlatButton(
-                child: Text("CANCEL"),
-                onPressed: () => navigator.pop(),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              state.value.progressIndicator,
+              ButtonBar(
+                alignment: MainAxisAlignment.end,
+                children: <Widget>[
+                  FlatButton(
+                    onPressed: navigator.pop,
+                    child: const Text("CANCEL"),
+                  ),
+                  RaisedButton(
+                    color: Colors.green[700],
+                    onPressed: state.value.isLoading ? null : submit,
+                    child: const Text("CREATE").textColor(Colors.white),
+                  )
+                ],
               ),
-              FlatButton(
-                child: Text("CREATE").textColor(Colors.white),
-                color: Colors.green[700],
-                onPressed: state.value.isLoading
-                    ? null
-                    : () async {
-                        autovalid.value = true;
-                        if (_formKey.currentState.validate()) {
-                          state.value = RequestState.loading();
-                          final error = await userStore.createVehicle(
-                            VehicleModel(
-                                active: true,
-                                description: descriptionC.text,
-                                plate: plateC.text.toUpperCase()),
-                          );
-                          if (error != null)
-                            state.value = RequestState.err(error);
-                          else
-                            navigator.pop();
-                        }
-                      },
-              )
             ],
-          )
+          ).padding(bottom: 10)
         ],
       ),
     );

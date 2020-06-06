@@ -11,20 +11,25 @@ class TransactionBack {
   Future<BackResult<List<TransactionModel>>> transactions() async {
     final resp = await _client.get(
       "/transactions",
-      // headers: lastModified != null
-      //     ? {'if-modified-since': lastModified.toIso8601String()}
-      //     : null,
+      headers: lastModified != null
+          ? {'if-modified-since': lastModified.toIso8601String()}
+          : null,
     );
 
     return resp.mapOk<List<TransactionModel>>(
       (resp) {
         switch (resp.statusCode) {
           case 200:
-            if (resp.headers.containsKey("modified-at"))
+            if (resp.headers.containsKey("modified-at")) {
               lastModified = DateTime.parse(resp.headers["modified-at"]);
+            }
             final _body = json.decode(resp.body) as List<dynamic>;
             return BackResult(
-              _body.map((e) => TransactionModel.fromJson(e)).toList(),
+              _body
+                  .map(
+                    (e) => TransactionModel.fromJson(e as Map<String, dynamic>),
+                  )
+                  .toList(),
             );
           case 401:
             _client.setToken(null);

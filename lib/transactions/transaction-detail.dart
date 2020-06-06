@@ -4,11 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:parks/common/bottom-nav-bar.dart';
 import 'package:parks/common/root-store.dart';
 import 'package:parks/common/scaffold.dart';
 import 'package:parks/common/utils.dart';
 import 'package:parks/common/widgets.dart';
-import 'package:parks/routes.gr.dart';
+import 'package:parks/routes.dart';
 import 'package:parks/transactions/transaction-model.dart';
 import 'package:styled_widget/styled_widget.dart';
 import 'package:timeago/timeago.dart' as timeago;
@@ -19,17 +20,19 @@ class TransactionPage extends HookWidget {
   final TransactionModel transaction;
 
   @override
-  Widget build(ctx) => Scaffold(
-        appBar: DefaultAppBar(
-          title: Text("Transaction"),
-        ),
-        bottomNavigationBar: DefaultBottomNavigationBar(),
-        body: TransactionDetail(transaction),
-      );
+  Widget build(ctx) {
+    return const Scaffold(
+      appBar: DefaultAppBar(
+        title: Text("Transaction"),
+      ),
+      bottomNavigationBar: DefaultBottomNavigationBar(),
+      body: TransactionDetail(),
+    );
+  }
 }
 
 class TransactionDetail extends HookWidget {
-  const TransactionDetail(transaction, {Key key}) : super(key: key);
+  const TransactionDetail({Key key}) : super(key: key);
 
   @override
   Widget build(ctx) {
@@ -52,7 +55,7 @@ class TransactionDetail extends HookWidget {
         return Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            SizedBox(height: 15),
+            const SizedBox(height: 15),
             TransactionDetailColumn(
               "Place",
               Icons.location_on,
@@ -60,19 +63,19 @@ class TransactionDetail extends HookWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
                   Text(transaction.place.name, style: textTheme.headline5),
-                  SizedBox(height: 8),
+                  const SizedBox(height: 8),
                   Text(transaction.place.address, style: textTheme.subtitle1)
                 ],
               ),
             ),
-            Divider(height: 20, thickness: 1).padding(top: 8),
+            const Divider(height: 20, thickness: 1).padding(top: 8),
             TransactionDetailColumn(
               "Cost",
               Icons.attach_money,
               Text("${transaction.costString()} COP",
                   style: textTheme.headline5),
             ),
-            Divider(height: 20, thickness: 1).padding(top: 8),
+            const Divider(height: 20, thickness: 1).padding(top: 8),
             TransactionDetailColumn(
               "Vehicle",
               Icons.directions_car,
@@ -80,7 +83,7 @@ class TransactionDetail extends HookWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(transaction.vehicle.plate, style: textTheme.headline5),
-                  SizedBox(height: 8),
+                  const SizedBox(height: 8),
                   Text(
                     transaction.vehicle.description ?? "No description",
                     style: textTheme.subtitle1,
@@ -88,7 +91,7 @@ class TransactionDetail extends HookWidget {
                 ],
               ),
             ),
-            Divider(height: 20, thickness: 1).padding(top: 8),
+            const Divider(height: 20, thickness: 1).padding(top: 8),
             TransactionDetailColumn(
               "Duration",
               Icons.timer,
@@ -103,13 +106,13 @@ class TransactionDetail extends HookWidget {
                 ],
               ),
             ),
-            SizedBox(height: 40),
+            const SizedBox(height: 40),
             Observer(
               builder: (_) => (transactionStore.selectedTransaction.state ==
                           TransactionState.Waiting &&
                       store.client.isConnected)
                   ? acceptCancelPaymentButtons(ctx).padding(bottom: 20)
-                  : SizedBox(height: 1),
+                  : const SizedBox(height: 1),
             )
 
             // else if (transaction.state == TransactionState.Active)
@@ -124,7 +127,7 @@ class TransactionDetail extends HookWidget {
             //   )
           ],
         )
-            .scrollable(scrollDirection: Axis.vertical)
+            .scrollable()
             .backgroundColor(Colors.white)
             .constrained(maxWidth: 400)
             .alignment(Alignment.center);
@@ -148,28 +151,30 @@ Widget acceptCancelPaymentButtons(BuildContext ctx) {
                 transactionStore.selectedTransaction.id, false);
             Navigator.of(ctx).pushNamed(Routes.transactions);
           },
-          Text("Reject Transaction"),
-          Text("Are you sure you want to reject the transaction?"),
+          const Text("Reject Transaction"),
+          const Text("Are you sure you want to reject the transaction?"),
         ),
-        child: Text("REJECT", style: TextStyle(color: Colors.white)),
         color: Colors.red[700],
+        child: const Text("REJECT", style: TextStyle(color: Colors.white)),
       ),
-      SizedBox(width: 40),
+      const SizedBox(width: 40),
       RaisedButton(
         onPressed: userStore.user.paymentMethods.isEmpty
             ? () {
-                // store.showInfo(SnackBar(
-                //   content: Text(
-                //       "You have to create a payment method to accept a transaction"),
-                // ));
+                store.showInfo(
+                  const SnackBar(
+                    content: Text(
+                        "You have to create a payment method to accept a transaction"),
+                  ),
+                );
                 Navigator.of(ctx).pushNamed(Routes.createPaymentMethod);
               }
             : () => showDialog(
                   context: ctx,
-                  child: Dialog(child: SingleSelect()),
+                  child: const Dialog(child: SingleSelect()),
                 ),
-        child: Text("ACCEPT", style: TextStyle(color: Colors.white)),
         color: Colors.green[700],
+        child: const Text("ACCEPT", style: TextStyle(color: Colors.white)),
       )
     ],
   );
@@ -215,21 +220,22 @@ class SingleSelect extends HookWidget {
                           .alignment(Alignment.centerRight)
                     ],
                   ),
-                  trailing: Radio(
+                  trailing: Radio<String>(
                     value: e.id,
                     groupValue: groupValue.value,
                     onChanged: (id) => groupValue.value = id,
                   ),
                 );
               },
-              separatorBuilder: (_, __) => Divider(thickness: 2, height: 20),
+              separatorBuilder: (_, __) =>
+                  const Divider(thickness: 2, height: 20),
               itemCount: userStore.user.paymentMethods.length,
             ).flexible(),
           ],
         )
             .padding(horizontal: 10)
             .constrained(maxHeight: min(mq.size.height * 0.7, 600)),
-        SizedBox(height: 30),
+        const SizedBox(height: 30),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -240,21 +246,22 @@ class SingleSelect extends HookWidget {
             ButtonBar(
               children: [
                 FlatButton(
-                  child: Text("CANCEL"),
                   onPressed: () => Navigator.of(ctx).pop(),
+                  child: const Text("CANCEL"),
                 ),
                 FlatButton(
-                  child: Text("ACCEPT"),
+                  child: const Text("ACCEPT"),
                   onPressed: () async {
                     state.value = RequestState.loading();
                     final error = await transactionStore.updateTransactionState(
                       transactionStore.selectedTransaction.id,
                       true,
                     );
-                    if (error == null)
+                    if (error == null) {
                       Navigator.of(ctx).pop();
-                    else
+                    } else {
                       state.value = RequestState.err(error);
+                    }
                   },
                   color: Colors.green[800],
                 ),
@@ -278,10 +285,12 @@ class TransactionDetailColumn extends HookWidget {
   Widget build(ctx) {
     return Column(
       children: [
-        Row(mainAxisAlignment: MainAxisAlignment.start, children: [
-          Icon(icon, size: 26).padding(right: 6, left: 25),
-          Text(name, style: Theme.of(ctx).textTheme.subtitle1)
-        ]).padding(bottom: 12, top: 12),
+        Row(
+          children: [
+            Icon(icon, size: 26).padding(right: 6, left: 25),
+            Text(name, style: Theme.of(ctx).textTheme.subtitle1)
+          ],
+        ).padding(bottom: 12, top: 12),
         info,
       ],
     );

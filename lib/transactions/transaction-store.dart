@@ -15,10 +15,10 @@ class TransactionFilterStore extends _TransactionFilterStore
 
 abstract class _TransactionFilterStore with Store {
   bool valid(TransactionModel t) {
-    return ((minCost == null || t.cost >= minCost) &&
+    return (minCost == null || t.cost >= minCost) &&
         (maxCost == null || t.cost <= maxCost) &&
         (places.isEmpty || places.contains(t.place)) &&
-        (vehicles.isEmpty || vehicles.contains(t.vehicle)));
+        (vehicles.isEmpty || vehicles.contains(t.vehicle));
   }
 
   @observable
@@ -27,13 +27,13 @@ abstract class _TransactionFilterStore with Store {
   double maxCost;
 
   @action
-  setCostInteval(material.RangeValues range) {
+  void setCostInteval(material.RangeValues range) {
     minCost = range.start;
     maxCost = range.end;
   }
 
   @action
-  setMinCost(double cost) {
+  void setMinCost(double cost) {
     if (cost == null || cost.compareTo(maxCost) <= 0) {
       minCost = cost;
     } else {
@@ -44,7 +44,7 @@ abstract class _TransactionFilterStore with Store {
   }
 
   @action
-  setMaxCost(double cost) {
+  void setMaxCost(double cost) {
     if (cost == null || cost.compareTo(minCost) >= 0) {
       maxCost = cost;
     } else {
@@ -59,7 +59,7 @@ abstract class _TransactionFilterStore with Store {
   @observable
   DateTime maxTime;
   @action
-  setMinTime(DateTime time) {
+  void setMinTime(DateTime time) {
     if (time == null || time.compareTo(maxTime) <= 0) {
       minTime = time;
     } else {
@@ -70,7 +70,7 @@ abstract class _TransactionFilterStore with Store {
   }
 
   @action
-  setMaxTime(DateTime time) {
+  void setMaxTime(DateTime time) {
     if (time == null || time.compareTo(minTime) >= 0) {
       maxTime = time;
     } else {
@@ -87,7 +87,7 @@ abstract class _TransactionFilterStore with Store {
   ObservableSet<VehicleModel> vehicles = ObservableSet();
 
   @action
-  reset() {
+  void reset() {
     places.clear();
     vehicles.clear();
     minCost = null;
@@ -98,7 +98,7 @@ abstract class _TransactionFilterStore with Store {
 }
 
 class TransactionStore extends _TransactionStore with _$TransactionStore {
-  TransactionStore(root) : super(root);
+  TransactionStore(RootStore root) : super(root);
 }
 
 abstract class _TransactionStore with Store {
@@ -108,11 +108,11 @@ abstract class _TransactionStore with Store {
       Map.fromEntries(_box.values.map((e) => MapEntry(e.id, e))),
     );
     selectedTransaction =
-        transactions.length > 0 ? transactions.values.first : null;
+        transactions.isNotEmpty ? transactions.values.first : null;
     filter = TransactionFilterStore();
   }
 
-  RootStore _root;
+  final RootStore _root;
 
   final _back = TransactionBack();
   Box<TransactionModel> _box;
@@ -136,13 +136,16 @@ abstract class _TransactionStore with Store {
     final value = resp.okOrNull();
     if (value != null) {
       final map = Map.fromEntries(value.map((e) => MapEntry(e.id, e)));
-      for (var vv in map.values) print("map ${vv.state}");
+      // for (final vv in map.values) {
+      //   print("map ${vv.state}");
+      // }
       transactions.addAll(map);
       transactions = ObservableMap.of(
         Map.fromEntries(transactions.values.map((e) => MapEntry(e.id, e))),
       );
-      if (transactions.length > 0 && selectedTransaction == null)
+      if (transactions.isNotEmpty && selectedTransaction == null) {
         selectedTransaction = transactions.values.first;
+      }
 
       await _box.putAll(map);
     } else {
@@ -152,12 +155,12 @@ abstract class _TransactionStore with Store {
   }
 
   @action
-  onTransactionMessage(TransactionModel t) async {
+  Future onTransactionMessage(TransactionModel t) async {
     transactions.remove(t.id);
     transactions.update(t.id, (_) => t, ifAbsent: () => t);
     transactions[t.id] = t;
     await _box.put(t.id, t);
-    _root.transactionStore.selectedTransaction = t;
+    selectedTransaction = t;
     print(t.state);
   }
 
@@ -177,7 +180,7 @@ abstract class _TransactionStore with Store {
           await _box.delete(id);
           if (selectedTransaction.id == id) {
             selectedTransaction =
-                transactions.length > 0 ? transactions.values.first : null;
+                transactions.isNotEmpty ? transactions.values.first : null;
           }
         }
         return null;
@@ -186,11 +189,7 @@ abstract class _TransactionStore with Store {
   }
 
   @action
-  setSelectedTransaction(TransactionModel transaction) =>
-      selectedTransaction = transaction;
-
-  @action
-  resetFilter() => filter = TransactionFilterStore();
+  void resetFilter() => filter = TransactionFilterStore();
 
   @computed
   ObservableList<TransactionModel> get filteredTransactions =>

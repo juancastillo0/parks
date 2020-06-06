@@ -82,6 +82,13 @@ Map<String, dynamic> _$PlaceModelToJson(PlaceModel instance) =>
 // ignore_for_file: non_constant_identifier_names, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic
 
 mixin _$PlaceStore on _PlaceStore, Store {
+  Computed<ObservableList<PlaceModel>> _$placesListComputed;
+
+  @override
+  ObservableList<PlaceModel> get placesList => (_$placesListComputed ??=
+          Computed<ObservableList<PlaceModel>>(() => super.placesList))
+      .value;
+
   final _$placesAtom = Atom(name: '_PlaceStore.places');
 
   @override
@@ -116,6 +123,23 @@ mixin _$PlaceStore on _PlaceStore, Store {
     }, _$loadingAtom, name: '${_$loadingAtom.name}_set');
   }
 
+  final _$showListAtom = Atom(name: '_PlaceStore.showList');
+
+  @override
+  bool get showList {
+    _$showListAtom.context.enforceReadPolicy(_$showListAtom);
+    _$showListAtom.reportObserved();
+    return super.showList;
+  }
+
+  @override
+  set showList(bool value) {
+    _$showListAtom.context.conditionallyRunInAction(() {
+      super.showList = value;
+      _$showListAtom.reportChanged();
+    }, _$showListAtom, name: '${_$showListAtom.name}_set');
+  }
+
   final _$fetchPlacesAsyncAction = AsyncAction('fetchPlaces');
 
   @override
@@ -126,7 +150,7 @@ mixin _$PlaceStore on _PlaceStore, Store {
   @override
   String toString() {
     final string =
-        'places: ${places.toString()},loading: ${loading.toString()}';
+        'places: ${places.toString()},loading: ${loading.toString()},showList: ${showList.toString()},placesList: ${placesList.toString()}';
     return '{$string}';
   }
 }
