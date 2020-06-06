@@ -32,7 +32,7 @@ money because all transactions are done purely digital.
 
 You can see the web version of the application in https://juancastillo0.github.io/parks/#/
 
-The build apk is in https://github.com/juancastillo0/parks/blob/master/app-release.apk
+The build apk is in https://github.com/juancastillo0/parks/blob/master/app-release.apk and in https://github.com/juancastillo0/parks/blob/master/app-release-sprint-4.apk for the sprint 4.
 
 ### Server
 
